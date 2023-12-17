@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUSO.Business", "TUSO.Business", "{1CA522FE-7C03-49AB-8E5B-9EFA15F54C54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUSO.Data", "TUSO.Data", "{79322203-A37A-4727-9075-84A6ADF8C9F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUSO.Helper", "TUSO.Helper", "{467CB7BA-1BA8-4850-9539-3D86E0A437D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUSO.Api", "TUSO.Api\TUSO.Api.csproj", "{4D104631-6558-45EF-937C-953901C1B189}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUSO.Domain", "TUSO.Domain\TUSO.Domain.csproj", "{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUSO.Infrastructure", "TUSO.Infrastructure\TUSO.Infrastructure.csproj", "{D75AD766-0546-447B-B4D9-61F0695016A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUSO.Infrastructure.SqlServer", "TUSO.Infrastructure.SqlServer\TUSO.Infrastructure.SqlServer.csproj", "{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUSO.Utilities", "TUSO.Utilities\TUSO.Utilities.csproj", "{068D1B4B-452C-4A03-B79B-E318C0AD54F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D104631-6558-45EF-937C-953901C1B189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D104631-6558-45EF-937C-953901C1B189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D104631-6558-45EF-937C-953901C1B189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D104631-6558-45EF-937C-953901C1B189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D75AD766-0546-447B-B4D9-61F0695016A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D75AD766-0546-447B-B4D9-61F0695016A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D75AD766-0546-447B-B4D9-61F0695016A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D75AD766-0546-447B-B4D9-61F0695016A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{068D1B4B-452C-4A03-B79B-E318C0AD54F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{068D1B4B-452C-4A03-B79B-E318C0AD54F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{068D1B4B-452C-4A03-B79B-E318C0AD54F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{068D1B4B-452C-4A03-B79B-E318C0AD54F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D104631-6558-45EF-937C-953901C1B189} = {1CA522FE-7C03-49AB-8E5B-9EFA15F54C54}
+		{10FDC922-CFDE-4E22-9D4B-7A103B4E69AE} = {1CA522FE-7C03-49AB-8E5B-9EFA15F54C54}
+		{D75AD766-0546-447B-B4D9-61F0695016A0} = {79322203-A37A-4727-9075-84A6ADF8C9F9}
+		{93E50CFB-5AFF-4A2E-8CFA-F79596CF6E29} = {467CB7BA-1BA8-4850-9539-3D86E0A437D3}
+		{068D1B4B-452C-4A03-B79B-E318C0AD54F6} = {467CB7BA-1BA8-4850-9539-3D86E0A437D3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A322B36C-3D03-4843-9443-4B598CE8D303}
+	EndGlobalSection
+EndGlobal
