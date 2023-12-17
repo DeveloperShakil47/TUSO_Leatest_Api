@@ -163,9 +163,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign key. Primary key of entity UserType.
         /// </summary>
-        public int? UsertypeID { get; set; }
+        public int? DeviceTypeID { get; set; }
 
-        [ForeignKey("UsertypeID")]
+        [ForeignKey("DeviceTypeID")]
         public virtual DeviceType UserTypes { get; set; }
         /// <summary>
         /// 

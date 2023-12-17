@@ -35,6 +35,6 @@ namespace TUSO.Domain.Entities
         public long UserID { get; set; }
 
         [ForeignKey("UserID")]
-        public virtual UserAccount User { get; set; }
+        public virtual UserAccount UserAccount  { get; set; }
     }
 }
