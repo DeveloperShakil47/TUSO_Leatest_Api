@@ -119,9 +119,9 @@ namespace TUSO.Infrastructure.SqlServer
         public DbSet<Screenshot> Screenshots { get; set; }
 
         /// <summary>
-        /// Represents Projects entity.
+        /// Represents Systems entity.
         /// </summary>
-        public DbSet<Project> Projects { get; set; }
+        public DbSet<Project> Projects{ get; set; }
 
         /// <summary>
         /// Represents SystemPermission entity.
