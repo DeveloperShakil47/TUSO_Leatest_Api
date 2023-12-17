@@ -17,9 +17,4 @@
     <ProjectReference Include="..\TUSO.Infrastructure.SqlServer\TUSO.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
