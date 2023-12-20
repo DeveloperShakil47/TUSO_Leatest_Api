@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="EmailServices\" />
     <Folder Include="EmailTemplate\" />
   </ItemGroup>

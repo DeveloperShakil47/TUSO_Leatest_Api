@@ -1,9 +1,9 @@
 /*
-* Created by: Labib
-* Date created: 31.08.2022
-* Last modified: 06.11.2022
-* Modified by:Bithy
-*/
+ * Created by: Stephan
+ * Date created: 17.12.2023
+ * Last modified:
+ * Modified by: 
+ */
 namespace TUSO.Utilities.Constants
 {
     public static class RouteConstants
