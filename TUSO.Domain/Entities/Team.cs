@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -41,11 +42,13 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Members of a Team.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Member> Members { get; set; }
 
         /// <summary>
         /// Incidents of a Team.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Incident> Incidents { get; set; }
     }
 }

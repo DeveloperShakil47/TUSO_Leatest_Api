@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -45,6 +46,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Incident of a IncidentCategory.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Incident> Incidents { get; set; }
     }
 }

@@ -85,7 +85,6 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [ForeignKey("UserAccountAdmins")]
         public long? AdminId { get; set; }
-
         public virtual UserAccount UserAccountAdmins { get; set; }
 
         /// <summary>

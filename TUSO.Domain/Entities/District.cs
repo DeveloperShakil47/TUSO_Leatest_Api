@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -41,6 +42,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Facilities of a District.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Facility> Facilities { get; set; }
 
     }

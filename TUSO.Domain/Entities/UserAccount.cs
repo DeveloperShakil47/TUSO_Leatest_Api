@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Domain.Validators;
 using TUSO.Utilities.Constants;
 
@@ -140,16 +141,19 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// SystemPermissions of a UserAccount.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<SystemPermission> SystemPermissions { get; set; }
 
         /// <summary>
         /// UserAccounts of a FacilityPermission.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<FacilityPermission> FacilityPermissions { get; set; }
 
         /// <summary>
         /// UserAccounts of a RemoteLoginConcent.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<RemoteLoginConcent> RemoteLoginConcents { get; set; }
 
         /// <summary>

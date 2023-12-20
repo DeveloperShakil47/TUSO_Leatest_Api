@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 using static TUSO.Utilities.Constants.Enums;
 
@@ -98,16 +99,19 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Incidents of a Facility.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Incident> Incidents { get; set; }
 
         /// <summary>
         /// UserAccounts of a Facility.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<UserAccount> UserAccounts { get; set; }
 
         /// <summary>
         /// UserAccounts of a Role.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<FacilityPermission> FacilityPermissions { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -41,6 +42,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// ModulePermissions of a Module.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<ModulePermission> ModulePermissions { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -41,11 +42,13 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// UserAccounts of a Role.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<UserAccount> UserAccounts { get; set; }
 
         /// <summary>
         /// ModulePermissions of a Role.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<ModulePermission> ModulePermissions { get; set; }
     }
 }

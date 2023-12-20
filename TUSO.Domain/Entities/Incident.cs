@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Domain.Validators;
 using TUSO.Utilities.Constants;
 
@@ -217,21 +218,25 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Messages of a Incident.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Message> Messages { get; set; }
 
         /// <summary>
         /// Messages of a IncidentActionLogs.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<IncidentActionLog> IncidentActionLogs { get; set; }
 
         /// <summary>
         /// Messages of a IncidentAdminActionLogs.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<IncidentAdminActionLog> IncidentAdminActionLogs { get; set; }
 
         /// <summary>
         /// Messages of a IncidentAdminActionLogs.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Screenshot> Screenshots { get; set; }
 
         [NotMapped]
