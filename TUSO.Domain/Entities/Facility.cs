@@ -20,7 +20,7 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table Facility.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Facility.
@@ -90,9 +90,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign Key. Primary key of the entity District.
         /// </summary>
-        public int DistrictID { get; set; }
+        public int DistrictId { get; set; }
 
-        [ForeignKey("DistrictID")]
+        [ForeignKey("DistrictId")]
         public virtual District Districts { get; set; }
 
         /// <summary>
@@ -109,17 +109,5 @@ namespace TUSO.Domain.Entities
         /// UserAccounts of a Role.
         /// </summary>
         public virtual IEnumerable<FacilityPermission> FacilityPermissions { get; set; }
-
-        /// <summary>
-        /// This field in not insert.
-        /// </summary>
-        [NotMapped]
-        public int ProvinceID { get; set; }
-
-        /// <summary>
-        /// This field in not insert.
-        /// </summary>
-        [NotMapped]
-        public int CountryId { get; set; }
     }
 }

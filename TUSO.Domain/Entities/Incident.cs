@@ -20,7 +20,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Incident.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// DateofIncident of an Incident.
@@ -82,17 +82,17 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign Key. Primary key of the entity System.
         /// </summary>
-        public int SystemID { get; set; }
+        public int SystemId { get; set; }
 
-        [ForeignKey("SystemID")]
+        [ForeignKey("SystemId")]
         public virtual Project Projects { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the entity Facility.
         /// </summary>
-        public int FacilityID { get; set; }
+        public int FacilityId { get; set; }
 
-        [ForeignKey("FacilityID")]
+        [ForeignKey("FacilityId")]
         public virtual Facility Facilities { get; set; }
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace TUSO.Domain.Entities
         /// Foregin key. Primary key of the Team Table.
         /// </summary>
         [Display(Name = "Team")]
-        public long? TeamID { get; set; }
+        public long? TeamId { get; set; }
 
-        [ForeignKey("TeamID")]
+        [ForeignKey("TeamId")]
         public virtual Team? Teams { get; set; }
 
         /// <summary>
@@ -189,29 +189,29 @@ namespace TUSO.Domain.Entities
         /// First Level Category for ticket creation.
         /// </summary>
         [Display(Name = "FirstLevelCategory")]
-        public int? FirstLevelCategoryID { get; set; }
+        public int? FirstLevelCategoryId { get; set; }
 
         /// <summary>
         /// Second Level Category for ticket creation.
         /// </summary>
         [Display(Name = "SecondLevelCategory")]
-        public int? SecondLevelCategoryID { get; set; }
+        public int? SecondLevelCategoryId { get; set; }
 
         /// <summary>
         /// Foreign key. Primary key of the table Incident Category.
         /// </summary>
         [Display(Name = "ThirdLevelCategory")]
-        public int? ThirdLevelCategoryID { get; set; }
+        public int? ThirdLevelCategoryId { get; set; }
 
-        [ForeignKey("ThirdLevelCategoryID")]
+        [ForeignKey("ThirdLevelCategoryId")]
         public virtual IncidentCategory? IncidentCategory { get; set; }
 
         /// <summary>
         /// Foregin key. Primary key of the Incident Priority Table.
         /// </summary>
-        public int? PriorityID { get; set; }
+        public int? PriorityId { get; set; }
 
-        [ForeignKey("PriorityID")]
+        [ForeignKey("PriorityId")]
         public virtual IncidentPriority? IncidentPriority { get; set; }
 
         /// <summary>
@@ -235,25 +235,25 @@ namespace TUSO.Domain.Entities
         public virtual IEnumerable<Screenshot> Screenshots { get; set; }
 
         [NotMapped]
-        public long? AgentID { get; set; }
+        public long? AgentId { get; set; }
 
         [NotMapped]
         public DateTime? AgentDateModified { get; set; }
 
         [NotMapped]
-        public long? SupervisedID { get; set; }
+        public long? SupervisedId { get; set; }
 
         [NotMapped]
         public DateTime? SupervisedDateModified { get; set; }
 
         [NotMapped]
-        public long? ExpertID { get; set; }
+        public long? ExpertId { get; set; }
 
         [NotMapped]
         public DateTime? ExpertDateModified { get; set; }
 
         [NotMapped]
-        public long? AdminID { get; set; }
+        public long? AdminId { get; set; }
 
         [NotMapped]
         public DateTime? AdminDateModified { get; set; }
@@ -265,7 +265,7 @@ namespace TUSO.Domain.Entities
         public DateTime? TeamLeadDateModified { get; set; }
 
         [NotMapped]
-        public long? CloseUserAccountID { get; set; }
+        public long? CloseUserAccountId { get; set; }
 
         [NotMapped]
         public DateTime? DateClosed { get; set; }

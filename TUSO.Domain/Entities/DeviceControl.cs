@@ -16,7 +16,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Sync.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Show the CPU uses percentage of the device.

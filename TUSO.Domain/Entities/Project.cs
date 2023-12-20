@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Project.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Title of the project.

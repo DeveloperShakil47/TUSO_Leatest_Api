@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table RDPDeviceInfo.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// UserName of the RDPDeviceInfo.
@@ -36,8 +36,8 @@ namespace TUSO.Domain.Entities
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [StringLength(100)]
         [DataType(DataType.Text)]
-        [Display(Name = "Device ID")]
-        public string DeviceID { get; set; }
+        [Display(Name = "Device Id")]
+        public string DeviceId { get; set; }
 
         /// <summary>
         /// PrivateIP of the RDPDeviceInfo.

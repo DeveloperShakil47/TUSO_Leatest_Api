@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Team.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Title of the Team

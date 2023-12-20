@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table District.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the District.
@@ -33,9 +33,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign key. Primary key of the entity Province.
         /// </summary>
-        public int ProvinceID { get; set; }
+        public int ProvinceId { get; set; }
 
-        [ForeignKey("ProvinceID")]
+        [ForeignKey("ProvinceId")]
         public virtual Province Provinces { get; set; }
 
         /// <summary>
@@ -43,10 +43,5 @@ namespace TUSO.Domain.Entities
         /// </summary>
         public virtual IEnumerable<Facility> Facilities { get; set; }
 
-        /// <summary>
-        /// This field in not insert.
-        /// </summary>
-        [NotMapped]
-        public int CountryId { get; set; }
     }
 }

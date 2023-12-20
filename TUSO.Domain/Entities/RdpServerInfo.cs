@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table RdpServerInfo.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// ServerURL of the RdpServerInfo.
@@ -35,7 +35,7 @@ namespace TUSO.Domain.Entities
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [StringLength(90)]
         [DataType(DataType.Text)]
-        [Display(Name = "Organization ID")]
-        public string OrganizationID { get; set; }
+        [Display(Name = "Organization Id")]
+        public string OrganizationId { get; set; }
     }
 }

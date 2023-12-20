@@ -18,22 +18,22 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table ModulePermission.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Foreign key. Primary key of the entity Role.
         /// </summary>
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
 
-        [ForeignKey("RoleID")]
+        [ForeignKey("RoleId")]
         public virtual Role Roles { get; set; }
 
         /// <summary>
         /// Foreign key. Primary key of the entity Module.
         /// </summary>
-        public int ModuleID { get; set; }
+        public int ModuleId { get; set; }
 
-        [ForeignKey("ModuleID")]
+        [ForeignKey("ModuleId")]
         public virtual Module Modules { get; set; }
     }
 }

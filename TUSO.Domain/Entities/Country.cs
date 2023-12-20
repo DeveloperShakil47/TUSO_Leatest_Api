@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Country.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Country.

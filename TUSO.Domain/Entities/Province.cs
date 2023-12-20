@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Province.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Province.
@@ -33,9 +33,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign key. Primary key of the entity Country. 
         /// </summary>
-        public int CountryID { get; set; }
+        public int CountryId { get; set; }
 
-        [ForeignKey("CountryID")]
+        [ForeignKey("CountryId")]
         public virtual Country Countries { get; set; }
 
         /// <summary>

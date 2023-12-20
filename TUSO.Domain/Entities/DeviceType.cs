@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table UserTypes.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the UserTypes.
@@ -26,8 +26,8 @@ namespace TUSO.Domain.Entities
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [StringLength(90)]
         [DataType(DataType.Text)]
-        [Display(Name = "UserType Name")]
-        public string UserTypeName { get; set; }
+        [Display(Name = "DeviceTypeName")]
+        public string DeviceTypeName { get; set; }
 
         /// <summary>
         /// Navigation Property

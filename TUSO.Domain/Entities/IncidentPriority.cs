@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table IncidentPriority.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the IncidentPriority.

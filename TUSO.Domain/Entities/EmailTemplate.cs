@@ -15,7 +15,7 @@ namespace TUSO.Domain.Entities
     public class EmailTemplate : BaseModel
     {
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Subject of the Email.

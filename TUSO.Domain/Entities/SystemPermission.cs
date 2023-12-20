@@ -18,22 +18,22 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table ProjectPermission.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the table Role.
         /// </summary>
-        public long UserAccountID { get; set; }
+        public long UserAccountId { get; set; }
 
-        [ForeignKey("UserAccountID")]
+        [ForeignKey("UserAccountId")]
         public virtual UserAccount UserAccount { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the table Project.
         /// </summary>
-        public int SystemID { get; set; }
+        public int SystemId { get; set; }
 
-        [ForeignKey("SystemID")]
+        [ForeignKey("SystemId")]
         public virtual Project Projects { get; set; }
     }
 }

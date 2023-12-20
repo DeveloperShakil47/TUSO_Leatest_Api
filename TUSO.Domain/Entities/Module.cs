@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Module.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Module

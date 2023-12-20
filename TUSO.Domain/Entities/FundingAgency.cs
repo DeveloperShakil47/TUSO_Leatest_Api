@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table FundingAgency.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Funding Agency.
@@ -32,9 +32,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign Key. Primary key of the entity Project.
         /// </summary>
-        public int ProjectID { get; set; }
+        public int ProjectId { get; set; }
 
-        [ForeignKey("ProjectID")]
+        [ForeignKey("ProjectId")]
         public virtual Project Projects { get; set; }
     }
 }

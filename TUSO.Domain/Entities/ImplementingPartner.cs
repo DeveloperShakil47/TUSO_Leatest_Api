@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table ImplementingPartner.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the Implementing Partner.
@@ -32,8 +32,8 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign Key. Primary key of the entity Project.
         /// </summary>
-        public int ProjectID { get; set; }
-        [ForeignKey("ProjectID")]
+        public int ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
 
         public virtual Project Projects { get; set; }
     }

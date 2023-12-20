@@ -17,7 +17,7 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table Configuration.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Is Emai lSend For Incident Create .

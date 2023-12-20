@@ -20,7 +20,7 @@ namespace TUSO.Domain.Entities
         /// Primary Key of the table UserAccounts.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Name of the user.
@@ -100,9 +100,9 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [IfNotSelected]
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
 
-        [ForeignKey("RoleID")]
+        [ForeignKey("RoleId")]
         public virtual Role Roles { get; set; }
         /// <summary>
         /// Members of a UserAccount.
@@ -155,18 +155,18 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign Key. Primary key of the entity Facility.
         /// </summary>
-        public int? FacilityID { get; set; }
+        public int? FacilityId { get; set; }
 
-        [ForeignKey("FacilityID")]
+        [ForeignKey("FacilityId")]
         public virtual Facility Facilities { get; set; }
 
         /// <summary>
         /// Foreign key. Primary key of entity UserType.
         /// </summary>
-        public int? DeviceTypeID { get; set; }
+        public int? DeviceTypeId { get; set; }
 
-        [ForeignKey("DeviceTypeID")]
-        public virtual DeviceType UserTypes { get; set; }
+        [ForeignKey("DeviceTypeId")]
+        public virtual DeviceType DeviceTypes  { get; set; }
         /// <summary>
         /// 
         /// </summary>

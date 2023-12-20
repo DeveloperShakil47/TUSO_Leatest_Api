@@ -15,13 +15,13 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table IncidentActionLog.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the entity Incident.
         /// </summary>
-        public long IncidentID { get; set; }
-        [ForeignKey("IncidentID")]
+        public long IncidentId { get; set; }
+        [ForeignKey("IncidentId")]
         ///<summary>
         ///Navigation List
         ///</summary>

@@ -18,7 +18,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table IncidentCategory.
         /// </summary>
         [Key]
-        public int OID { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Name of the IncidentCategory.
@@ -40,7 +40,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// ParentID of Incidents.
         /// </summary>
-        public int ParentID { get; set; }
+        public int ParentId { get; set; }
 
         /// <summary>
         /// Incident of a IncidentCategory.

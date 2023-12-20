@@ -18,13 +18,13 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table IncidentActionLog.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the entity Incident.
         /// </summary>
-        public long IncidentID { get; set; }
-        [ForeignKey("IncidentID")]
+        public long IncidentId { get; set; }
+        [ForeignKey("IncidentId")]
 
         public virtual Incident Incident { get; set; }
 
@@ -32,7 +32,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountAgents")]
-        public long? AgentID { get; set; }
+        public long? AgentId { get; set; }
 
         public virtual UserAccount UserAccountAgents { get; set; }
 
@@ -45,7 +45,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountsSuperviseds")]
-        public long? SupervisedID { get; set; }
+        public long? SupervisedId { get; set; }
 
         public virtual UserAccount UserAccountsSuperviseds { get; set; }
 
@@ -58,7 +58,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountsTeamLeads")]
-        public long? TeamLeadID { get; set; }
+        public long? TeamLeadId { get; set; }
 
         public virtual UserAccount UserAccountsTeamLeads { get; set; }
 
@@ -71,7 +71,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountExperts")]
-        public long? ExpertID { get; set; }
+        public long? ExpertId { get; set; }
 
         public virtual UserAccount UserAccountExperts { get; set; }
 
@@ -84,7 +84,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountAdmins")]
-        public long? AdminID { get; set; }
+        public long? AdminId { get; set; }
 
         public virtual UserAccount UserAccountAdmins { get; set; }
 
@@ -97,7 +97,7 @@ namespace TUSO.Domain.Entities
         /// Foreign Key. Primary key of the entity UserAccount.
         /// </summary>
         [ForeignKey("UserAccountsClosed")]
-        public long? CloseUserAccountID { get; set; }
+        public long? CloseUserAccountId { get; set; }
         public virtual UserAccount UserAccountsClosed { get; set; }
 
         /// <summary>

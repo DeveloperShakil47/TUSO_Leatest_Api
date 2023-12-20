@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table RecoveryRequests.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Cellphone number of the user.
@@ -55,9 +55,9 @@ namespace TUSO.Domain.Entities
         /// <summary>
         ///Foreign key, referance of UserAccounts table.
         /// </summary>        
-        public long UserAccountID { get; set; }
+        public long UserAccountId { get; set; }
 
-        [ForeignKey("UserAccountID")]
+        [ForeignKey("UserAccountId")]
         public virtual UserAccount UserAccounts { get; set; }
     }
 }

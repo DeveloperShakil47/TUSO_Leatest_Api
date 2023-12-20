@@ -15,22 +15,22 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Member.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the table UserAccount.
         /// </summary>
-        public long UserAccountID { get; set; }
+        public long UserAccountId { get; set; }
 
-        [ForeignKey("UserAccountID")]
+        [ForeignKey("UserAccountId")]
         public virtual UserAccount UserAccounts { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the table Team.
         /// </summary>
-        public long TeamID { get; set; }
+        public long TeamId { get; set; }
 
-        [ForeignKey("TeamID")]
+        [ForeignKey("TeamId")]
         public virtual Team Teams { get; set; }
 
         /// <summary>

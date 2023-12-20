@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table ProfilePicture.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// User profile picture
@@ -30,7 +30,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Foreign key. Primary key of the entity UserAccounts. 
         /// </summary>
-        [ForeignKey("OID")]
+        [ForeignKey("Oid")]
         public virtual UserAccount UserAccounts { get; set; }
     }
 }

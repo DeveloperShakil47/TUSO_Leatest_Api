@@ -19,7 +19,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table Screenshot.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// User Ticket Attachment

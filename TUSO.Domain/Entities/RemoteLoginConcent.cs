@@ -20,7 +20,7 @@ namespace TUSO.Domain.Entities
         /// Primary key of the table RemoteLoginConcent.
         /// </summary>
         [Key]
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         /// <summary>
         /// Connect date of the row.
