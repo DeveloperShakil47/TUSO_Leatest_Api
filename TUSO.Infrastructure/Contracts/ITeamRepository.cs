@@ -1,10 +1,10 @@
 ﻿using TUSO.Domain.Entities;
 
 /*
- * Created by: Emon
- * Date created: 14.09.2022
- * Last modified: 14.09.2022
- * Modified by: Emon
+ * Created by: Stephan
+ * Date created: 17.12.2023
+ * Last modified:
+ * Modified by: 
  */
 namespace TUSO.Infrastructure.Contracts
 {
