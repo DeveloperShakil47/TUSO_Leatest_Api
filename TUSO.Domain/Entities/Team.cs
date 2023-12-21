@@ -50,5 +50,11 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [JsonIgnore]
         public virtual IEnumerable<Incident> Incidents { get; set; }
+
+        /// <summary>
+        /// TeamLeads of a Team.
+        /// </summary>
+        [JsonIgnore]
+        public virtual IEnumerable<TeamLead> TeamLeads  { get;}
     }
 }

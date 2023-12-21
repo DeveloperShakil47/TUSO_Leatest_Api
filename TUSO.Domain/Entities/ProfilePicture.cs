@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -31,6 +32,7 @@ namespace TUSO.Domain.Entities
         /// Foreign key. Primary key of the entity UserAccounts. 
         /// </summary>
         [ForeignKey("Oid")]
+        [JsonIgnore]
         public virtual UserAccount UserAccounts { get; set; }
     }
 }

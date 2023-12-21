@@ -183,5 +183,9 @@ namespace TUSO.Infrastructure.SqlServer
         /// Represents RemoteLoginConcents entity.
         /// </summary>
         public DbSet<RemoteLoginConcent> RemoteLoginConcents { get; set; }
+        /// <summary>
+        /// Represents TeamLeads entity.
+        /// </summary>
+        public DbSet<TeamLead> TeamLeads { get; set; }
     }
 }

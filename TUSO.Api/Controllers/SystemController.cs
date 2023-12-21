@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -12,44 +13,44 @@ using TUSO.Utilities.Constants;
 namespace TUSO.Api.Controllers
 {
     /// <summary>
-    ///Country Controller
+    /// Project Controller
     /// </summary>
     [Route(RouteConstants.BaseRoute)]
     [ApiController]
-    public class CountryController : ControllerBase
+    public class SystemController : ControllerBase
     {
         private readonly IUnitOfWork context;
 
         /// <summary>
-        /// Default constructor
+        ///Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public CountryController(IUnitOfWork context)
+        public SystemController(IUnitOfWork context)
         {
             this.context = context;
         }
 
         /// <summary>
-        /// URL: tuso-api/country
+        /// URL: tuso-api/system
         /// </summary>
-        /// <param name="country">Object to be saved in the table as a row.</param>
+        /// <param name="system">Object to be saved in the table as a row.</param>
         /// <returns>Saved object.</returns>
         [HttpPost]
-        [Route(RouteConstants.CreateCountry)]
-        public async Task<IActionResult> CreateCountry(Country country)
+        [Route(RouteConstants.CreateSystem)]
+        public async Task<IActionResult> CreateSystem(Project system)
         {
             try
             {
-                if (await IsCountryDuplicate(country) == true)
+                if (await IsSystemDuplicate(system) == true)
                     return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-                country.DateCreated = DateTime.Now;
-                country.IsDeleted = false;
+                system.DateCreated = DateTime.Now;
+                system.IsDeleted = false;
 
-                context.CountryRepository.Add(country);
+                context.SystemRepository.Add(system);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadCountryByKey", new { key = country.Oid }, country);
+                return CreatedAtAction("ReadSystemByKey", new { key = system.Oid }, system);
             }
             catch (Exception)
             {
@@ -58,43 +59,23 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/countries
+        /// URL: tuso-api/systems
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadCountries)]
-        public async Task<IActionResult> ReadCountries()
+        [Route(RouteConstants.ReadSystemsPagination)]
+        public async Task<IActionResult> ReadSystemsPagination(int start, int take)
         {
             try
             {
-                var country = await context.CountryRepository.GetCountries();
+                var system = await context.SystemRepository.GetSystem(start, take);
 
-                return Ok(country);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-            }
-        }
-
-        /// <summary>
-        /// URL: tuso-api/countrypage
-        /// </summary>
-        /// <returns>List of table object.</returns>
-        [HttpGet]
-        [Route(RouteConstants.ReadCountriesbyPage)]
-        public async Task<IActionResult> ReadCountriesbyPage(int start, int take)
-        {
-            try
-            {
-                var country = await context.CountryRepository.GetCountrybyPage(start, take);
                 var response = new
                 {
-                    country = country,
-                    currentPage = start + 1,
-                    totalRows = await context.CountryRepository.GetCountryCount()
+                    systems = system,
+                    currentPage = start+1,
+                    totalRows = await context.SystemRepository.GetSystemCount()
                 };
-
                 return Ok(response);
             }
             catch (Exception)
@@ -103,26 +84,28 @@ namespace TUSO.Api.Controllers
             }
         }
 
+
+
         /// <summary>
-        /// URL: tuso-api/country/key/{key}
+        /// URL: tuso-api/system/key/{OID}
         /// </summary>
-        /// <param name="key">Primary key of the table Countries</param>
+        /// <param name="OID">Primary key of the table Systems</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadCountryByKey)]
-        public async Task<IActionResult> ReadCountryByKey(int key)
+        [Route(RouteConstants.ReadSystemByKey)]
+        public async Task<IActionResult> ReadSystemByKey(int key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var country = await context.CountryRepository.GetCountryByKey(key);
+                var system = await context.SystemRepository.GetSystemByKey(key);
 
-                if (country == null)
+                if (system == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                return Ok(country);
+                return Ok(system);
             }
             catch (Exception)
             {
@@ -131,27 +114,27 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/country/{key}
+        /// URL: tuso-api/system/{key}
         /// </summary>
         /// <param name="key">Primary key of the table</param>
-        /// <param name="country">Object to be updated</param>
+        /// <param name="system">Object to be updated</param>
         /// <returns>Update row in the table.</returns>
         [HttpPut]
-        [Route(RouteConstants.UpdateCountry)]
-        public async Task<IActionResult> UpdateCountry(int key, Country country)
+        [Route(RouteConstants.UpdateSystem)]
+        public async Task<IActionResult> UpdateSystem(int key, Project system)
         {
             try
             {
-                if (key != country.Oid)
+                if (key != system.Oid)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
 
-                if (await IsCountryDuplicate(country) == true)
+                if (await IsSystemDuplicate(system) == true)
                     return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-                country.DateModified = DateTime.Now;
-                country.IsDeleted = false;
+                system.DateModified = DateTime.Now;
+                system.IsDeleted = false;
 
-                context.CountryRepository.Update(country);
+                context.SystemRepository.Update(system);
                 await context.SaveChangesAsync();
 
                 return StatusCode(StatusCodes.Status204NoContent);
@@ -163,34 +146,46 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/country/{key}
+        /// URL: tuso-api/system/{key}
         /// </summary>
         /// <param name="key">Primary key of the table</param>
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
-        [Route(RouteConstants.DeleteCountry)]
-        public async Task<IActionResult> DeleteCountry(int key)
+        [Route(RouteConstants.DeleteSystem)]
+        public async Task<IActionResult> DeleteSystem(int key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var countryInDb = await context.CountryRepository.GetCountryByKey(key);
+                var systemInDb = await context.SystemRepository.GetSystemByKey(key);
 
-                if (countryInDb == null)
+                if (systemInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                if (countryInDb.Provinces.Where(w => w.IsDeleted == false).ToList().Count > 0)
+                var totalOpenTicketUnderSystem = await context.SystemRepository.TotalOpenTicketUnderSystem(systemInDb.Oid);
+
+                if (totalOpenTicketUnderSystem > 0)
                     return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
 
-                countryInDb.IsDeleted = true;
-                countryInDb.DateModified = DateTime.Now;
+                var systemPermissions = await context.SystemPermissionRepository.GetSystemPermissionBySystem(systemInDb.Oid);
+                if (systemPermissions != null)
+                {
+                    foreach(var systemPermission in systemPermissions)
+                    {
+                        systemPermission.DateModified = DateTime.Now;
+                        context.SystemPermissionRepository.Delete(systemPermission);
+                    }
+                }
 
-                context.CountryRepository.Update(countryInDb);
+                systemInDb.IsDeleted = true;
+                systemInDb.DateModified = DateTime.Now;
+
+                context.SystemRepository.Update(systemInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(countryInDb);
+                return Ok(systemInDb);
             }
             catch (Exception)
             {
@@ -199,19 +194,19 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// Checks whether the country name is duplicate? 
+        /// Checks whether the system title is duplicate? 
         /// </summary>
-        /// <param name="country">Country object.</param>
+        /// <param name="system">System object.</param>
         /// <returns>Boolean</returns>
-        private async Task<bool> IsCountryDuplicate(Country country)
+        private async Task<bool> IsSystemDuplicate(Project system)
         {
             try
             {
-                var countryInDb = await context.CountryRepository.GetCountryByName(country.CountryName);
+                var systemInDb = await context.SystemRepository.GetSystemByTitle(system.Title);
 
-                if (countryInDb != null)
+                if (systemInDb != null)
                 {
-                    if (countryInDb.Oid != country.Oid)
+                    if (systemInDb.Oid != system.Oid)
                         return true;
                 }
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -35,6 +36,7 @@ namespace TUSO.Domain.Entities
         public int ProjectId { get; set; }
 
         [ForeignKey("ProjectId")]
+        [JsonIgnore]
         public virtual Project Projects { get; set; }
     }
 }

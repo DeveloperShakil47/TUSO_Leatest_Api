@@ -37,6 +37,7 @@ namespace TUSO.Domain.Entities
         public int CountryId { get; set; }
 
         [ForeignKey("CountryId")]
+        [JsonIgnore]
         public virtual Country Countries { get; set; }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="Oid">System key of the table System</param>
         /// <returns>Instance of a System object.</returns>
-        public Task<Project> GetSystemByKey(int Oid);
+        public Task<Project> GetSystemByKey(int key);
 
         /// <summary>
         /// Returns a System if the title matched.
@@ -34,7 +34,7 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns all System.
         /// </summary>
         /// <returns>List of System object.</returns>
-        public Task<IEnumerable<Project>> GetSystem();
+        public Task<IEnumerable<Project>> GetAllSystem();
 
         /// <summary>
         /// Count all System.
@@ -47,6 +47,6 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="Oid">Primary key of the table System</param>
         /// <returns>Number of open ticket under the System.</returns>
-        public Task<int> TotalOpenTicketUnderSystem(int Oid);
+        public Task<int> TotalOpenTicketUnderSystem(int key);
     }
 }

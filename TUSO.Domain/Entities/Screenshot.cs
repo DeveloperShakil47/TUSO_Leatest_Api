@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TUSO.Utilities.Constants;
 
 /*
@@ -32,6 +33,7 @@ namespace TUSO.Domain.Entities
         /// Foreign key. Primary key of the entity Incident. 
         /// </summary>
         [ForeignKey("IncidentId")]
+        [JsonIgnore]
         public virtual Incident Incidents { get; set; }
     }
 }

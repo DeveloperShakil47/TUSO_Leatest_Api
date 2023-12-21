@@ -46,10 +46,10 @@ namespace TUSO.Infrastructure.Contracts
         /// <summary>
         /// Returns a Member permission if UserAccountID, TeamID matched
         /// </summary>
-        /// <param name="UserAccountID">Primary key of the useraccount table</param>
-        /// <param name="TeamID">Primary key of the System table</param>
+        /// <param name="userAccountId">Primary key of the useraccount table</param>
+        /// <param name="teamId">Primary key of the System table</param>
         /// <returns>Instance of a Member object.</returns>
-        public Task<Member> GetMemberPermission(long UserAccountID, long TeamID);
+        public Task<Member> GetMemberPermission(long userAccountId, long teamId);
 
         /// <summary>
         /// Returns all member.
@@ -74,6 +74,7 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns a member if member is team lead of any team.
         /// </summary>
         /// <param name="key">UserID of the table Members</param>
+        /// /// <param name="teamId">team of the table Members</param>
         /// <returns>Instance of a Member object.</returns>
         public Task<Member> GetMemberByTeamLead(long key, long teamId);
     }

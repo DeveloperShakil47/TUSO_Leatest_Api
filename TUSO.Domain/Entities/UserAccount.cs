@@ -104,19 +104,22 @@ namespace TUSO.Domain.Entities
         public int RoleId { get; set; }
 
         [ForeignKey("RoleId")]
+        [JsonIgnore]
         public virtual Role Roles { get; set; }
         /// <summary>
         /// Members of a UserAccount.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Member> Members { get; set; }
 
         /// <summary>
         /// Incidents of a UserAccount.
         /// </summary>
+        [JsonIgnore]
         public virtual IEnumerable<Incident> Incidents { get; set; }
 
         //  public virtual IEnumerable<IncidentActionLog> IncidentActionLogs { get; set; }
-
+        [JsonIgnore]
         public virtual IEnumerable<IncidentAdminActionLog> IncidentAdminActionLogs { get; set; }
 
 
@@ -156,20 +159,13 @@ namespace TUSO.Domain.Entities
         [JsonIgnore]
         public virtual IEnumerable<RemoteLoginConcent> RemoteLoginConcents { get; set; }
 
-        /// <summary>
-        /// Foreign Key. Primary key of the entity Facility.
-        /// </summary>
-        public int? FacilityId { get; set; }
-
-        [ForeignKey("FacilityId")]
-        public virtual Facility Facilities { get; set; }
-
-        /// <summary>
+        /// <summary>initial
         /// Foreign key. Primary key of entity UserType.
         /// </summary>
         public int? DeviceTypeId { get; set; }
 
         [ForeignKey("DeviceTypeId")]
+        [JsonIgnore]
         public virtual DeviceType DeviceTypes  { get; set; }
         /// <summary>
         /// 

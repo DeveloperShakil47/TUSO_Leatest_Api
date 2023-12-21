@@ -15,7 +15,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="OID">Primary key of the table Teams</param>
         /// <returns>Instance of a Team object.</returns>
-        public Task<Team> GetTeamByKey(long OID);
+        public Task<Team> GetTeamByKey(long oid);
 
         /// <summary>
         /// Returns a team if the title matched.
@@ -42,6 +42,6 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="OID">Primary key of the table Teams</param>
         /// <returns>Number of open ticket under the Team.</returns>
-        public Task<int> TotalOpenTicketUnderTeam(long OID);
+        public Task<int> TotalOpenTicketUnderTeam(long oid);
     }
 }

@@ -94,6 +94,7 @@ namespace TUSO.Domain.Entities
         public int DistrictId { get; set; }
 
         [ForeignKey("DistrictId")]
+        [JsonIgnore]
         public virtual District Districts { get; set; }
 
         /// <summary>
@@ -103,15 +104,21 @@ namespace TUSO.Domain.Entities
         public virtual IEnumerable<Incident> Incidents { get; set; }
 
         /// <summary>
-        /// UserAccounts of a Facility.
-        /// </summary>
-        [JsonIgnore]
-        public virtual IEnumerable<UserAccount> UserAccounts { get; set; }
-
-        /// <summary>
         /// UserAccounts of a Role.
         /// </summary>
         [JsonIgnore]
         public virtual IEnumerable<FacilityPermission> FacilityPermissions { get; set; }
+
+        /// <summary>
+        /// This field in not insert.
+        /// </summary>
+        [NotMapped]
+        public int ProvinceId { get; set; }
+
+        /// <summary>
+        /// This field in not insert.
+        /// </summary>
+        [NotMapped]
+        public int CountryId { get; set; }
     }
 }

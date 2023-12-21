@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 /*
  * Created by: Stephan
@@ -26,6 +27,7 @@ namespace TUSO.Domain.Entities
         public long UserAccountId { get; set; }
 
         [ForeignKey("UserAccountId")]
+        [JsonIgnore]
         public virtual UserAccount UserAccount { get; set; }
 
         /// <summary>
@@ -34,6 +36,7 @@ namespace TUSO.Domain.Entities
         public int SystemId { get; set; }
 
         [ForeignKey("SystemId")]
+        [JsonIgnore]
         public virtual Project Projects { get; set; }
     }
 }

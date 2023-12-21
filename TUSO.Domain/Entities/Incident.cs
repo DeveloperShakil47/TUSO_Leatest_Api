@@ -94,6 +94,7 @@ namespace TUSO.Domain.Entities
         public int FacilityId { get; set; }
 
         [ForeignKey("FacilityId")]
+        [JsonIgnore]
         public virtual Facility Facilities { get; set; }
 
         /// <summary>
@@ -103,15 +104,18 @@ namespace TUSO.Domain.Entities
         public long ReportedBy { get; set; }
 
         [ForeignKey("ReportedBy")]
+        [JsonIgnore]
         public virtual UserAccount UserAccounts { get; set; }
 
         /// <summary>
         /// Foregin key. Primary key of the Team Table.
         /// </summary>
         [Display(Name = "Team")]
+
         public long? TeamId { get; set; }
 
         [ForeignKey("TeamId")]
+        [JsonIgnore]
         public virtual Team? Teams { get; set; }
 
         /// <summary>
@@ -205,6 +209,7 @@ namespace TUSO.Domain.Entities
         public int? ThirdLevelCategoryId { get; set; }
 
         [ForeignKey("ThirdLevelCategoryId")]
+        [JsonIgnore]
         public virtual IncidentCategory? IncidentCategory { get; set; }
 
         /// <summary>
@@ -213,6 +218,7 @@ namespace TUSO.Domain.Entities
         public int? PriorityId { get; set; }
 
         [ForeignKey("PriorityId")]
+        [JsonIgnore]
         public virtual IncidentPriority? IncidentPriority { get; set; }
 
         /// <summary>

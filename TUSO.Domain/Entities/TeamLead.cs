@@ -1,22 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
-/*
- * Created by: Stephan
- * Date created: 17.12.2023
- * Last modified:
- * Modified by: 
- */
 namespace TUSO.Domain.Entities
 {
-    public class Member : BaseModel
+    public class TeamLead :BaseModel
     {
-        /// <summary>
-        /// Primary key of the table Member.
-        /// </summary>
         [Key]
-        public long Oid { get; set; }
+        public int Oid { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the table UserAccount.
@@ -35,11 +31,5 @@ namespace TUSO.Domain.Entities
         [ForeignKey("TeamId")]
         [JsonIgnore]
         public virtual Team Teams { get; set; }
-
-        ///// <summary>
-        ///// Indicates is he/she team lead or not.
-        ///// </summary>
-        //[Display(Name = "Is Team Lead")]
-        //public bool IsTeamLead { get; set; }
     }
 }

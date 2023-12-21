@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TUSO.Infrastructure.Repositories;
+using TUSO.Infrastructure;
 using TUSO.Infrastructure.SqlServer;
+using TUSO.Infrastructure.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -8,9 +11,15 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(configuration.GetConnectionString("TusoCon")));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 var app = builder.Build();
 
@@ -21,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("ApiCorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

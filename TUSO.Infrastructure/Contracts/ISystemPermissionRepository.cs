@@ -20,9 +20,9 @@ namespace TUSO.Infrastructure.Contracts
         /// <summary>
         /// Returns a System permission if RoleID matched
         /// </summary>
-        /// <param name="UserAccountID">Primary key of the UserAccount table></param>
+        /// <param name="userAccountId">Primary key of the UserAccount table></param>
         /// <returns>Instance of a SystemPermission object.</returns>
-        public Task<IEnumerable<SystemPermission>> GetSystemPermissionByUser(int UserAccountID);
+        public Task<IEnumerable<SystemPermission>> GetSystemPermissionByUser(int userAccountId);
 
         /// <summary>
         /// Returns a province if key matched.
@@ -34,17 +34,17 @@ namespace TUSO.Infrastructure.Contracts
         /// <summary>
         /// Returns a System permission if SystemID matched
         /// </summary>
-        /// <param name="SystemID">Primary key of the System table></param>
+        /// <param name="systemId">Primary key of the System table></param>
         /// <returns>Instance of a SystemPermission object.</returns>
-        public Task<IEnumerable<SystemPermission>> GetSystemPermissionBySystem(int SystemID);
+        public Task<IEnumerable<SystemPermission>> GetSystemPermissionBySystem(int systemId);
 
         /// <summary>
         /// Returns a System permission if UserAccountID, SystemID matched
         /// </summary>
-        /// <param name="UserAccountID">Primary key of the UserAccount table</param>
-        /// <param name="SystemID">Primary key of the System table</param>
+        /// <param name="userAccountId">Primary key of the UserAccount table</param>
+        /// <param name="systemId">Primary key of the System table</param>
         /// <returns>Instance of a SystemPermission object.</returns>
-        public Task<SystemPermission> GetSystemPermission(long UserAccountID, int SystemID);
+        public Task<SystemPermission> GetSystemPermission(long userAccountId, int systemId);
 
         /// <summary>
         /// Returns all System permission.

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 /*
  * Created by: Stephan
@@ -25,6 +26,7 @@ namespace TUSO.Domain.Entities
         ///<summary>
         ///Navigation List
         ///</summary>
+        [JsonIgnore]
         public virtual Incident Incident { get; set; }
 
         /// <summary>

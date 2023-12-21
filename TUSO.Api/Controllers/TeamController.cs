@@ -12,44 +12,44 @@ using TUSO.Utilities.Constants;
 namespace TUSO.Api.Controllers
 {
     /// <summary>
-    ///Country Controller
+    ///Team Controller
     /// </summary>
     [Route(RouteConstants.BaseRoute)]
     [ApiController]
-    public class CountryController : ControllerBase
+    public class TeamController : ControllerBase
     {
         private readonly IUnitOfWork context;
 
         /// <summary>
-        /// Default constructor
+        ///Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public CountryController(IUnitOfWork context)
+        public TeamController(IUnitOfWork context)
         {
             this.context = context;
         }
 
         /// <summary>
-        /// URL: tuso-api/country
+        /// URL: tuso-api/team
         /// </summary>
-        /// <param name="country">Object to be saved in the table as a row.</param>
+        /// <param name="team">Object to be saved in the table as a row.</param>
         /// <returns>Saved object.</returns>
         [HttpPost]
-        [Route(RouteConstants.CreateCountry)]
-        public async Task<IActionResult> CreateCountry(Country country)
+        [Route(RouteConstants.CreateTeam)]
+        public async Task<IActionResult> CreateTeam(Team team)
         {
             try
             {
-                if (await IsCountryDuplicate(country) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                if (await IsTeamDuplicate(team) == true)
+                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateError);
 
-                country.DateCreated = DateTime.Now;
-                country.IsDeleted = false;
+                team.DateCreated = DateTime.Now;
+                team.IsDeleted = false;
 
-                context.CountryRepository.Add(country);
+                context.TeamRepository.Add(team);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadCountryByKey", new { key = country.Oid }, country);
+                return CreatedAtAction("ReadTeamByKey", new { key = team.Oid }, team);
             }
             catch (Exception)
             {
@@ -58,18 +58,17 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/countries
+        /// URL: tuso-api/team
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadCountries)]
-        public async Task<IActionResult> ReadCountries()
+        [Route(RouteConstants.ReadTeams)]
+        public async Task<IActionResult> ReadTeams()
         {
             try
             {
-                var country = await context.CountryRepository.GetCountries();
-
-                return Ok(country);
+                var team = await context.TeamRepository.GetTeams();
+                return Ok(team);
             }
             catch (Exception)
             {
@@ -78,23 +77,22 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/countrypage
+        /// URL: tuso-api/team
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadCountriesbyPage)]
-        public async Task<IActionResult> ReadCountriesbyPage(int start, int take)
+        [Route(RouteConstants.ReadTeamsbyPage)]
+        public async Task<IActionResult> ReadTeamsbyPage(int start, int take)
         {
             try
             {
-                var country = await context.CountryRepository.GetCountrybyPage(start, take);
+                var team = await context.TeamRepository.GetTeamsbyPage(start, take);
                 var response = new
                 {
-                    country = country,
-                    currentPage = start + 1,
-                    totalRows = await context.CountryRepository.GetCountryCount()
+                    team = team,
+                    currentPage = start+1,
+                    totalRows = context.TeamRepository.GetTeamsCount()
                 };
-
                 return Ok(response);
             }
             catch (Exception)
@@ -104,25 +102,25 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/country/key/{key}
+        /// URL: tuso-api/team/key/{key}
         /// </summary>
-        /// <param name="key">Primary key of the table Countries</param>
+        /// <param name="key">Primary key of the table Teams</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadCountryByKey)]
-        public async Task<IActionResult> ReadCountryByKey(int key)
+        [Route(RouteConstants.ReadTeamByKey)]
+        public async Task<IActionResult> ReadTeamByKey(long key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var country = await context.CountryRepository.GetCountryByKey(key);
+                var team = await context.TeamRepository.GetTeamByKey(key);
 
-                if (country == null)
+                if (team == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                return Ok(country);
+                return Ok(team);
             }
             catch (Exception)
             {
@@ -131,27 +129,27 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/country/{key}
+        /// URL: tuso-api/team/{key}
         /// </summary>
-        /// <param name="key">Primary key of the table</param>
-        /// <param name="country">Object to be updated</param>
+        /// <param name="key">Primary key of the talbe</param>
+        /// <param name="team">Object to be updated</param>
         /// <returns>Update row in the table.</returns>
         [HttpPut]
-        [Route(RouteConstants.UpdateCountry)]
-        public async Task<IActionResult> UpdateCountry(int key, Country country)
+        [Route(RouteConstants.UpdateTeam)]
+        public async Task<IActionResult> UpdateTeam(long key, Team team)
         {
             try
             {
-                if (key != country.Oid)
+                if (key != team.Oid)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
 
-                if (await IsCountryDuplicate(country) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                if (await IsTeamDuplicate(team) == true)
+                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateError);
 
-                country.DateModified = DateTime.Now;
-                country.IsDeleted = false;
+                team.DateModified = DateTime.Now;
+                team.IsDeleted = false;
 
-                context.CountryRepository.Update(country);
+                context.TeamRepository.Update(team);
                 await context.SaveChangesAsync();
 
                 return StatusCode(StatusCodes.Status204NoContent);
@@ -163,34 +161,36 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/country/{key}
+        /// URL: tuso-api/team/{key}
         /// </summary>
         /// <param name="key">Primary key of the table</param>
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
-        [Route(RouteConstants.DeleteCountry)]
-        public async Task<IActionResult> DeleteCountry(int key)
+        [Route(RouteConstants.DeleteTeam)]
+        public async Task<IActionResult> DeleteTeam(long key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var countryInDb = await context.CountryRepository.GetCountryByKey(key);
+                var teamInDb = await context.TeamRepository.GetTeamByKey(key);
 
-                if (countryInDb == null)
+                if (teamInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                if (countryInDb.Provinces.Where(w => w.IsDeleted == false).ToList().Count > 0)
+                var totalOpenTicketUnderTeam = await context.TeamRepository.TotalOpenTicketUnderTeam(teamInDb.Oid);
+
+                if (totalOpenTicketUnderTeam > 0)
                     return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
 
-                countryInDb.IsDeleted = true;
-                countryInDb.DateModified = DateTime.Now;
+                teamInDb.IsDeleted = true;
+                teamInDb.DateModified = DateTime.Now;
 
-                context.CountryRepository.Update(countryInDb);
+                context.TeamRepository.Update(teamInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(countryInDb);
+                return Ok(teamInDb);
             }
             catch (Exception)
             {
@@ -199,21 +199,19 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// Checks whether the country name is duplicate? 
+        /// Checks whether the team name is duplicate? 
         /// </summary>
-        /// <param name="country">Country object.</param>
+        /// <param name="team">Team object.</param>
         /// <returns>Boolean</returns>
-        private async Task<bool> IsCountryDuplicate(Country country)
+        private async Task<bool> IsTeamDuplicate(Team team)
         {
             try
             {
-                var countryInDb = await context.CountryRepository.GetCountryByName(country.CountryName);
+                var teamInDb = await context.TeamRepository.GetTeamByTitle(team.Title);
 
-                if (countryInDb != null)
-                {
-                    if (countryInDb.Oid != country.Oid)
+                if (teamInDb != null)
+                    if (teamInDb.Oid != team.Oid)
                         return true;
-                }
 
                 return false;
             }

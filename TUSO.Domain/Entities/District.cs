@@ -37,6 +37,7 @@ namespace TUSO.Domain.Entities
         public int ProvinceId { get; set; }
 
         [ForeignKey("ProvinceId")]
+        [JsonIgnore]
         public virtual Province Provinces { get; set; }
 
         /// <summary>
@@ -44,6 +45,13 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [JsonIgnore]
         public virtual IEnumerable<Facility> Facilities { get; set; }
+
+
+        /// <summary>
+        /// This field in not insert.
+        /// </summary>
+        [NotMapped]
+        public int CountryId { get; set; }
 
     }
 }

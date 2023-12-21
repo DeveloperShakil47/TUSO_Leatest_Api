@@ -12,6 +12,25 @@ namespace TUSO.Infrastructure.Contracts
     {
         ICountryRepository CountryRepository { get; }
 
+        IProvinceRepository ProvinceRepository { get; }
+
+        IDistrictRepository DistrictRepository { get; }
+
+        IFacilityRepository FacilityRepository { get; }
+
+        IFacilityPermissionRepository FacilityPermissionRepository { get; }
+
+        ISystemRepository SystemRepository { get; }
+
+        ISystemPermissionRepository SystemPermissionRepository { get; }
+
+        ITeamRepository TeamRepository { get; }
+
+        IMemberRepository MemberRepository { get; }
+
+        IFundingAgencyRepository FundingAgencyRepository { get; }
+
+        IImplementingPartnerRepository ImplementingPartnerRepository { get; }
         Task<int> SaveChangesAsync();
 
     }
