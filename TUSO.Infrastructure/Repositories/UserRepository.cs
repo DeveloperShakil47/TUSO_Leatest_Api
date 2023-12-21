@@ -1,0 +1,352 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using TUSO.Domain.Dto;
+using TUSO.Domain.Entities;
+using TUSO.Infrastructure.Contracts;
+using TUSO.Infrastructure.SqlServer;
+
+namespace TUSO.Infrastructure.Repositories
+{
+    public class UserRepository : Repository<UserAccount>, IUserRepository
+    {
+        public UserRepository(DataContext context) : base(context)
+        {
+
+        }
+
+        public async Task<UserAccount> GetUserAccountByKey(long key)
+        {
+            try
+            {
+                return await FirstOrDefaultAsync(u => u.Oid == key && u.IsDeleted == false, i => i.Roles);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserListDto> GetUserAccountByRole(int key, int start, int take)
+        {
+            try
+            {
+                if (key == 0)
+                {
+                    return GetUserList(i => i.IsDeleted == false, start, take);
+                }
+                else
+                {
+                    return GetUserList(u => u.RoleId == key && u.IsDeleted == false, start, take);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<UserAccount>> GetUserAccountByExpert()
+        {
+            try
+            {
+                return await QueryAsync(u => u.Roles.RoleName == "Expert" && u.IsDeleted == false, o => o.Oid);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserAccount> GetUserAccountByName(string name)
+        {
+            try
+            {
+                return await FirstOrDefaultAsync(u => u.Username.ToLower().Trim() == name.ToLower().Trim() && u.IsDeleted == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<UserAccount>> GetUserAccountByFullName(string name)
+        {
+            try
+            {
+                return await context.UserAccounts.Where(u => u.Name.ToLower().Trim().Contains(name.ToLower().Trim()) && u.RoleId != 1 && u.IsDeleted == false).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserAccount> GetUserAccountByCellphone(string cellphone)
+        {
+            try
+            {
+                return await FirstOrDefaultAsync(u => u.Cellphone.Trim() == cellphone.Trim() && u.IsDeleted == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserAccountCountDto> UserAccouontCount()
+        {
+            try
+            {
+                UserAccountCountDto userAccountCount = new UserAccountCountDto();
+
+                userAccountCount.TotalUser = context.UserAccounts.Where(x => x.IsDeleted == false).Count();
+                userAccountCount.TotalClientUser = context.UserAccounts.Where(x => x.RoleId == 1 && x.IsDeleted == false).Count();
+                userAccountCount.TotalAgentUser = context.UserAccounts.Where(x => x.RoleId == 2 && x.IsDeleted == false).Count();
+                userAccountCount.TotalSuperUser = context.UserAccounts.Where(x => x.RoleId == 3 && x.IsDeleted == false).Count();
+                userAccountCount.TotalExpertUser = context.UserAccounts.Where(x => x.RoleId == 4 && x.IsDeleted == false).Count();
+
+                return await Task.Run(() => userAccountCount);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        public async Task<UserListDto> GetUsers(int start, int take)
+        {
+            try
+            {
+                return GetUserList(i => i.IsDeleted == false, start, take);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserListDto> GetUsersByName(string name, int start, int take)
+        {
+            try
+            {
+                var length = name.Length;
+                return GetUserList(i => i.IsDeleted == false && i.Name.Substring(0, length) == name, start, take);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserAccount> GetUserByUserNamePassword(string UserName, string Password)
+        {
+            try
+            {
+                return await FirstOrDefaultAsync(u => u.Username == UserName && u.Password == Password && u.IsDeleted == false, i => i.Roles);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<UserAccount>> GetUserAccountBydevice(string username)
+        {
+            try
+            {
+                return await QueryAsync(c => c.IsDeleted == false && c.Username == username);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public UserListDto GetUserList(Expression<Func<UserAccount, bool>> predicate, int start, int take)
+        {
+            var data = (from i in context.UserAccounts.Where(predicate)
+                        join f in context.Roles on i.RoleId equals f.Oid
+                        select new
+                        {
+                            i.Oid,
+                            i.RoleId,
+                            i.Name,
+                            i.Surname,
+                            i.Email,
+                            i.Username,
+                            i.Password,
+                            i.CountryCode,
+                            i.Cellphone,
+                            i.IsAccountActive,
+                            i.CreatedBy,
+                            f.RoleName
+                        }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToList();
+
+            List<UserDto> dto = new List<UserDto>();
+            if (data.Count > 0)
+            {
+                foreach (var i in data)
+                {
+                    dto.Add(new UserDto
+                    {
+                        OID = i.Oid,
+                        Name = i.Name,
+                        Surname = i.Surname,
+                        Email = i.Email,
+                        Username = i.Username,
+                        Password = i.Password,
+                        CountryCode = i.CountryCode,
+                        Cellphone = i.Cellphone,
+                        IsAccountActive = i.IsAccountActive,
+                        RoleID = i.RoleId,
+                        RoleName = i.RoleName,
+                        IsUserAlreadyUsed = context.Members.FirstOrDefault(x => x.UserAccountId == i.Oid) == null ? false : true
+                    });
+                }
+            }
+
+            UserListDto list = new UserListDto
+            {
+                List = dto,
+                CurrentPage = start + 1,
+                TotalUser = context.UserAccounts.Where(predicate).Count()
+            };
+            return list;
+        }
+
+        public async Task<UserAccount> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Username))
+                {
+                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.CountryCode == CountryCode && x.IsDeleted == false);
+                    return result;
+                }
+                else if (string.IsNullOrEmpty(Cellphone) || string.IsNullOrEmpty(CountryCode))
+                {
+                    var result = context.UserAccounts.FirstOrDefault(x => x.Username == Username && x.IsDeleted == false);
+                    return result;
+                }
+                else if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
+                {
+                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.Username == Username && x.CountryCode == CountryCode && x.IsDeleted == false);
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<int> TotalOpenTicketUnderClient(long OID)
+        {
+            try
+            {
+                return context.Incidents.Where(c => c.ReportedBy == OID && c.UserAccounts.RoleId == 1 && c.IsOpen == true && c.IsDeleted == false).Count();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<UserAccount>> GetAdminUser()
+        {
+            try
+            {
+                return await context.UserAccounts.Where(c => c.RoleId == 5 && c.IsDeleted == false).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public async Task<bool> IsTeamLeader(long OID)
+        {
+            try
+            {
+                var result = true ;//await context.Members.FirstOrDefaultAsync(c => c.UserAccountID == OID && c == true && c.IsDeleted == false);
+                if (result != null)
+                    return true;
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserDto> GetClientAccountByKey(long userAccountId)
+        {
+            try
+            {
+                Expression<Func<UserAccount, bool>> predicate = u => u.Oid == userAccountId && u.IsDeleted == false;
+
+                var userAccount = (from user in context.UserAccounts.Where(predicate)
+                                   join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
+                                   from usertype in userTypeInfo.DefaultIfEmpty()
+                                   join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
+                                   from userFacility in facilityInfo.DefaultIfEmpty()
+                                   join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
+                                   from facility in facilities.DefaultIfEmpty()
+                                   join district in context.Districts on facility.DistrictId equals district.Oid into districtInfo
+                                   from district in districtInfo.DefaultIfEmpty()
+                                   join provinces in context.Provinces on district.ProvinceId equals provinces.Oid into provincesInfo
+                                   from provinces in provincesInfo.DefaultIfEmpty()
+                                   select new UserDto
+                                   {
+                                       OID = user.Oid,
+                                       Name = user.Name,
+                                       Cellphone = user.Cellphone,
+                                       Surname = user.Surname,
+                                       Email = user.Email,
+                                       Username = user.Username,
+                                       Password = user.Password,
+                                       IsAccountActive = user.IsAccountActive,
+                                       CountryCode = user.CountryCode,
+                                       RoleID = user.RoleId, // Fixed property name
+                                       FacilityID = facility.Oid,
+                                       DistrictID = district.Oid,
+                                       ProvinceID = provinces.Oid,
+                                       UsertypeID = user.DeviceTypeId, // Assuming DeviceTypeId is equivalent to UsertypeID
+                                       IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid) // Simplified the check
+                                   }
+                        ).FirstOrDefault();
+
+                return userAccount;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID)
+        {
+            try
+            {
+                return await QueryAsync(u => u.DeviceTypeId == UsertypeID && u.IsDeleted == false, o => o.Oid);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+    }
+}

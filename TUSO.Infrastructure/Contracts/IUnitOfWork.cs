@@ -44,6 +44,8 @@ namespace TUSO.Infrastructure.Contracts
 
         IRoleRepository RoleRepository { get; }
 
+        IUserRepository UserRepository { get; }
+
 
         Task<int> SaveChangesAsync();
 

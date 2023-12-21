@@ -254,5 +254,19 @@ namespace TUSO.Infrastructure
             }
         }
         #endregion
+
+
+        #region UserRepository
+        private IUserRepository userRepository;
+        public IUserRepository UserRepository
+        {
+            get
+            {
+                if (userRepository == null)
+                    userRepository = new UserRepository(context);
+                return userRepository;
+            }
+        }
+        #endregion
     }
 }
