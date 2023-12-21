@@ -31,6 +31,20 @@ namespace TUSO.Infrastructure.Contracts
         IFundingAgencyRepository FundingAgencyRepository { get; }
 
         IImplementingPartnerRepository ImplementingPartnerRepository { get; }
+        
+        IDeviceControlRepository DeviceControlRepository { get; }
+
+        IEmailControlRepository EmailControlRepository { get; }
+
+        IEmailConfigurationRepository EmailConfigurationRepository { get; }
+
+        IEmailTemplateRepository EmailTemplateRepository { get; }
+
+        IRecoveryRequestRepository RecoveryRequestRepository { get; }
+
+        IRoleRepository RoleRepository { get; }
+
+
         Task<int> SaveChangesAsync();
 
     }

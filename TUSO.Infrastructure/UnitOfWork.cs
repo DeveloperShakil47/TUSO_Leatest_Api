@@ -174,6 +174,85 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
+        #region DeviceControl
+        private IDeviceControlRepository deviceControlRepository;
+        public IDeviceControlRepository DeviceControlRepository 
+        {
+            get
+            {
+                if (deviceControlRepository == null)
+                    deviceControlRepository = new DeviceControlRepository(context);
 
+                return deviceControlRepository;
+            }
+        }
+        #endregion
+
+        #region EmailControl
+        private IEmailControlRepository emailControlRepository;
+        public IEmailControlRepository EmailControlRepository
+        {
+            get
+            {
+                if (emailControlRepository == null)
+                    emailControlRepository = new EmailControlRepository(context);
+
+                return emailControlRepository;
+            }
+        }
+        #endregion
+
+        #region EmailConfigurtionRepository
+        private IEmailConfigurationRepository emailConfigurationRepository;
+        public IEmailConfigurationRepository EmailConfigurationRepository
+        {
+            get
+            {
+                if (emailConfigurationRepository == null)
+                    emailConfigurationRepository = new EmailConfigurationRepository(context);
+                return emailConfigurationRepository;
+            }
+        }
+        #endregion
+
+        #region EmailTemplateRepository
+        private IEmailTemplateRepository emailTemplateRepository;
+        public IEmailTemplateRepository EmailTemplateRepository
+        {
+            get
+            {
+                if (emailTemplateRepository == null)
+                    emailTemplateRepository = new EmailTemplateRepository(context);
+                return emailTemplateRepository;
+            }
+        }
+        #endregion
+
+        #region RecoveryRequestRepository
+        private IRecoveryRequestRepository recoveryRequest;
+        public IRecoveryRequestRepository RecoveryRequestRepository
+        {
+            get
+            {
+                if (recoveryRequest == null)
+                    recoveryRequest = new RecoveryRequestRepository(context);
+
+                return recoveryRequest;
+            }
+        }
+        #endregion
+
+        #region RoleRepository
+        private IRoleRepository roleRepository;
+        public IRoleRepository RoleRepository
+        {
+            get
+            {
+                if (roleRepository == null)
+                    roleRepository = new RoleRepository(context);
+                return roleRepository;
+            }
+        }
+        #endregion
     }
 }

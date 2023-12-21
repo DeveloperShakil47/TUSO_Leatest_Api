@@ -239,9 +239,9 @@ namespace TUSO.Utilities.Constants
         #endregion
 
         #region DeviceControl
-        public const string CreateSync = "Sync";
+        public const string UpdateDeviceControl = "device-control/{key}";
 
-        public const string ReadSyns = "Syncs";
+        public const string ReadDeviceControl = "device-controls";
         #endregion
 
         #region EmailControl
