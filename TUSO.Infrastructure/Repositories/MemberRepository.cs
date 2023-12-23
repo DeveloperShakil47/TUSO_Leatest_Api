@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Infrastructure.SqlServer;
@@ -71,7 +72,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await context.Members.Where(m => m.IsDeleted == false && m.TeamId == key).Include(x=>x.UserAccounts).Include(x=>x.Teams).Skip((start - 1) *take).Take(take).ToListAsync();
+                return await context.Members.Where(m => m.IsDeleted == false && m.TeamId == key).Include(x => x.UserAccounts).Include(x => x.Teams).Skip((start - 1) *take).Take(take).ToListAsync();
             }
             catch (Exception)
             {
@@ -90,29 +91,43 @@ namespace TUSO.Infrastructure.Repositories
                 throw;
             }
         }
-
-        public async Task<IEnumerable<Member>> GetMembers()
+        public async Task<IEnumerable<MemberDtoCollection>> GetMembers()
         {
             try
             {
-                var data = await context.Members.Where(c => c.IsDeleted==false).Include(x => x.UserAccounts).OrderBy(x => x.UserAccountId).ToListAsync();
-                return data;
+                var memberDtoCollection = await (from member in context.Members
+                                                 join userAccount in context.UserAccounts on member.UserAccountId equals userAccount.Oid
+                                                 join team in context.Teams on member.TeamId equals team.Oid
+                                                 join teamLead in context.TeamLeads on member.UserAccountId equals teamLead.UserAccountId into teamLeadsGroup
+                                                 from teamLead in teamLeadsGroup.DefaultIfEmpty()
+                                                 select new MemberDtoCollection
+                                                 {
+                                                     Oid = member.Oid,
+                                                     UserAccountName = userAccount.Name,
+                                                     UserAccountId = member.UserAccountId,
+                                                     TeamName = team.Title,
+                                                     TeamId = member.TeamId,
+                                                     IsTeamLead = teamLead != null
+                                                 }).ToListAsync();
+
+                return memberDtoCollection;
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
         public async Task<int> GetMemberCount(int key)
         {
-            return await context.Members.Where( m=> m.IsDeleted == false && m.TeamId == key).CountAsync();
+            return await context.Members.Where(m => m.IsDeleted == false && m.TeamId == key).CountAsync();
         }
 
         public async Task<IEnumerable<Member>> GetMembersByUser(long key)
         {
             try
             {
-                return await QueryAsync(m => m.UserAccountId == key && m.IsDeleted == false , t => t.Teams);
+                return await QueryAsync(m => m.UserAccountId == key && m.IsDeleted == false, t => t.Teams);
             }
             catch (Exception)
             {

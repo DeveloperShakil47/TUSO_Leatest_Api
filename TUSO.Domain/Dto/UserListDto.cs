@@ -38,6 +38,7 @@ namespace TUSO.Domain.Dto
 
         public int? DeviceTypeId { get; set; }
 
+        public string Modules { get; set; }
         public bool IsUserAlreadyUsed { get; set; }
     }
 

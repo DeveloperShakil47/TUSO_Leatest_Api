@@ -176,6 +176,19 @@ namespace TUSO.Infrastructure
             }
         }
         #endregion
+        #region LeadMemberRepository
+        private ILeadMemberRepository leadMemberRepository;
+        public ILeadMemberRepository LeadMemberRepository
+        {
+            get
+            {
+                if (leadMemberRepository == null)
+                    leadMemberRepository = new LeadMemberRepository(context);
+
+                return leadMemberRepository;
+            }
+        }
+        #endregion
 
         #region DeviceControlRepository
         private IDeviceControlRepository deviceControlRepository;

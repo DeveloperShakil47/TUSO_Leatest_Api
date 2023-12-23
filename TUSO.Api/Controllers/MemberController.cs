@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -36,20 +37,46 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateMember)]
-        public async Task<IActionResult> CreateMember(Member member)
+        public async Task<IActionResult> CreateMember(MemberDto model)
         {
             try
             {
-                if (await IsMemberDuplicate(member) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                if (!model.IsTeamLead)
+                {
+                    Member member = new Member()
+                    {
+                        UserAccountId = model.UserAccountId,
+                        TeamId = model.TeamId,
+                    };
 
-                member.DateCreated = DateTime.Now;
-                member.IsDeleted = false;
+                    if (await IsMemberDuplicate(member) == true)
+                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-                context.MemberRepository.Add(member);
+                    member.DateCreated = DateTime.Now;
+                    member.IsDeleted = false;
+
+                    context.MemberRepository.Add(member);
+                }
+                else
+                {
+                    TeamLead leadMember = new TeamLead()
+                    {
+                        UserAccountId = model.UserAccountId,
+                        TeamId = model.TeamId,
+                    };
+
+                    if (await IsLeadMemberDuplicateAndAlreadyHaveTeamLead(leadMember) == true)
+                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+
+                    leadMember.DateCreated = DateTime.Now;
+                    leadMember.IsDeleted = false;
+
+                    context.LeadMemberRepository.Add(leadMember);
+                }
+
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadMemberByKey", new { key = member.Oid }, member);
+                return Ok();
             }
             catch (Exception)
             {
@@ -68,7 +95,7 @@ namespace TUSO.Api.Controllers
             try
             {
                 var member = await context.MemberRepository.GetMembers();
-               
+
                 return Ok(member);
             }
             catch (Exception)
@@ -234,6 +261,28 @@ namespace TUSO.Api.Controllers
             try
             {
                 var permissionInDb = await context.MemberRepository.GetMemberPermission(member.UserAccountId, member.TeamId);
+
+                if (permissionInDb != null)
+                    return true;
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the permission is duplicate? 
+        /// </summary>
+        /// <param name ="member"> Member object.</param>
+        /// <returns>Boolean</returns>
+        private async Task<bool> IsLeadMemberDuplicateAndAlreadyHaveTeamLead(TeamLead leadMember)
+        {
+            try
+            {
+                var permissionInDb = await context.LeadMemberRepository.GetMemberPermission(leadMember.UserAccountId, leadMember.TeamId);
 
                 if (permissionInDb != null)
                     return true;

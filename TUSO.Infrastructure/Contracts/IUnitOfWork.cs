@@ -28,6 +28,8 @@ namespace TUSO.Infrastructure.Contracts
 
         IMemberRepository MemberRepository { get; }
 
+        ILeadMemberRepository LeadMemberRepository { get; }
+
         IFundingAgencyRepository FundingAgencyRepository { get; }
 
         IImplementingPartnerRepository ImplementingPartnerRepository { get; }

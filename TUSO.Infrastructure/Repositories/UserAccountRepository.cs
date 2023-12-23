@@ -303,6 +303,10 @@ namespace TUSO.Infrastructure.Repositories
                         DistrictId = district.Oid,
                         ProvinceId = provinces.Oid,
                         DeviceTypeId = user.DeviceTypeId,
+                        Modules = string.Join(",", context.ModulePermissions
+            .Where(mp => mp.RoleId == user.RoleId)
+            .Select(mp => mp.Modules.Description) 
+            .ToList()),
                         IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid)
                     }
                 ).FirstOrDefaultAsync();
