@@ -81,7 +81,7 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadUserRoles)]
+        [Route(RouteConstants.ReadUserRolesPage)]
         public async Task<IActionResult> ReadUserRoles(int start, int take)
         {
             try

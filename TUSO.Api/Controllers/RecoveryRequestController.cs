@@ -30,45 +30,45 @@ namespace TUSO.Api.Controllers
             this.context = context;
         }
 
-        //[HttpPost]
-        //[Route(RouteConstants.CreateRecoveryRequest)]
-        //public async Task<IActionResult> CreateRecoveryRequest(RecoveryRequestDto recoveryRequest)
-        //{
-        //    try
-        //    {
-        //        var IsExist = await context.UserAccountRepository.GetUserByUsernameCellPhone(recoveryRequest.CellPhone, recoveryRequest.UserName, recoveryRequest.CountryCode);
-                
-        //        if (IsExist != null)
-        //        {
-        //            if (await IsRequestDuplicate(recoveryRequest) == true)
-        //                return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+        [HttpPost]
+        [Route(RouteConstants.CreateRecoveryRequest)]
+        public async Task<IActionResult> CreateRecoveryRequest(RecoveryRequestDto recoveryRequest)
+        {
+            try
+            {
+                var IsExist = await context.UserAccountRepository.GetUserByUsernameCellPhone(recoveryRequest.CellPhone, recoveryRequest.UserName, recoveryRequest.CountryCode);
 
-        //            var userRecovery = new RecoveryRequest()
-        //            {
-        //                Cellphone = IsExist.Cellphone,
-        //                Username = IsExist.Username,
-        //                DateRequested = DateTime.Now,
-        //                IsRequestOpen = true,
-        //                UserAccountId = IsExist.Oid,
-        //            };
+                if (IsExist != null)
+                {
+                    if (await IsRequestDuplicate(recoveryRequest) == true)
+                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-        //            userRecovery.DateCreated = DateTime.Now;
-        //            userRecovery.IsDeleted = false;
+                    var userRecovery = new RecoveryRequest()
+                    {
+                        Cellphone = IsExist.Cellphone,
+                        Username = IsExist.Username,
+                        DateRequested = DateTime.Now,
+                        IsRequestOpen = true,
+                        UserAccountId = IsExist.Oid,
+                    };
 
-        //            context.RecoveryRequestRepository.Add(userRecovery);
-        //            await context.SaveChangesAsync();
-        //            return Ok(userRecovery);
-        //        }
-        //        else
-        //        {
-        //            return StatusCode(StatusCodes.Status510NotExtended, MessageConstants.NoMatchFoundError);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-        //    }
-        //}
+                    userRecovery.DateCreated = DateTime.Now;
+                    userRecovery.IsDeleted = false;
+
+                    context.RecoveryRequestRepository.Add(userRecovery);
+                    await context.SaveChangesAsync();
+                    return Ok(userRecovery);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status510NotExtended, MessageConstants.NoMatchFoundError);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+        }
 
         /// <summary>
         /// URL: tuso-api/recovery-request
