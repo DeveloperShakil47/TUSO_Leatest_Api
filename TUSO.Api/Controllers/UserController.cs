@@ -88,7 +88,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                UserAccountCountDto useraccountDto = await context.UserRepository.UserAccouontCount();
+                UserAccountCountDto useraccountDto = await context.UserRepository.UserAccountCount();
 
                 return Ok(useraccountDto);
             }

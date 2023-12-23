@@ -98,26 +98,24 @@ namespace TUSO.Infrastructure.Repositories
                 throw;
             }
         }
-
-        public async Task<UserAccountCountDto> UserAccouontCount()
+        public async Task<UserAccountCountDto> UserAccountCount()
         {
             try
             {
                 UserAccountCountDto userAccountCount = new UserAccountCountDto();
 
-                userAccountCount.TotalUser = context.UserAccounts.Where(x => x.IsDeleted == false).Count();
-                userAccountCount.TotalClientUser = context.UserAccounts.Where(x => x.RoleId == 1 && x.IsDeleted == false).Count();
-                userAccountCount.TotalAgentUser = context.UserAccounts.Where(x => x.RoleId == 2 && x.IsDeleted == false).Count();
-                userAccountCount.TotalSuperUser = context.UserAccounts.Where(x => x.RoleId == 3 && x.IsDeleted == false).Count();
-                userAccountCount.TotalExpertUser = context.UserAccounts.Where(x => x.RoleId == 4 && x.IsDeleted == false).Count();
+                userAccountCount.TotalUser = await context.UserAccounts.CountAsync(x => !x.IsDeleted);
+                userAccountCount.TotalClientUser = await context.UserAccounts.CountAsync(x => x.RoleId == 1 && !x.IsDeleted);
+                userAccountCount.TotalAgentUser = await context.UserAccounts.CountAsync(x => x.RoleId == 2 && !x.IsDeleted);
+                userAccountCount.TotalSuperUser = await context.UserAccounts.CountAsync(x => x.RoleId == 3 && !x.IsDeleted);
+                userAccountCount.TotalExpertUser = await context.UserAccounts.CountAsync(x => x.RoleId == 4 && !x.IsDeleted);
 
-                return await Task.Run(() => userAccountCount);
+                return userAccountCount;
             }
             catch (Exception)
             {
                 throw;
             }
-
         }
 
         public async Task<UserListDto> GetUsers(int start, int take)
@@ -221,41 +219,31 @@ namespace TUSO.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<UserAccount> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
+       
+
+        public async Task<UserAccount?> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
         {
-            try
+            if (string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
             {
-                if (string.IsNullOrEmpty(Username))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.CountryCode == CountryCode && x.IsDeleted == false);
-                    return result;
-                }
-                else if (string.IsNullOrEmpty(Cellphone) || string.IsNullOrEmpty(CountryCode))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Username == Username && x.IsDeleted == false);
-                    return result;
-                }
-                else if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.Username == Username && x.CountryCode == CountryCode && x.IsDeleted == false);
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Cellphone == Cellphone && x.CountryCode == CountryCode && !x.IsDeleted);
             }
-            catch (Exception)
+            else if (string.IsNullOrEmpty(Cellphone) || string.IsNullOrEmpty(CountryCode))
             {
-                throw;
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Username == Username && !x.IsDeleted);
             }
+            else if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
+            {
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Cellphone == Cellphone && x.Username == Username && x.CountryCode == CountryCode && !x.IsDeleted);
+            }
+
+            return null;
         }
 
         public async Task<int> TotalOpenTicketUnderClient(long OID)
         {
             try
             {
-                return context.Incidents.Where(c => c.ReportedBy == OID && c.UserAccounts.RoleId == 1 && c.IsOpen == true && c.IsDeleted == false).Count();
+                return await context.Incidents.CountAsync(c => c.ReportedBy == OID && c.UserAccounts.RoleId == 1 && c.IsOpen == true && c.IsDeleted == false);
             }
             catch (Exception)
             {
@@ -280,7 +268,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                var result = true ;//await context.Members.FirstOrDefaultAsync(c => c.UserAccountID == OID && c == true && c.IsDeleted == false);
+                var result = await context.TeamLeads.FirstOrDefaultAsync(c => c.UserAccountId == OID  && c.IsDeleted == false);
                 if (result != null)
                     return true;
                 return false;

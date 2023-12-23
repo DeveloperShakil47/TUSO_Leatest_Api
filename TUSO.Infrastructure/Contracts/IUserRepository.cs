@@ -82,7 +82,7 @@ namespace TUSO.Infrastructure.Contracts
         /// <param name="Username"></param>
         /// <param name="CountryCode"></param>
         /// <returns>Instance of a UserAccount object.</returns>
-        public Task<UserAccount> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode);
+        public Task<UserAccount?> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode);
 
         /// <summary>
         /// Check is there any open ticket under a client.
@@ -130,6 +130,6 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns admin user accounts.
         /// </summary>
         /// <returns>List of UserAccount object.</returns>
-        public Task<UserAccountCountDto> UserAccouontCount();
+        public Task<UserAccountCountDto> UserAccountCount();
     }
 }
