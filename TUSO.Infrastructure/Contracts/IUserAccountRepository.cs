@@ -82,7 +82,7 @@ namespace TUSO.Infrastructure.Contracts
         /// <param name="Username"></param>
         /// <param name="CountryCode"></param>
         /// <returns>Instance of a UserAccount object.</returns>
-        public Task<UserAccount> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode);
+        public Task<UserAccount?> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode);
 
         /// <summary>
         /// Check is there any open ticket under a client.
@@ -103,14 +103,14 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="key">Primary key of the table UserAccounts</param>
         /// <returns>Instance of a UserDto object.</returns>
-        public Task<UserDto> GetClientAccountByKey(long key);
+        public Task<UserDto?> GetClientAccountByKey(long key);
 
         /// <summary>
-        /// Returns a System permission if SystemID matched
+        /// Returns a System permission if deviceTypeId matched
         /// </summary>
-        /// <param name="SystemID">Primary key of the System table></param>
-        /// <returns>Instance of a SystemPermission object.</returns>
-        public Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID);
+        /// <param name="deviceTypeId">Primary key of the DeviceType table></param>
+        /// <returns>Instance of a DeviceType object.</returns>
+        public Task<IEnumerable<UserAccount>> GetUserByDevicetypeByKey(int deviceTypeId);
 
         /// <summary>
         /// Returns a User  of  name matched.
@@ -130,6 +130,6 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns admin user accounts.
         /// </summary>
         /// <returns>List of UserAccount object.</returns>
-        public Task<UserAccountCountDto> UserAccouontCount();
+        public Task<UserAccountCountDto> UserAccountCount();
     }
 }

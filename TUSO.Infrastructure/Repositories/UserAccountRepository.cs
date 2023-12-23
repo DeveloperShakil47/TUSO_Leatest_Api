@@ -98,26 +98,24 @@ namespace TUSO.Infrastructure.Repositories
                 throw;
             }
         }
-
-        public async Task<UserAccountCountDto> UserAccouontCount()
+        public async Task<UserAccountCountDto> UserAccountCount()
         {
             try
             {
                 UserAccountCountDto userAccountCount = new UserAccountCountDto();
 
-                userAccountCount.TotalUser = context.UserAccounts.Where(x => x.IsDeleted == false).Count();
-                userAccountCount.TotalClientUser = context.UserAccounts.Where(x => x.RoleId == 1 && x.IsDeleted == false).Count();
-                userAccountCount.TotalAgentUser = context.UserAccounts.Where(x => x.RoleId == 2 && x.IsDeleted == false).Count();
-                userAccountCount.TotalSuperUser = context.UserAccounts.Where(x => x.RoleId == 3 && x.IsDeleted == false).Count();
-                userAccountCount.TotalExpertUser = context.UserAccounts.Where(x => x.RoleId == 4 && x.IsDeleted == false).Count();
+                userAccountCount.TotalUser = await context.UserAccounts.CountAsync(x => !x.IsDeleted);
+                userAccountCount.TotalClientUser = await context.UserAccounts.CountAsync(x => x.RoleId == 1 && !x.IsDeleted);
+                userAccountCount.TotalAgentUser = await context.UserAccounts.CountAsync(x => x.RoleId == 2 && !x.IsDeleted);
+                userAccountCount.TotalSuperUser = await context.UserAccounts.CountAsync(x => x.RoleId == 3 && !x.IsDeleted);
+                userAccountCount.TotalExpertUser = await context.UserAccounts.CountAsync(x => x.RoleId == 4 && !x.IsDeleted);
 
-                return await Task.Run(() => userAccountCount);
+                return userAccountCount;
             }
             catch (Exception)
             {
                 throw;
             }
-
         }
 
         public async Task<UserListDto> GetUsers(int start, int take)
@@ -221,41 +219,31 @@ namespace TUSO.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<UserAccount> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
+       
+
+        public async Task<UserAccount?> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
         {
-            try
+            if (string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
             {
-                if (string.IsNullOrEmpty(Username))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.CountryCode == CountryCode && x.IsDeleted == false);
-                    return result;
-                }
-                else if (string.IsNullOrEmpty(Cellphone) || string.IsNullOrEmpty(CountryCode))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Username == Username && x.IsDeleted == false);
-                    return result;
-                }
-                else if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
-                {
-                    var result = context.UserAccounts.FirstOrDefault(x => x.Cellphone == Cellphone && x.Username == Username && x.CountryCode == CountryCode && x.IsDeleted == false);
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Cellphone == Cellphone && x.CountryCode == CountryCode && !x.IsDeleted);
             }
-            catch (Exception)
+            else if (string.IsNullOrEmpty(Cellphone) || string.IsNullOrEmpty(CountryCode))
             {
-                throw;
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Username == Username && !x.IsDeleted);
             }
+            else if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Cellphone) && !string.IsNullOrEmpty(CountryCode))
+            {
+                return await context.UserAccounts.FirstOrDefaultAsync(x => x.Cellphone == Cellphone && x.Username == Username && x.CountryCode == CountryCode && !x.IsDeleted);
+            }
+
+            return null;
         }
 
         public async Task<int> TotalOpenTicketUnderClient(long OID)
         {
             try
             {
-                return context.Incidents.Where(c => c.ReportedBy == OID && c.UserAccounts.RoleId == 1 && c.IsOpen == true && c.IsDeleted == false).Count();
+                return await context.Incidents.CountAsync(c => c.ReportedBy == OID && c.UserAccounts.RoleId == 1 && c.IsOpen == true && c.IsDeleted == false);
             }
             catch (Exception)
             {
@@ -280,7 +268,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                var result = true ;//await context.Members.FirstOrDefaultAsync(c => c.UserAccountID == OID && c == true && c.IsDeleted == false);
+                var result = await context.TeamLeads.FirstOrDefaultAsync(c => c.UserAccountId == OID  && c.IsDeleted == false);
                 if (result != null)
                     return true;
                 return false;
@@ -291,42 +279,42 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<UserDto> GetClientAccountByKey(long userAccountId)
+        public async Task<UserDto?> GetClientAccountByKey(long userAccountId)
         {
             try
             {
-                Expression<Func<UserAccount, bool>> predicate = u => u.Oid == userAccountId && u.IsDeleted == false;
-
-                var userAccount = (from user in context.UserAccounts.Where(predicate)
-                                   join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
-                                   from usertype in userTypeInfo.DefaultIfEmpty()
-                                   join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
-                                   from userFacility in facilityInfo.DefaultIfEmpty()
-                                   join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
-                                   from facility in facilities.DefaultIfEmpty()
-                                   join district in context.Districts on facility.DistrictId equals district.Oid into districtInfo
-                                   from district in districtInfo.DefaultIfEmpty()
-                                   join provinces in context.Provinces on district.ProvinceId equals provinces.Oid into provincesInfo
-                                   from provinces in provincesInfo.DefaultIfEmpty()
-                                   select new UserDto
-                                   {
-                                       Oid = user.Oid,
-                                       Name = user.Name,
-                                       Cellphone = user.Cellphone,
-                                       Surname = user.Surname,
-                                       Email = user.Email,
-                                       Username = user.Username,
-                                       Password = user.Password,
-                                       IsAccountActive = user.IsAccountActive,
-                                       CountryCode = user.CountryCode,
-                                       RoleId = user.RoleId, // Fixed property name
-                                       FacilityId = facility.Oid,
-                                       DistrictId = district.Oid,
-                                       ProvinceId = provinces.Oid,
-                                       DeviceTypeId = user.DeviceTypeId, // Assuming DeviceTypeId is equivalent to UsertypeID
-                                       IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid) // Simplified the check
-                                   }
-                        ).FirstOrDefault();
+                var userAccount = await (
+                    from user in context.UserAccounts
+                             .Where(u => u.Oid == userAccountId && !u.IsDeleted)
+                    join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
+                    from usertype in userTypeInfo.DefaultIfEmpty()
+                    join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
+                    from userFacility in facilityInfo.DefaultIfEmpty()
+                    join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
+                    from facility in facilities.DefaultIfEmpty()
+                    join district in context.Districts on facility.DistrictId equals district.Oid into districtInfo
+                    from district in districtInfo.DefaultIfEmpty()
+                    join provinces in context.Provinces on district.ProvinceId equals provinces.Oid into provincesInfo
+                    from provinces in provincesInfo.DefaultIfEmpty()
+                    select new UserDto
+                    {
+                        Oid = user.Oid,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Cellphone = user.Cellphone,
+                        Email = user.Email,
+                        Username = user.Username,
+                        Password = user.Password,
+                        IsAccountActive = user.IsAccountActive,
+                        CountryCode = user.CountryCode,
+                        RoleId = user.RoleId, // consistent naming
+                        FacilityId = facility.Oid,
+                        DistrictId = district.Oid,
+                        ProvinceId = provinces.Oid,
+                        DeviceTypeId = user.DeviceTypeId, // consistent naming
+                        IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid)
+                    }
+                ).FirstOrDefaultAsync();
 
                 return userAccount;
             }
@@ -336,11 +324,12 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID)
+
+        public async Task<IEnumerable<UserAccount>> GetUserByDevicetypeByKey(int deviceTypeId)
         {
             try
             {
-                return await QueryAsync(u => u.DeviceTypeId == UsertypeID && u.IsDeleted == false, o => o.Oid);
+                return await QueryAsync(u => u.DeviceTypeId == deviceTypeId && u.IsDeleted == false, o => o.Oid);
             }
             catch (Exception)
             {
