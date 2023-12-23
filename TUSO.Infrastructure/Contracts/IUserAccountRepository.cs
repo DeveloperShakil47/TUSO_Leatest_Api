@@ -103,7 +103,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="key">Primary key of the table UserAccounts</param>
         /// <returns>Instance of a UserDto object.</returns>
-        public Task<UserDto> GetClientAccountByKey(long key);
+        public Task<UserDto?> GetClientAccountByKey(long key);
 
         /// <summary>
         /// Returns a System permission if SystemID matched

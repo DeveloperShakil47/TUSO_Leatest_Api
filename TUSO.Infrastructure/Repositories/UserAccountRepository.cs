@@ -279,42 +279,42 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<UserDto> GetClientAccountByKey(long userAccountId)
+        public async Task<UserDto?> GetClientAccountByKey(long userAccountId)
         {
             try
             {
-                Expression<Func<UserAccount, bool>> predicate = u => u.Oid == userAccountId && u.IsDeleted == false;
-
-                var userAccount = (from user in context.UserAccounts.Where(predicate)
-                                   join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
-                                   from usertype in userTypeInfo.DefaultIfEmpty()
-                                   join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
-                                   from userFacility in facilityInfo.DefaultIfEmpty()
-                                   join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
-                                   from facility in facilities.DefaultIfEmpty()
-                                   join district in context.Districts on facility.DistrictId equals district.Oid into districtInfo
-                                   from district in districtInfo.DefaultIfEmpty()
-                                   join provinces in context.Provinces on district.ProvinceId equals provinces.Oid into provincesInfo
-                                   from provinces in provincesInfo.DefaultIfEmpty()
-                                   select new UserDto
-                                   {
-                                       Oid = user.Oid,
-                                       Name = user.Name,
-                                       Cellphone = user.Cellphone,
-                                       Surname = user.Surname,
-                                       Email = user.Email,
-                                       Username = user.Username,
-                                       Password = user.Password,
-                                       IsAccountActive = user.IsAccountActive,
-                                       CountryCode = user.CountryCode,
-                                       RoleId = user.RoleId, // Fixed property name
-                                       FacilityId = facility.Oid,
-                                       DistrictId = district.Oid,
-                                       ProvinceId = provinces.Oid,
-                                       DeviceTypeId = user.DeviceTypeId, // Assuming DeviceTypeId is equivalent to UsertypeID
-                                       IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid) // Simplified the check
-                                   }
-                        ).FirstOrDefault();
+                var userAccount = await (
+                    from user in context.UserAccounts
+                             .Where(u => u.Oid == userAccountId && !u.IsDeleted)
+                    join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
+                    from usertype in userTypeInfo.DefaultIfEmpty()
+                    join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
+                    from userFacility in facilityInfo.DefaultIfEmpty()
+                    join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
+                    from facility in facilities.DefaultIfEmpty()
+                    join district in context.Districts on facility.DistrictId equals district.Oid into districtInfo
+                    from district in districtInfo.DefaultIfEmpty()
+                    join provinces in context.Provinces on district.ProvinceId equals provinces.Oid into provincesInfo
+                    from provinces in provincesInfo.DefaultIfEmpty()
+                    select new UserDto
+                    {
+                        Oid = user.Oid,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Cellphone = user.Cellphone,
+                        Email = user.Email,
+                        Username = user.Username,
+                        Password = user.Password,
+                        IsAccountActive = user.IsAccountActive,
+                        CountryCode = user.CountryCode,
+                        RoleId = user.RoleId, // consistent naming
+                        FacilityId = facility.Oid,
+                        DistrictId = district.Oid,
+                        ProvinceId = provinces.Oid,
+                        DeviceTypeId = user.DeviceTypeId, // consistent naming
+                        IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid)
+                    }
+                ).FirstOrDefaultAsync();
 
                 return userAccount;
             }
@@ -323,6 +323,7 @@ namespace TUSO.Infrastructure.Repositories
                 throw;
             }
         }
+
 
         public async Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID)
         {
