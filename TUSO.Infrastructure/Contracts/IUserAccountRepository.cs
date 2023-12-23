@@ -106,11 +106,11 @@ namespace TUSO.Infrastructure.Contracts
         public Task<UserDto?> GetClientAccountByKey(long key);
 
         /// <summary>
-        /// Returns a System permission if SystemID matched
+        /// Returns a System permission if deviceTypeId matched
         /// </summary>
-        /// <param name="SystemID">Primary key of the System table></param>
-        /// <returns>Instance of a SystemPermission object.</returns>
-        public Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID);
+        /// <param name="deviceTypeId">Primary key of the DeviceType table></param>
+        /// <returns>Instance of a DeviceType object.</returns>
+        public Task<IEnumerable<UserAccount>> GetUserByDevicetypeByKey(int deviceTypeId);
 
         /// <summary>
         /// Returns a User  of  name matched.

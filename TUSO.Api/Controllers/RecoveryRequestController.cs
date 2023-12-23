@@ -160,6 +160,7 @@ namespace TUSO.Api.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
 
                 recoveryRequest.DateModified = DateTime.Now;
+                recoveryRequest.IsDeleted = false;
 
                 context.RecoveryRequestRepository.Update(recoveryRequest);
                 await context.SaveChangesAsync();
@@ -235,7 +236,6 @@ namespace TUSO.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
-
 
         /// <summary>
         /// Checks whether the recoveryRequest name is duplicate? 

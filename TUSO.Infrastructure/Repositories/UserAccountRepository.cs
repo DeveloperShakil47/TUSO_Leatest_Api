@@ -277,8 +277,8 @@ namespace TUSO.Infrastructure.Repositories
                 var userAccount = await (
                     from user in context.UserAccounts
                              .Where(u => u.Oid == userAccountId && !u.IsDeleted)
-                    join usertype in context.DeviceTypes on user.DeviceTypeId equals usertype.Oid into userTypeInfo
-                    from usertype in userTypeInfo.DefaultIfEmpty()
+                    join devicetype in context.DeviceTypes on user.DeviceTypeId equals devicetype.Oid into deviceTypeInfo
+                    from devicetype in deviceTypeInfo.DefaultIfEmpty()
                     join userFacility in context.FacilityPermissions on user.Oid equals userFacility.UserId into facilityInfo
                     from userFacility in facilityInfo.DefaultIfEmpty()
                     join facility in context.Facilities on userFacility.FacilityId equals facility.Oid into facilities
@@ -298,11 +298,11 @@ namespace TUSO.Infrastructure.Repositories
                         Password = user.Password,
                         IsAccountActive = user.IsAccountActive,
                         CountryCode = user.CountryCode,
-                        RoleId = user.RoleId, // consistent naming
+                        RoleId = user.RoleId,
                         FacilityId = facility.Oid,
                         DistrictId = district.Oid,
                         ProvinceId = provinces.Oid,
-                        DeviceTypeId = user.DeviceTypeId, // consistent naming
+                        DeviceTypeId = user.DeviceTypeId,
                         IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid)
                     }
                 ).FirstOrDefaultAsync();
@@ -316,11 +316,11 @@ namespace TUSO.Infrastructure.Repositories
         }
 
 
-        public async Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID)
+        public async Task<IEnumerable<UserAccount>> GetUserByDevicetypeByKey(int deviceTypeId)
         {
             try
             {
-                return await QueryAsync(u => u.DeviceTypeId == UsertypeID && u.IsDeleted == false, o => o.Oid);
+                return await QueryAsync(u => u.DeviceTypeId == deviceTypeId && u.IsDeleted == false, o => o.Oid);
             }
             catch (Exception)
             {

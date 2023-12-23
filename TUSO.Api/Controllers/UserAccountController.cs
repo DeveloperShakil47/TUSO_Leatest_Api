@@ -10,7 +10,7 @@ namespace TUSO.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserAccountController : ControllerBase
     {
         private readonly IUnitOfWork context;
 
@@ -18,7 +18,7 @@ namespace TUSO.Api.Controllers
         /// System Permission constructor.
         /// </summary>
         /// <param name="context">Inject IUnitOfWork as context</param>
-        public UserController(IUnitOfWork context)
+        public UserAccountController(IUnitOfWork context)
         {
             this.context = context;
         }
@@ -78,9 +78,7 @@ namespace TUSO.Api.Controllers
                         systemPermission.IsDeleted = false;
                         context.SystemPermissionRepository.Add(systemPermission);
                         await context.SaveChangesAsync();
-
                     }
-
                 }
 
                 return CreatedAtAction("ReadUserAccountByKey", new { key = userAccount.Oid }, userAccount);
@@ -192,7 +190,7 @@ namespace TUSO.Api.Controllers
                 if (devicetypeId <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccountInDb = await context.UserAccountRepository.GetUserByUsertype(devicetypeId);
+                var userAccountInDb = await context.UserAccountRepository.GetUserByDevicetypeByKey(devicetypeId);
 
                 if (userAccountInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);

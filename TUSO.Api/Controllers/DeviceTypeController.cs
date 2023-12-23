@@ -16,7 +16,7 @@ namespace TUSO.Api.Controllers
     /// </summary>
     [Route(RouteConstants.BaseRoute)]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class DeviceTypeController : ControllerBase
     {
         private readonly IUnitOfWork context;
 
@@ -24,32 +24,32 @@ namespace TUSO.Api.Controllers
         /// Default constructor.
         /// </summary>
         /// <param name="UnitOfWork"></param>
-        public RoleController(IUnitOfWork context)
+        public DeviceTypeController(IUnitOfWork context)
         {
             this.context = context;
         }
 
         /// <summary>
-        /// URL: tuso-api/user-role
+        /// URL: tuso-api/user-type
         /// </summary>
         /// <param name="entity">Object to be saved in the table as a row.</param>
         /// <returns>Saved object.</returns>
         [HttpPost]
-        [Route(RouteConstants.CreateUserRole)]
-        public async Task<IActionResult> CreateUserRole(Role role)
+        [Route(RouteConstants.CreateDeviceType)]
+        public async Task<IActionResult> CreateDeviceType(DeviceType deviceType)
         {
             try
             {
-                if (await IsRoleDuplicate(role) == true)
+                if (await IsDeviceTypeDuplicate(deviceType) == true)
                     return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-                role.DateCreated = DateTime.Now;
-                role.IsDeleted = false;
+                deviceType.DateCreated = DateTime.Now;
+                deviceType.IsDeleted = false;
 
-                context.RoleRepository.Add(role);
+                context.DeviceTypeRepository.Add(deviceType);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadUserRoleByKey", new { key = role.Oid }, role);
+                return CreatedAtAction("ReadDeviceTypeByKey", new { key = deviceType.Oid }, deviceType);
             }
             catch (Exception)
             {
@@ -58,17 +58,18 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/countries
+        /// URL: tuso-api/user-types
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadUserRoles)]
-        public async Task<IActionResult> ReadUserRoles()
+        [Route(RouteConstants.ReadDevices)]
+        public async Task<IActionResult> ReadDevices()
         {
             try
-            { 
-                var role = await context.RoleRepository.GetRoles();
-                return Ok(role);
+            {
+                var deviceTypes = await context.DeviceTypeRepository.GetDeviceTypes();
+
+                return Ok(deviceTypes);
             }
             catch (Exception)
             {
@@ -77,23 +78,23 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/user-roles
+        /// URL: tuso-api/user-types
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadUserRolesPage)]
-        public async Task<IActionResult> ReadUserRoles(int start, int take)
+        [Route(RouteConstants.ReadDeviceTypeByPage)]
+        public async Task<IActionResult> ReadDeviceTypeByPage(int start, int take)
         {
             try
             {
-                var userAccounts = await context.RoleRepository.GetRolePage(start, take);
-
+                var deviceTypes = await context.DeviceTypeRepository.GetDeviceTypeByPage(start, take);
                 var response = new
                 {
-                    data = userAccounts,
+                    deviceTypes = deviceTypes,
                     currentPage = start + 1,
-                    totalRows = await context.RoleRepository.GetRoleCount()
+                    TotalRows = await context.DeviceTypeRepository.GetDeviceTypeCount()
                 };
+
                 return Ok(response);
             }
             catch (Exception)
@@ -103,25 +104,25 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/user-role/key/{key}
+        /// URL: tuso-api/user-t ype/key/{key}
         /// </summary>
         /// <param name="key">Primary key of the table Countries</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadUserRoleByKey)]
-        public async Task<IActionResult> ReadUserRoleByKey(int key)
+        [Route(RouteConstants.ReadDeviceTypeByKey)]
+        public async Task<IActionResult> ReadDeviceTypeByKey(int key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccount = await context.RoleRepository.GetRoleByKey(key);
+                var deviceType = await context.DeviceTypeRepository.GetDeviceTypeByKey(key);
 
-                if (userAccount == null)
+                if (deviceType == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                return Ok(userAccount);
+                return Ok(deviceType);
             }
             catch (Exception ex)
             {
@@ -130,27 +131,27 @@ namespace TUSO.Api.Controllers
         }
 
         /// <summary>
-        /// URL: tuso-api/user-role/{key}
+        /// URL: tuso-api/user-type/{key}
         /// </summary>
         /// <param name="key">Primary key of the talbe</param>
-        /// <param name="role">Object to be updated</param>
+        /// <param name="userType">Object to be updated</param>
         /// <returns>Update row in the table.</returns>
         [HttpPut]
-        [Route(RouteConstants.UpdateUserRole)]
-        public async Task<IActionResult> UpdateUserRole(int key, Role role)
+        [Route(RouteConstants.UpdateDeviceType)]
+        public async Task<IActionResult> UpdateDeviceType(int key, DeviceType deviceType)
         {
             try
             {
-                if (key != role.Oid)
+                if (key != deviceType.Oid)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
 
-                if (await IsRoleDuplicate(role) == true)
+                if (await IsDeviceTypeDuplicate(deviceType) == true)
                     return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
 
-                role.DateModified = DateTime.Now;
-                role.IsDeleted = false;
+                deviceType.DateModified = DateTime.Now;
+                deviceType.IsDeleted = false;
 
-                context.RoleRepository.Update(role);
+                context.DeviceTypeRepository.Update(deviceType);
                 await context.SaveChangesAsync();
 
                 return StatusCode(StatusCodes.Status204NoContent);
@@ -161,36 +162,36 @@ namespace TUSO.Api.Controllers
             }
         }
 
+
         /// <summary>
-        /// URL: tuso-api/user-role/{key}
+        /// URL: tuso-api/user-type/{key}
         /// </summary>
         /// <param name="key">Primary key of the table</param>
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
-        [Route(RouteConstants.DeleteUserRole)]
-        public async Task<IActionResult> DeleteUserRole(int key)
+        [Route(RouteConstants.DeleteDeviceType)]
+        public async Task<IActionResult> DeleteDeviceType(int key)
         {
             try
             {
                 if (key <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccountInDb = context.RoleRepository.Get(key);
+                var deviceTypeInDb = context.DeviceTypeRepository.Get(key);
 
-                if (userAccountInDb == null)
+                if (deviceTypeInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                userAccountInDb.IsDeleted = true;
-                userAccountInDb.DateModified = DateTime.Now;
+                deviceTypeInDb.IsDeleted = true;
+                deviceTypeInDb.DateModified = DateTime.Now;
 
-                context.RoleRepository.Update(userAccountInDb);
+                context.DeviceTypeRepository.Update(deviceTypeInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(userAccountInDb);
+                return Ok(deviceTypeInDb);
             }
             catch (Exception)
             {
-                ///WriteToLog(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -198,17 +199,19 @@ namespace TUSO.Api.Controllers
         /// <summary>
         /// Checks whether the user role is duplicate? 
         /// </summary>
-        /// <param name="role">UserRole object.</param>
+        /// <param name="userType">UserRole object.</param>
         /// <returns>Boolean</returns>
-        private async Task<bool> IsRoleDuplicate(Role role)
+        private async Task<bool> IsDeviceTypeDuplicate(DeviceType deviceType)
         {
             try
             {
-                var userAccountInDb = await context.RoleRepository.GetRoleByName(role.RoleName);
+                var deviceTypeInDb = await context.DeviceTypeRepository.GetDeviceTypeByName(deviceType.DeviceTypeName);
 
-                if (userAccountInDb != null)
-                    if (userAccountInDb.Oid != role.Oid)
+                if (deviceTypeInDb != null)
+                {
+                    if (deviceTypeInDb.Oid != deviceType.Oid)
                         return true;
+                }
 
                 return false;
             }
@@ -217,5 +220,6 @@ namespace TUSO.Api.Controllers
                 throw;
             }
         }
+
     }
 }
