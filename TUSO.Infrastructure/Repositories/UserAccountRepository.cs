@@ -325,11 +325,11 @@ namespace TUSO.Infrastructure.Repositories
         }
 
 
-        public async Task<IEnumerable<UserAccount>> GetUserByUsertype(int UsertypeID)
+        public async Task<IEnumerable<UserAccount>> GetUserByDevicetypeByKey(int deviceTypeId)
         {
             try
             {
-                return await QueryAsync(u => u.DeviceTypeId == UsertypeID && u.IsDeleted == false, o => o.Oid);
+                return await QueryAsync(u => u.DeviceTypeId == deviceTypeId && u.IsDeleted == false, o => o.Oid);
             }
             catch (Exception)
             {

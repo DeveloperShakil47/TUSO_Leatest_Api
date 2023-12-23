@@ -178,7 +178,7 @@ namespace TUSO.Api.Controllers
                 if (devicetypeId <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccountInDb = await context.UserAccountRepository.GetUserByUsertype(devicetypeId);
+                var userAccountInDb = await context.UserAccountRepository.GetUserByDevicetypeByKey(devicetypeId);
 
                 if (userAccountInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
