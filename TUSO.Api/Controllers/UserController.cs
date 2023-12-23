@@ -30,10 +30,24 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateUserAccount)]
-        public async Task<IActionResult> CreateUserAccount(UserAccount userAccount)
+        public async Task<IActionResult> CreateUserAccount(UserAccountCreateDto user)
         {
             try
             {
+                UserAccount userAccount = new UserAccount()
+                {
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Email = user.Email,
+                    Username = user.Username,
+                    Password = user.Password,
+                    CountryCode = user.CountryCode,
+                    Cellphone = user.Cellphone,
+                    IsAccountActive = user.IsAccountActive,
+                    RoleId  = user.RoleId,
+
+                };
+
                 if (await IsAccountDuplicate(userAccount) == true)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateUserAccountError);
 

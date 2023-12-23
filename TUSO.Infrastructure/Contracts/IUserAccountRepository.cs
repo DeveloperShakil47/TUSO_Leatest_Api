@@ -15,7 +15,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="key">Primary key of the table UserAccounts</param>
         /// <returns>Instance of a UserAccount object.</returns>
-        public Task<UserAccount> GetUserAccountByKey(long key);
+        public Task<UserAccount?> GetUserAccountByKey(long key);
 
         /// <summary>
         /// Returns a user account if role matched.

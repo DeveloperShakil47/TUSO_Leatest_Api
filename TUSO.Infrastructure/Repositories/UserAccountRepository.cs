@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -20,16 +14,12 @@ namespace TUSO.Infrastructure.Repositories
 
         }
 
-        public async Task<UserAccount> GetUserAccountByKey(long key)
+        public async Task<UserAccount?> GetUserAccountByKey(long key)
         {
-            try
-            {
-                return await FirstOrDefaultAsync(u => u.Oid == key && u.IsDeleted == false, i => i.Roles);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+     
+            return await context.UserAccounts
+                .Include(u => u.Roles) 
+                .FirstOrDefaultAsync(u => u.Oid == key && !u.IsDeleted);
         }
 
         public async Task<UserListDto> GetUserAccountByRole(int key, int start, int take)
@@ -38,11 +28,11 @@ namespace TUSO.Infrastructure.Repositories
             {
                 if (key == 0)
                 {
-                    return GetUserList(i => i.IsDeleted == false, start, take);
+                    return await GetUserList(i => i.IsDeleted == false, start, take);
                 }
                 else
                 {
-                    return GetUserList(u => u.RoleId == key && u.IsDeleted == false, start, take);
+                    return await GetUserList(u => u.RoleId == key && u.IsDeleted == false, start, take);
                 }
             }
             catch (Exception)
@@ -122,7 +112,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return GetUserList(i => i.IsDeleted == false, start, take);
+                return await GetUserList(i => i.IsDeleted == false, start, take);
             }
             catch (Exception)
             {
@@ -135,7 +125,7 @@ namespace TUSO.Infrastructure.Repositories
             try
             {
                 var length = name.Length;
-                return GetUserList(i => i.IsDeleted == false && i.Name.Substring(0, length) == name, start, take);
+                return await GetUserList(i => i.IsDeleted == false && i.Name.Substring(0, length) == name, start, take);
             }
             catch (Exception)
             {
@@ -167,59 +157,60 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public UserListDto GetUserList(Expression<Func<UserAccount, bool>> predicate, int start, int take)
+        public async Task<UserListDto> GetUserList(Expression<Func<UserAccount, bool>> predicate, int start, int take)
         {
-            var data = (from i in context.UserAccounts.Where(predicate)
-                        join f in context.Roles on i.RoleId equals f.Oid
-                        select new
-                        {
-                            i.Oid,
-                            i.RoleId,
-                            i.Name,
-                            i.Surname,
-                            i.Email,
-                            i.Username,
-                            i.Password,
-                            i.CountryCode,
-                            i.Cellphone,
-                            i.IsAccountActive,
-                            i.CreatedBy,
-                            f.RoleName
-                        }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToList();
-
-            List<UserDto> dto = new List<UserDto>();
-            if (data.Count > 0)
-            {
-                foreach (var i in data)
-                {
-                    dto.Add(new UserDto
+            var data = context.UserAccounts
+                .Where(predicate)
+                .OrderByDescending(o => o.Oid)
+                .Skip(start)
+                .Take(take)
+                .Join(context.Roles,
+                    u => u.RoleId,
+                    r => r.Oid,
+                    (u, r) => new
                     {
-                        Oid = i.Oid,
-                        Name = i.Name,
-                        Surname = i.Surname,
-                        Email = i.Email,
-                        Username = i.Username,
-                        Password = i.Password,
-                        CountryCode = i.CountryCode,
-                        Cellphone = i.Cellphone,
-                        IsAccountActive = i.IsAccountActive,
-                        RoleId = i.RoleId,
-                        RoleName = i.RoleName,
-                        IsUserAlreadyUsed = context.Members.FirstOrDefault(x => x.UserAccountId == i.Oid) == null ? false : true
-                    });
-                }
-            }
+                        u.Oid,
+                        u.RoleId,
+                        u.Name,
+                        u.Surname,
+                        u.Email,
+                        u.Username,
+                        u.Password,
+                        u.CountryCode,
+                        u.Cellphone,
+                        u.IsAccountActive,
+                        u.CreatedBy,
+                        RoleName = r.RoleName
+                    })
+                .ToList();
 
-            UserListDto list = new UserListDto
+            var dto = data.Select(i => new UserDto
+            {
+                Oid = i.Oid,
+                Name = i.Name,
+                Surname = i.Surname,
+                Email = i.Email,
+                Username = i.Username,
+                Password = i.Password,
+                CountryCode = i.CountryCode,
+                Cellphone = i.Cellphone,
+                IsAccountActive = i.IsAccountActive,
+                RoleId = i.RoleId,
+                RoleName = i.RoleName,
+                IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == i.Oid)
+            }).ToList();
+
+            var list = new UserListDto
             {
                 List = dto,
                 CurrentPage = start + 1,
-                TotalUser = context.UserAccounts.Where(predicate).Count()
+                TotalUser = await context.UserAccounts.CountAsync(predicate)
             };
+
             return list;
         }
 
-       
+
 
         public async Task<UserAccount?> GetUserByUsernameCellPhone(string Cellphone, string Username, string CountryCode)
         {
