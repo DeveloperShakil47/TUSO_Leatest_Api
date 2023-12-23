@@ -428,17 +428,15 @@ namespace TUSO.Utilities.Constants
 
         public const string ReadIncidentCategorys = "incident-categorys";
 
-        public const string ReadIncidentCategorybyPageParentOne = "incident-category/pagination-one";
+        public const string ReadIncidentCategoryByKeyParent = "incident-category/parent/key/{key}";
 
-        public const string ReadIncidentCategorysTreeView = "incident-categorystreeview";
+        public const string ReadIncidentCategoryBySingleKey = "incident-category-single/key/{key}";
 
-        public const string ReadIncidentCategoryByKeyParentTwo = "incident-category/parent-two/key/{key}";
+        public const string ReadIncidentCategoryPageByFirstLevel = "incident-category/pagination-firstlevel";
 
-        public const string ReadIncidentCategoriesByPageParentTwo = "incident-category/pagination-two/key/{key}";
+        public const string ReadIncidentCategoryPageBySecondLevel = "incident-category/pagination-secondlevel/key/{key}";
 
-        public const string ReadIncidentCategoryByKeyParentThree = "incident-category/parent-three/key/{key}";
-
-        public const string ReadIncidentCategoryByPageParentThree = "incident-category/pagination-three/key/{key}";
+        public const string ReadIncidentCategoryPageByThirdLevel = "incident-category/pagination-thirdlevel/key/{key}";
 
         public const string UpdateIncidentCategory = "incident-category/{key}";
 
