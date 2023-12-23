@@ -1,14 +1,14 @@
 ﻿/*
- * Created by: Rakib
- * Date created: 27.09.2022
- * Last modified: 
+ * Created by: Stephan
+ * Date created: 17.12.2023
+ * Last modified:
  * Modified by: 
  */
 namespace TUSO.Domain.Dto
 {
     public class UserDto
     {
-        public long OID { get; set; }
+        public long Oid { get; set; }
 
         public string Name { get; set; }
 
@@ -26,17 +26,17 @@ namespace TUSO.Domain.Dto
 
         public bool IsAccountActive { get; set; }
 
-        public int RoleID { get; set; }
+        public int RoleId { get; set; }
 
         public string RoleName { get; set; }
 
-        public int? FacilityID { get; set; }
+        public int? FacilityId { get; set; }
 
-        public int? DistrictID { get; set; }
+        public int? DistrictId { get; set; }
 
-        public int? ProvinceID { get; set; }
+        public int? ProvinceId { get; set; }
 
-        public int? UsertypeID { get; set; }
+        public int? DeviceTypeId { get; set; }
 
         public bool IsUserAlreadyUsed { get; set; }
     }

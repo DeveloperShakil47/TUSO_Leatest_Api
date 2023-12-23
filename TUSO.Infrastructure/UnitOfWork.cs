@@ -257,14 +257,14 @@ namespace TUSO.Infrastructure
 
 
         #region UserRepository
-        private IUserRepository userRepository;
-        public IUserRepository UserRepository
+        private IUserAccountRepository userAccountRepository ;
+        public IUserAccountRepository UserAccountRepository 
         {
             get
             {
-                if (userRepository == null)
-                    userRepository = new UserRepository(context);
-                return userRepository;
+                if (userAccountRepository == null)
+                    userAccountRepository = new UserAccountRepository(context);
+                return userAccountRepository;
             }
         }
         #endregion

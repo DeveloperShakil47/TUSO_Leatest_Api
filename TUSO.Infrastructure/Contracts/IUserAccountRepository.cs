@@ -8,7 +8,7 @@ using TUSO.Domain.Entities;
 
 namespace TUSO.Infrastructure.Contracts
 {
-    public interface IUserRepository : IRepository<UserAccount>
+    public interface IUserAccountRepository : IRepository<UserAccount>
     {
         /// <summary>
         /// Returns a user account if key matched.
