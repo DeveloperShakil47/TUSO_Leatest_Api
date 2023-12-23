@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
@@ -38,7 +37,7 @@ namespace TUSO.Api.Controllers
                 if (await IsAccountDuplicate(userAccount) == true)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateUserAccountError);
 
-                var userAccountWithSameCellphone = await context.UserRepository.GetUserAccountByCellphone(userAccount.Cellphone);
+                var userAccountWithSameCellphone = await context.UserAccountRepository.GetUserAccountByCellphone(userAccount.Cellphone);
 
                 if (userAccountWithSameCellphone != null)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateCellphoneError);
@@ -50,7 +49,7 @@ namespace TUSO.Api.Controllers
                 string encryptedPassword = encryptionHelpers.Encrypt(userAccount.Password);
                 userAccount.Password = encryptedPassword;
 
-               context.UserRepository.Add(userAccount);
+               context.UserAccountRepository.Add(userAccount);
                 await context.SaveChangesAsync();
 
                 if (userAccount.SystemPermissionList != null)
@@ -88,7 +87,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                UserAccountCountDto useraccountDto = await context.UserRepository.UserAccountCount();
+                UserAccountCountDto useraccountDto = await context.UserRepository.UserAccouontCount();
 
                 return Ok(useraccountDto);
             }
@@ -108,7 +107,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccounts = await context.UserRepository.GetUsers(start, take);
+                var userAccounts = await context.UserAccountRepository.GetUsers(start, take);
 
                 return Ok(userAccounts);
             }
@@ -128,7 +127,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccounts = await context.UserRepository.GetUsersByName(name, start, take);
+                var userAccounts = await context.UserAccountRepository.GetUsersByName(name, start, take);
 
                 return Ok(userAccounts);
             }
@@ -152,7 +151,7 @@ namespace TUSO.Api.Controllers
                 if (String.IsNullOrEmpty(key.ToString()))
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccount = await context.UserRepository.GetUserAccountByKey(key);
+                var userAccount = await context.UserAccountRepository.GetUserAccountByKey(key);
 
                 if (userAccount == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
@@ -179,7 +178,7 @@ namespace TUSO.Api.Controllers
                 if (devicetypeId <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccountInDb = await context.UserRepository.GetUserByUsertype(devicetypeId);
+                var userAccountInDb = await context.UserAccountRepository.GetUserByUsertype(devicetypeId);
 
                 if (userAccountInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
@@ -206,7 +205,7 @@ namespace TUSO.Api.Controllers
                 if (String.IsNullOrEmpty(key.ToString()))
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccount = await context.UserRepository.GetClientAccountByKey(key);
+                var userAccount = await context.UserAccountRepository.GetClientAccountByKey(key);
 
                 if (userAccount == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
@@ -235,7 +234,7 @@ namespace TUSO.Api.Controllers
                 if (String.IsNullOrEmpty(key.ToString()))
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccount = await context.UserRepository.GetUserAccountByRole(key, start, take);
+                var userAccount = await context.UserAccountRepository.GetUserAccountByRole(key, start, take);
 
                 if (userAccount == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
@@ -258,7 +257,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccount = await context.UserRepository.GetUserAccountByExpert();
+                var userAccount = await context.UserAccountRepository.GetUserAccountByExpert();
 
                 if (userAccount == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
@@ -290,7 +289,7 @@ namespace TUSO.Api.Controllers
                 if (await IsAccountDuplicate(userAccount) == true)
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateUserAccountError);
 
-                var userAccountWithSameCellphone = await context.UserRepository.GetUserAccountByCellphone(userAccount.Cellphone);
+                var userAccountWithSameCellphone = await context.UserAccountRepository.GetUserAccountByCellphone(userAccount.Cellphone);
 
 
                 if (userAccountWithSameCellphone != null && userAccountWithSameCellphone.Oid != userAccount.Oid)
@@ -298,7 +297,7 @@ namespace TUSO.Api.Controllers
 
                 userAccount.DateModified = DateTime.Now;
 
-                context.UserRepository.Update(userAccount);
+                context.UserAccountRepository.Update(userAccount);
                 await context.SaveChangesAsync();
 
                 return StatusCode(StatusCodes.Status204NoContent);
@@ -323,7 +322,7 @@ namespace TUSO.Api.Controllers
                 EncryptionHelpers encryptionHelpers = new EncryptionHelpers();
                 string encryptedPassword = encryptionHelpers.Encrypt(login.Password);
 
-                var user = await context.UserRepository.GetUserByUserNamePassword(login.UserName, encryptedPassword);
+                var user = await context.UserAccountRepository.GetUserByUserNamePassword(login.UserName, encryptedPassword);
 
                 if (user != null)
                 {
@@ -354,7 +353,7 @@ namespace TUSO.Api.Controllers
                 EncryptionHelpers encryptionHelpers = new EncryptionHelpers();
                 string encryptedOldPassword = encryptionHelpers.Encrypt(changePassword.Password);
 
-                var user = await context.UserRepository.GetUserByUserNamePassword(changePassword.UserName, encryptedOldPassword);
+                var user = await context.UserAccountRepository.GetUserByUserNamePassword(changePassword.UserName, encryptedOldPassword);
 
                 if (user.Password != encryptedOldPassword)
                     return BadRequest(MessageConstants.WrongPasswordError);
@@ -366,7 +365,7 @@ namespace TUSO.Api.Controllers
                     string encryptedPassword = encryptionHelpers.Encrypt(changePassword.NewPassword);
                     user.Password = encryptedPassword;
 
-                    context.UserRepository.Update(user);
+                    context.UserAccountRepository.Update(user);
                     await context.SaveChangesAsync();
 
                     return Ok(user);
@@ -393,7 +392,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var check = await context.UserRepository.GetUserAccountByKey(recoveryPassword.UserAccountID);
+                var check = await context.UserAccountRepository.GetUserAccountByKey(recoveryPassword.UserAccountID);
 
                 if (check != null)
                 {
@@ -404,7 +403,7 @@ namespace TUSO.Api.Controllers
 
                         check.Password = encryptedOldPassword;
 
-                        context.UserRepository.Update(check);
+                        context.UserAccountRepository.Update(check);
 
                         var recovery = await context.RecoveryRequestRepository.GetRecoveryRequestByKey(recoveryPassword.RequestID);
 
@@ -445,21 +444,21 @@ namespace TUSO.Api.Controllers
                 if (String.IsNullOrEmpty(key.ToString()))
                     return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
 
-                var userAccountInDb = await context.UserRepository.GetUserAccountByKey(key);
+                var userAccountInDb = await context.UserAccountRepository.GetUserAccountByKey(key);
 
                 if (userAccountInDb == null)
                     return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
                 if (userAccountInDb.RoleId == 1)
                 {
-                    var totalOpenTicketUnderClient = await context.UserRepository.TotalOpenTicketUnderClient(userAccountInDb.Oid);
+                    var totalOpenTicketUnderClient = await context.UserAccountRepository.TotalOpenTicketUnderClient(userAccountInDb.Oid);
 
                     if (totalOpenTicketUnderClient > 0)
                         return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
                 }
                 else if (userAccountInDb.RoleId == 4)
                 {
-                    var isTeamLead = await context.UserRepository.IsTeamLeader(userAccountInDb.Oid);
+                    var isTeamLead = await context.UserAccountRepository.IsTeamLeader(userAccountInDb.Oid);
 
                     if (isTeamLead == false)
                     {
@@ -497,7 +496,7 @@ namespace TUSO.Api.Controllers
                 userAccountInDb.IsDeleted = true;
                 userAccountInDb.DateModified = DateTime.Now;
 
-                context.UserRepository.Update(userAccountInDb);
+                context.UserAccountRepository.Update(userAccountInDb);
                 await context.SaveChangesAsync();
 
                 return Ok(userAccountInDb);
@@ -519,7 +518,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccountInDb = await context.UserRepository.GetUserAccountByName(key);
+                var userAccountInDb = await context.UserAccountRepository.GetUserAccountByName(key);
 
                 if (userAccountInDb != null)
                     return true;
@@ -543,7 +542,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccountInDb = await context.UserRepository.GetUserAccountByCellphone(key);
+                var userAccountInDb = await context.UserAccountRepository.GetUserAccountByCellphone(key);
 
                 if (userAccountInDb != null)
                     return true;
@@ -573,7 +572,7 @@ namespace TUSO.Api.Controllers
                 if (name.Length < 3)
                     return userAccounts;
 
-                userAccounts = await context.UserRepository.GetUserAccountByFullName(name);
+                userAccounts = await context.UserAccountRepository.GetUserAccountByFullName(name);
 
                 if (userAccounts != null)
                     return userAccounts;
@@ -595,7 +594,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccountInDb = await context.UserRepository.GetUserAccountByName(userAccount.Username);
+                var userAccountInDb = await context.UserAccountRepository.GetUserAccountByName(userAccount.Username);
 
                 if (userAccountInDb != null)
                 {
@@ -615,7 +614,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var userAccountInDb = await context.UserRepository.GetUserAccountByName(userAccount.Username);
+                var userAccountInDb = await context.UserAccountRepository.GetUserAccountByName(userAccount.Username);
 
                 if (userAccountInDb != null)
                     return userAccountInDb;

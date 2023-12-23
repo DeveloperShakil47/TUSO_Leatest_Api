@@ -13,9 +13,9 @@ using TUSO.Infrastructure.SqlServer;
 
 namespace TUSO.Infrastructure.Repositories
 {
-    public class UserRepository : Repository<UserAccount>, IUserRepository
+    public class UserAccountRepository : Repository<UserAccount>, IUserAccountRepository
     {
-        public UserRepository(DataContext context) : base(context)
+        public UserAccountRepository(DataContext context) : base(context)
         {
 
         }
@@ -194,7 +194,7 @@ namespace TUSO.Infrastructure.Repositories
                 {
                     dto.Add(new UserDto
                     {
-                        OID = i.Oid,
+                        Oid = i.Oid,
                         Name = i.Name,
                         Surname = i.Surname,
                         Email = i.Email,
@@ -203,7 +203,7 @@ namespace TUSO.Infrastructure.Repositories
                         CountryCode = i.CountryCode,
                         Cellphone = i.Cellphone,
                         IsAccountActive = i.IsAccountActive,
-                        RoleID = i.RoleId,
+                        RoleId = i.RoleId,
                         RoleName = i.RoleName,
                         IsUserAlreadyUsed = context.Members.FirstOrDefault(x => x.UserAccountId == i.Oid) == null ? false : true
                     });
@@ -298,7 +298,7 @@ namespace TUSO.Infrastructure.Repositories
                                    from provinces in provincesInfo.DefaultIfEmpty()
                                    select new UserDto
                                    {
-                                       OID = user.Oid,
+                                       Oid = user.Oid,
                                        Name = user.Name,
                                        Cellphone = user.Cellphone,
                                        Surname = user.Surname,
@@ -307,11 +307,11 @@ namespace TUSO.Infrastructure.Repositories
                                        Password = user.Password,
                                        IsAccountActive = user.IsAccountActive,
                                        CountryCode = user.CountryCode,
-                                       RoleID = user.RoleId, // Fixed property name
-                                       FacilityID = facility.Oid,
-                                       DistrictID = district.Oid,
-                                       ProvinceID = provinces.Oid,
-                                       UsertypeID = user.DeviceTypeId, // Assuming DeviceTypeId is equivalent to UsertypeID
+                                       RoleId = user.RoleId, // Fixed property name
+                                       FacilityId = facility.Oid,
+                                       DistrictId = district.Oid,
+                                       ProvinceId = provinces.Oid,
+                                       DeviceTypeId = user.DeviceTypeId, // Assuming DeviceTypeId is equivalent to UsertypeID
                                        IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid) // Simplified the check
                                    }
                         ).FirstOrDefault();
