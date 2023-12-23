@@ -46,6 +46,9 @@ namespace TUSO.Infrastructure.Contracts
 
         IUserAccountRepository UserAccountRepository { get; }
 
+        IDeviceTypeRepository DeviceTypeRepository { get; }
+
+        IIncidentPriorityRepository IncidentPriorityRepository { get; }
 
         Task<int> SaveChangesAsync();
 

@@ -101,12 +101,13 @@ namespace TUSO.Infrastructure
             {
                 if (systemRepository == null)
                     systemRepository = new SystemRepository(context);
+
                 return systemRepository;
             }
         }
         #endregion
 
-        #region FundingAgency
+        #region FundingAgencyRepository
         private IFundingAgencyRepository fundingAgencyRepository;
         public IFundingAgencyRepository FundingAgencyRepository
         {
@@ -120,7 +121,7 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
-        #region ImplementingPartner
+        #region ImplementingPartnerRepository
         private IImplementingPartnerRepository implementingpartnerRepository;
         public IImplementingPartnerRepository ImplementingPartnerRepository
         {
@@ -142,6 +143,7 @@ namespace TUSO.Infrastructure
             {
                 if (systemPermissionRepository == null)
                     systemPermissionRepository = new SystemPermissionRepository(context);
+
                 return systemPermissionRepository;
             }
         }
@@ -169,12 +171,13 @@ namespace TUSO.Infrastructure
             {
                 if (memberRepository == null)
                     memberRepository = new MemberRepository(context);
+
                 return memberRepository;
             }
         }
         #endregion
 
-        #region DeviceControl
+        #region DeviceControlRepository
         private IDeviceControlRepository deviceControlRepository;
         public IDeviceControlRepository DeviceControlRepository 
         {
@@ -188,7 +191,7 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
-        #region EmailControl
+        #region EmailControlRepository
         private IEmailControlRepository emailControlRepository;
         public IEmailControlRepository EmailControlRepository
         {
@@ -210,6 +213,7 @@ namespace TUSO.Infrastructure
             {
                 if (emailConfigurationRepository == null)
                     emailConfigurationRepository = new EmailConfigurationRepository(context);
+
                 return emailConfigurationRepository;
             }
         }
@@ -223,6 +227,7 @@ namespace TUSO.Infrastructure
             {
                 if (emailTemplateRepository == null)
                     emailTemplateRepository = new EmailTemplateRepository(context);
+
                 return emailTemplateRepository;
             }
         }
@@ -250,6 +255,7 @@ namespace TUSO.Infrastructure
             {
                 if (roleRepository == null)
                     roleRepository = new RoleRepository(context);
+
                 return roleRepository;
             }
         }
@@ -264,7 +270,36 @@ namespace TUSO.Infrastructure
             {
                 if (userAccountRepository == null)
                     userAccountRepository = new UserAccountRepository(context);
+
                 return userAccountRepository;
+            }
+        }
+        #endregion
+
+        #region UserTypeRepository
+        private IDeviceTypeRepository deviceTypeRepository;
+        public IDeviceTypeRepository DeviceTypeRepository 
+        {
+            get
+            {
+                if (deviceTypeRepository == null)
+                    deviceTypeRepository = new DeviceTypeRepository(context);
+
+                return deviceTypeRepository;
+            }
+        }
+        #endregion
+
+        #region IncidentPriorityRepository
+        private IIncidentPriorityRepository incidentPriorityRepository;
+        public IIncidentPriorityRepository IncidentPriorityRepository
+        {
+            get
+            {
+                if(incidentPriorityRepository == null)
+                    incidentPriorityRepository = new IncidentPriorityRepository(context);
+
+                return incidentPriorityRepository;
             }
         }
         #endregion
