@@ -165,7 +165,7 @@ namespace TUSO.Api.Controllers
         /// <param name="key">UserAccountID of the table Members</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadMemberByTeam)]
+        [Route(RouteConstants.ReadTeamMemberByKey)]
         public async Task<IActionResult> GetMemberByTeam(int key)
         {
             try

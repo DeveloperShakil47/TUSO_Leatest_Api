@@ -18,7 +18,7 @@ namespace TUSO.Domain.Dto
         public ResponseDto(HttpStatusCode httpStatusCode, bool isSuccess, string message, dynamic data) {
         
             StatusCode = httpStatusCode;
-            IsSuccess = IsSuccess;
+            IsSuccess = isSuccess;
             Message = message;
             Data = data;
         }

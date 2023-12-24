@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -149,32 +150,7 @@ namespace TUSO.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// URL: tuso-api/user-account/key/{key}
-        /// </summary>
-        /// <param name="key">Primary key of the table Countries</param>
-        /// <returns>Instance of a table object.</returns>
-        [HttpGet]
-        [Route(RouteConstants.ReadUserAccountByKey)]
-        public async Task<IActionResult> ReadUserAccountByKey(long key)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(key.ToString()))
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
-
-                var userAccount = await context.UserAccountRepository.GetUserAccountByKey(key);
-
-                if (userAccount == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(userAccount);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-            }
-        }
+   
 
         /// <summary>
         /// URL : tuso-api/user-account/usertype/{devicetypeId}
@@ -209,8 +185,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table useraccount</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadClientAccountByKey)]
-        public async Task<IActionResult> ReadClientAccountByKey(long key)
+        [Route(RouteConstants.ReadUserAccountByKey)]
+        public async Task<IActionResult> ReadUserAccountByKey(long key)
         {
             try
             {
@@ -327,7 +303,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.UserLogin)]
-        public async Task<IActionResult> UserLogin(LoginDto login)
+        public async Task<ResponseDto> UserLogin(LoginDto login)
         {
             try
             {
@@ -338,16 +314,17 @@ namespace TUSO.Api.Controllers
 
                 if (user != null)
                 {
-                    return Ok(user);
+                    var currentLoginUser = await context.UserAccountRepository.GetClientAccountByKey(user.Oid);
+                    return new ResponseDto(HttpStatusCode.OK, true, "Login Successfull", currentLoginUser);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, "Invalid Username and Password", null);
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

@@ -183,7 +183,6 @@ namespace TUSO.Utilities.Constants
 
         public const string ReadUserAccountByKey = "user-account/key/{key}";
 
-        public const string ReadClientAccountByKey = "user-account/client/key/{key}";
 
         public const string ReadUserAccountByRole = "user-account/role/{key}";
 
@@ -374,7 +373,7 @@ namespace TUSO.Utilities.Constants
 
         public const string ReadMemberByUser = "member/user/{key}";
 
-        public const string ReadMemberByTeam = "member/team/{key}";
+        public const string ReadTeamMemberByKey = "member/team/{key}";
 
         public const string ReadMemberByTeamPage = "members-pagination/team/{key}";
 

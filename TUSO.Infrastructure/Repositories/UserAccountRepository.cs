@@ -305,7 +305,7 @@ namespace TUSO.Infrastructure.Repositories
                         DeviceTypeId = user.DeviceTypeId,
                         Modules = string.Join(",", context.ModulePermissions
             .Where(mp => mp.RoleId == user.RoleId)
-            .Select(mp => mp.Modules.Description) 
+            .Select(mp => mp.Modules.ModuleName) 
             .ToList()),
                         IsUserAlreadyUsed = context.Members.Any(x => x.UserAccountId == user.Oid)
                     }
