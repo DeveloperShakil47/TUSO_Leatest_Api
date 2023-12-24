@@ -303,17 +303,17 @@ namespace TUSO.Utilities.Constants
         #endregion
 
         #region Modules
-        public const string CreateModule = "module";
+        public const string CreateModule = "module-option";
 
-        public const string ReadModules = "modules";
+        public const string ReadModules = "module-options";
 
-        public const string ReadModulesByPage = "modules/pagination";
+        public const string ReadModulesByPage = "modules-option/pagination";
 
-        public const string ReadModuleByKey = "module/key/{key}";
+        public const string ReadModuleByKey = "module-option/key/{key}";
 
-        public const string UpdateModule = "module/{key}";
+        public const string UpdateModule = "module-option/{key}";
 
-        public const string DeleteModule = "module/{key}";
+        public const string DeleteModule = "module-option/{key}";
         #endregion
 
         #region ModulePermission

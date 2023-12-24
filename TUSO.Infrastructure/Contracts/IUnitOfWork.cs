@@ -52,6 +52,8 @@ namespace TUSO.Infrastructure.Contracts
 
         IIncidentPriorityRepository IncidentPriorityRepository { get; }
 
+        IModuleRepository ModuleRepository { get; }
+
         Task<int> SaveChangesAsync();
 
     }

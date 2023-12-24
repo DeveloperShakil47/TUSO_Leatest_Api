@@ -176,6 +176,7 @@ namespace TUSO.Infrastructure
             }
         }
         #endregion
+
         #region LeadMemberRepository
         private ILeadMemberRepository leadMemberRepository;
         public ILeadMemberRepository LeadMemberRepository
@@ -274,6 +275,19 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
+        #region ModuleRepository
+        private IModuleRepository moduleRepository;
+        public IModuleRepository ModuleRepository 
+        {
+            get
+            {
+                if (moduleRepository == null)
+                    moduleRepository = new ModuleRepository(context);
+
+                return moduleRepository;
+            }
+        }
+        #endregion
 
         #region UserRepository
         private IUserAccountRepository userAccountRepository ;

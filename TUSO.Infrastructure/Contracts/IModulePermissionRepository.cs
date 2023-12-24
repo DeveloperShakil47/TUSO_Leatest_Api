@@ -15,43 +15,43 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="OID"Primary key of the table ></param>
         /// <returns>Instance of a ModulePermisstion object.</returns>
-        public Task<ModulePermission> GetModulePermissionByKey(int OID);
+        public Task<ModulePermission> GetModulePermissionByKey(int Oid);
 
         /// <summary>
         /// Returns a module permission if RoleID matched
         /// </summary>
         /// <param name="RoleID"Primary key of the role table ></param>
         /// <returns>Instance of a ModulePermission object.</returns>
-        public Task<IEnumerable<ModulePermission>> GetModulePermissionByRole(int RoleID);
+        public Task<IEnumerable<ModulePermission>> GetModulePermissionByRole(int RoleId);
 
         /// <summary>
         /// Returns a module permission if RoleID matched
         /// </summary>
         /// <param name="RoleID"Primary key of the role table ></param>
         /// <returns>Instance of a ModulePermission object.</returns>
-        public Task<IEnumerable<ModulePermission>> GetModulePermissionsByRole(int RoleID, int start, int take);
+        public Task<IEnumerable<ModulePermission>> GetModulePermissionsByRole(int RoleId, int start, int take);
 
         /// <summary>
         /// Count  module permission if RoleID matched
         /// </summary>
         /// <param name="RoleID"Primary key of the role table ></param>
         /// <returns>Count number of  ModulePermission object.</returns>
-        public Task<int> GetModulePermissionCountByRole(int RoleID);
+        public Task<int> GetModulePermissionCountByRole(int RoleId);
 
         /// <summary>
         /// Returns a module permission if ModuleID matched
         /// </summary>
         /// <param name="ModuleID"Primary key of the module table></param>
         /// <returns>Instance of a ModulePermission Object</returns>
-        public Task<IEnumerable<ModulePermission>> GetModulePermissionByModule(int ModuleID);
+        public Task<IEnumerable<ModulePermission>> GetModulePermissionByModule(int ModuleId);
 
         /// <summary>
         /// Returns a module permission if RoleID, ModuleID matched.
         /// </summary>
-        /// <param name="RoleID">Primary key of the role table</param>
-        /// <param name="ModuleID">Primary key of the module table</param>
+        /// <param name="RoleId">Primary key of the role table</param>
+        /// <param name="ModuleId">Primary key of the module table</param>
         /// <returns>Instance of a ModulePermission object</returns>
-        public Task<ModulePermission> GetModulePermission(int RoleID, int ModuleID);
+        public Task<ModulePermission> GetModulePermission(int RoleId, int ModuleId);
 
         /// <summary>
         /// Returns all Module permission.
