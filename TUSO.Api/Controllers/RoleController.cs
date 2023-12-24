@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<RoleController> logger;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="UnitOfWork"></param>
-        public RoleController(IUnitOfWork context)
+        public RoleController(IUnitOfWork context, ILogger<RoleController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadUserRoleByKey", new { key = role.Oid }, role);
             }
-            catch (Exception)
+            catch (Exception ex )
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateUserRole", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -70,8 +74,10 @@ namespace TUSO.Api.Controllers
                 var role = await context.RoleRepository.GetRoles();
                 return Ok(role);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRoles", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -82,7 +88,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRolesPage)]
-        public async Task<IActionResult> ReadUserRoles(int start, int take)
+        public async Task<IActionResult> ReadUserRolesPage(int start, int take)
         {
             try
             {
@@ -96,8 +102,10 @@ namespace TUSO.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRolesPage", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -125,6 +133,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRoleByKey", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -155,8 +165,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateUserRole", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -188,9 +200,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(userAccountInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ///WriteToLog(ex.Message);
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteUserRole", "RoleController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -212,8 +225,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsRoleDuplicate", "RoleController.cs", ex.Message);
+
                 throw;
             }
         }

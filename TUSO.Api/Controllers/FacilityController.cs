@@ -20,13 +20,16 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
 
+        private readonly ILogger<FacilityController> logger;
+
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public FacilityController(IUnitOfWork context)
+        public FacilityController(IUnitOfWork context, ILogger<FacilityController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +54,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadFacilityByKey", new { key = facility.Oid }, facility);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFacility", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -71,8 +76,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilities", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -98,8 +105,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByKey", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -125,8 +134,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByDistrict", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -158,8 +169,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilitiesByDistrict", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -189,6 +202,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByName", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -219,8 +234,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFacility", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -252,8 +269,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFacility", "FacilityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -276,8 +295,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsFacilityDuplicate", "FacilityController.cs", ex.Message);
+
                 throw;
             }
         }

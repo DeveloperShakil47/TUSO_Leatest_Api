@@ -28,13 +28,13 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns all System.
         /// </summary>
         /// <returns>List of System object.</returns>
-        public Task<IEnumerable<Project>> GetSystem(int start, int take);
+        public Task<IEnumerable<Project>> GetSystemByPage(int start, int take);
 
         /// <summary>
         /// Returns all System.
         /// </summary>
         /// <returns>List of System object.</returns>
-        public Task<IEnumerable<Project>> GetAllSystem();
+        public Task<IEnumerable<Project>> GetSystems();
 
         /// <summary>
         /// Count all System.

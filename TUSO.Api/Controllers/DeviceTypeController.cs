@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class DeviceTypeController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly  ILogger<DeviceTypeController> logger;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="UnitOfWork"></param>
-        public DeviceTypeController(IUnitOfWork context)
+        public DeviceTypeController(IUnitOfWork context , ILogger<DeviceTypeController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadDeviceTypeByKey", new { key = deviceType.Oid }, deviceType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateDeviceType", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -62,8 +66,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadDevices)]
-        public async Task<IActionResult> ReadDevices()
+        [Route(RouteConstants.ReadDeviceTypes)]
+        public async Task<IActionResult> ReadDeviceTypes()
         {
             try
             {
@@ -71,8 +75,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(deviceTypes);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypes", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -97,8 +103,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypeByPage", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -126,6 +134,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypeByKey", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -156,8 +166,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateDeviceType", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -190,8 +202,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(deviceTypeInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteDeviceType", "DeviceTypeController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -215,8 +229,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsDeviceTypeDuplicate", "DeviceTypeController.cs", ex.Message);
+
                 throw;
             }
         }

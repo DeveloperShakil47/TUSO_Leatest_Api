@@ -18,7 +18,7 @@ namespace TUSO.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<FundingAgency>> GetFindingAgencies(int start, int take)
+        public async Task<IEnumerable<FundingAgency>> GetFindingAgenciesByPage(int start, int take)
         {
             try
             {

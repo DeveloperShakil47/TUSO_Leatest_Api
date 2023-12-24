@@ -244,15 +244,15 @@ namespace TUSO.Utilities.Constants
         #endregion
 
         #region EmailControl
-        public const string CreateConfiguration = "configuration";
+        public const string CreateEmailControl = "email-control";
 
-        public const string ReadConfigurations = "configurations";
+        public const string ReadEmailControls = "email-controls";
 
-        public const string ReadConfigurationByKey = "configuration/key/{key}";
+        public const string ReadEmailControlByKey = "email-control/key/{key}";
 
-        public const string UpdateConfiguration = "configuration/{key}";
+        public const string UpdateEmailControl = "email-control/{key}";
 
-        public const string DeleteConfiguration = "configuration/delete/{key}";
+        public const string DeleteEmailControl = "email-control/{key}";
         #endregion
 
         #region EmailConfiguration
@@ -483,7 +483,7 @@ namespace TUSO.Utilities.Constants
         #endregion
 
         #region RDP
-        public const string ReadDevices = "rdp-devices";
+        public const string ReadDevicesType = "rdp-devices";
 
         public const string ReadDeviceByKey = "rdp-device/key/{key}";
 

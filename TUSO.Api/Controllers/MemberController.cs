@@ -20,14 +20,16 @@ namespace TUSO.Api.Controllers
     public class MemberController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<MemberController> logger;
 
         /// <summary>
         ///Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public MemberController(IUnitOfWork context)
+        public MemberController(IUnitOfWork context, ILogger<MemberController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -78,8 +80,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateMember", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -98,8 +102,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(member);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMembers", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -125,8 +131,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(member);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMemberByKey", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -152,8 +160,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(member);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetMemberByUser", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -180,8 +190,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(member);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetMemberByTeam", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -213,8 +225,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMembersByTeam", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -245,8 +259,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateMember", "MemberController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -267,8 +283,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsMemberDuplicate", "MemberController.cs", ex.Message);
+
                 throw;
             }
         }
@@ -289,8 +307,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch( Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsLeadMemberDuplicateAndAlreadyHaveTeamLead", "MemberController.cs", ex.Message);
+
                 throw;
             }
         }

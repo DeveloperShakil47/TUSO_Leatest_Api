@@ -13,14 +13,16 @@ namespace TUSO.Api.Controllers
     public class ImplementingPartnerController : Controller
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<ImplementingPartnerController> logger;
 
         /// <summary>
         /// FundingAgency constructor.
         /// </summary>
         /// <param name="context"></param>
-        public ImplementingPartnerController(IUnitOfWork context)
+        public ImplementingPartnerController(IUnitOfWork context, ILogger<ImplementingPartnerController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -45,8 +47,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadImplementingPartnerByKey", new { key = implementingPartner.Oid }, implementingPartner);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -57,15 +61,37 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartners)]
-        public async Task<IActionResult> ReadImplementingPartners(int start, int take, bool isDropdown)
+        public async Task<IActionResult> ReadImplementingPartners()
         {
             try
             {
-                if (isDropdown)
-                {
-                   return Ok(await context.ImplementingPartnerRepository.GetImplementingPatrners());
-                }
-                var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPatrners(start, take);
+                var impelementingPartner = await context.ImplementingPartnerRepository.GetImplementingPatrners();
+
+                return Ok(impelementingPartner);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartners", "ImplementingPartnerController.cs", ex.Message);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+
+            }
+
+
+        }
+
+        /// <summary>
+        /// URl: tuso-api/implementingPartners
+        /// </summary>
+        /// <returns>List of table object.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadImplementingPartnersPage)]
+        public async Task<IActionResult> ReadImplementingPartnersPage(int start, int take)
+        {
+            try
+            {
+                var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPatrnerByPage(start, take);
+
                 var response = new
                 {
                     implementions = implementingPartnerInDb,
@@ -75,8 +101,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnersPage", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -102,8 +130,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(implementingPartnerInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnerByKey", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -129,8 +159,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(implementingPartnerInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnerBySystem", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -161,8 +193,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -194,8 +228,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(implementingPartnerInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -218,8 +254,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteImplementingPartner", "IsImplementingPartnerDuplicate.cs", ex.Message);
+
                 throw;
             }
         }

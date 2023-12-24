@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class SystemPermissionController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<SystemPermissionController> logger;
 
         /// <summary>
         /// System Permission constructor.
         /// </summary>
         /// <param name="context">Inject IUnitOfWork as context</param>
-        public SystemPermissionController(IUnitOfWork context)
+        public SystemPermissionController(IUnitOfWork context, ILogger<SystemPermissionController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -49,8 +51,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadSystemPermissionByKey", new { key = permission.Oid }, permission);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateSystemPermission", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -68,8 +72,10 @@ namespace TUSO.Api.Controllers
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissions();
                 return Ok(permissionInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissions", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -95,8 +101,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(permissionInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByKey", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -122,8 +130,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(permissionInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByUser", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -156,8 +166,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByUserPage", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -184,8 +196,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(permissionInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByProject", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -213,8 +227,10 @@ namespace TUSO.Api.Controllers
                 return Ok(permissionInDb);
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermission", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -244,8 +260,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateSystemPermission", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -277,8 +295,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(permissionInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteSystemPermission", "SystemPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -299,8 +319,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsPermissionDuplicate", "SystemPermissionController.cs", ex.Message);
+
                 throw;
             }
         }

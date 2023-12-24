@@ -60,7 +60,7 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<ImplementingPartner>> GetImplementingPatrners(int start, int take)
+        public async Task<IEnumerable<ImplementingPartner>> GetImplementingPatrnerByPage(int start, int take)
         {
             try
             {

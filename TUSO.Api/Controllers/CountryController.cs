@@ -20,13 +20,16 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
 
+        private readonly ILogger<CountryController> logger;
+
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public CountryController(IUnitOfWork context)
+        public CountryController(IUnitOfWork context, ILogger<CountryController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +54,9 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadCountryByKey", new { key = country.Oid }, country);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}",DateTime.Now, "BusinessLayer", "CreateCountry", "CountryController.cs", ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -71,8 +75,9 @@ namespace TUSO.Api.Controllers
 
                 return Ok(country);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountries", "CountryController.cs", ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -97,8 +102,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountriesbyPage", "CountryController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -124,8 +131,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(country);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountryByKey", "CountryController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -156,8 +165,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateCountry", "CountryController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -192,8 +203,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(countryInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteCountry", "CountryController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -217,8 +230,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsCountryDuplicate", "CountryController.cs", ex.Message);
+
                 throw;
             }
         }

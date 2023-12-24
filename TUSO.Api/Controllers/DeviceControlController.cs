@@ -21,13 +21,16 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
 
+        private readonly ILogger<DeviceControlController> logger;
+
         /// <summary>
         ///Default constructor
         /// </summary>
         /// <param name="UnitOfWork"></param>
-        public DeviceControlController(IUnitOfWork context)
+        public DeviceControlController(IUnitOfWork context, ILogger<DeviceControlController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -59,8 +62,10 @@ namespace TUSO.Api.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateDeviceControl", " DeviceControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -82,8 +87,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(deviceControlInDb.FirstOrDefault());
             }
-            catch (Exception)
+            catch (Exception ex )
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceControl", " DeviceControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }

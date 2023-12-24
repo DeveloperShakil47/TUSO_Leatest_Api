@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class EmailControlController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<EmailControlController> logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public EmailControlController(IUnitOfWork context)
+        public EmailControlController(IUnitOfWork context, ILogger<EmailControlController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -35,8 +37,8 @@ namespace TUSO.Api.Controllers
         /// <param name="configuration">Object to be saved in the table as a row.</param>
         /// <returns>Saved object.</returns>
         [HttpPost]
-        [Route(RouteConstants.CreateConfiguration)]
-        public async Task<IActionResult> CreateConfiguration(EmailControl emailControl)
+        [Route(RouteConstants.CreateEmailControl)]
+        public async Task<IActionResult> CreateEmailControl(EmailControl emailControl)
         {
             try
             {
@@ -49,10 +51,12 @@ namespace TUSO.Api.Controllers
                 context.EmailControlRepository.Add(emailControl);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return CreatedAtAction("ReadEmailControlByKey", new { key = emailControl.Oid }, emailControl);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateEmailControl", "EmailControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -62,8 +66,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadConfigurationByKey)]
-        public async Task<IActionResult> ReadConfigurationByKey(int key)
+        [Route(RouteConstants.ReadEmailControlByKey)]
+        public async Task<IActionResult> ReadEmailControlByKey(int key)
         {
             try
             {
@@ -71,8 +75,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(configuration);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailControlByKey", "EmailControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -85,8 +91,8 @@ namespace TUSO.Api.Controllers
         /// <param name="configuration">Object to be updated</param>
         /// <returns>Update row in the table.</returns>
         [HttpPut]
-        [Route(RouteConstants.UpdateConfiguration)]
-        public async Task<IActionResult> UpdateConfiguration(int key, EmailControl emailControl)
+        [Route(RouteConstants.UpdateEmailControl)]
+        public async Task<IActionResult> UpdateEmailControl(int key, EmailControl emailControl)
         {
             try
             {
@@ -103,8 +109,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailControl", "EmailControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -115,8 +123,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table</param>
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
-        [Route(RouteConstants.DeleteConfiguration)]
-        public async Task<IActionResult> DeleteConfiguration(int key)
+        [Route(RouteConstants.DeleteEmailControl)]
+        public async Task<IActionResult> DeleteEmailControl(int key)
         {
             try
             {
@@ -136,8 +144,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(configuration);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteEmailControl", "EmailControlController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }

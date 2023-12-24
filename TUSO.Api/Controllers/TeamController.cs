@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class TeamController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<TeamController> logger;
 
         /// <summary>
         ///Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public TeamController(IUnitOfWork context)
+        public TeamController(IUnitOfWork context, ILogger<TeamController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadTeamByKey", new { key = team.Oid }, team);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateTeam", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -70,8 +74,10 @@ namespace TUSO.Api.Controllers
                 var team = await context.TeamRepository.GetTeams();
                 return Ok(team);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadTeams", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -95,8 +101,10 @@ namespace TUSO.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadTeamsbyPage", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -122,8 +130,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(team);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadTeamByKey", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -154,8 +164,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateTeam", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -192,8 +204,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(teamInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteTeam", "TeamController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -215,8 +229,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsTeamDuplicate", "TeamController.cs", ex.Message);
+
                 throw;
             }
         }

@@ -19,9 +19,11 @@ namespace TUSO.Api.Controllers
     public class IncidentPriorityController : ControllerBase
     {
         private readonly IUnitOfWork context;
-        public IncidentPriorityController(IUnitOfWork context)
+        private readonly ILogger<IncidentPriorityController> logger;
+        public IncidentPriorityController(IUnitOfWork context, ILogger<IncidentPriorityController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -46,8 +48,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadIncidentPriorityByKey", new { key = incidentPriority.Oid }, incidentPriority);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateIncidentPriority", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -68,6 +72,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorities", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -92,8 +98,10 @@ namespace TUSO.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorities", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -119,8 +127,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(incidentPriorityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorityByKey", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -151,8 +161,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateIncidentPriority", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -184,8 +196,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(incidentPriorityInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteIncidentPriority", "IncidentPriorityController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -207,8 +221,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsIncidentPriorityDuplicate", "IncidentPriorityController.cs", ex.Message);
+
                 throw;
             }
         }

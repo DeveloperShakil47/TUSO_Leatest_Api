@@ -21,13 +21,16 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
 
+        private readonly ILogger<SystemController> logger;
+
         /// <summary>
         ///Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public SystemController(IUnitOfWork context)
+        public SystemController(IUnitOfWork context , ILogger<SystemController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -52,8 +55,32 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadSystemByKey", new { key = system.Oid }, system);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateSystem", "SystemController.cs", ex.Message);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+        }
+
+        /// <summary>
+        /// URL: tuso-api/systems
+        /// </summary>
+        /// <returns>List of table object.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadSystems)]
+        public async Task<IActionResult> ReadSystems()
+        {
+            try
+            {
+                var systems = await context.SystemRepository.GetSystems();
+
+                return Ok(systems);
+            }
+            catch(Exception ex)
+            {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystems", "SystemController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -68,7 +95,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var system = await context.SystemRepository.GetSystem(start, take);
+                var system = await context.SystemRepository.GetSystemByPage(start, take);
 
                 var response = new
                 {
@@ -78,8 +105,10 @@ namespace TUSO.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemsPagination", "SystemController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -107,8 +136,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(system);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemByKey", "SystemController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -139,8 +170,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateSystem", "SystemController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -187,8 +220,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(systemInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteSystem", "SystemController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -212,8 +247,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsSystemDuplicate", "SystemController.cs", ex.Message);
+
                 throw;
             }
         }

@@ -29,7 +29,7 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns all ImplementingPartners.
         /// </summary>
         /// <returns>List of ImplementingPartners object.</returns>
-        public Task<IEnumerable<ImplementingPartner>> GetImplementingPatrners(int start, int take);
+        public Task<IEnumerable<ImplementingPartner>> GetImplementingPatrnerByPage(int start, int take);
 
         public Task<IEnumerable<ImplementingPartner>> GetImplementingPatrners();
 

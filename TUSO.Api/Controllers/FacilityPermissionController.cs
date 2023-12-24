@@ -20,14 +20,16 @@ namespace TUSO.Api.Controllers
     public class FacilityPermissionController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<FacilityPermissionController> logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public FacilityPermissionController(IUnitOfWork context)
+        public FacilityPermissionController(IUnitOfWork context, ILogger<FacilityPermissionController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFacilityPermission)]
-        public async Task<IActionResult> CreateIncidentPriority(FacilityPermission facilityPermission)
+        public async Task<IActionResult> CreateFacilityPermission(FacilityPermission facilityPermission)
         {
             try
             {
@@ -52,8 +54,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadFacilityPermissionsByKey", new { key = facilityPermission.Oid }, facilityPermission);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFacilityPermission", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -73,8 +77,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityPermission);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityPermissionsByKey", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -95,8 +101,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityPermission);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityUsers", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -122,8 +130,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilitiesUsers", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -162,8 +172,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilitiesPermissionDtos);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityPermissions", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -176,7 +188,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFacilityPermissions)]
-        public async Task<IActionResult> UpdateIncidentPriority(int key, FacilityPermission facilityPermission)
+        public async Task<IActionResult> UpdateFacilityPermissions(int key, FacilityPermission facilityPermission)
         {
             try
             {
@@ -194,8 +206,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFacilityPermissions", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -227,8 +241,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(facilityPermission);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFacilityPermission", "FacilityPermissionController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }

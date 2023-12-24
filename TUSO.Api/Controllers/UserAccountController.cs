@@ -14,14 +14,16 @@ namespace TUSO.Api.Controllers
     public class UserAccountController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<UserAccountController> logger;
 
         /// <summary>
         /// System Permission constructor.
         /// </summary>
         /// <param name="context">Inject IUnitOfWork as context</param>
-        public UserAccountController(IUnitOfWork context)
+        public UserAccountController(IUnitOfWork context, ILogger<UserAccountController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -84,8 +86,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadUserAccountByKey", new { key = userAccount.Oid }, userAccount);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateUserAccount", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -104,8 +108,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(useraccountDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserCount", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -124,8 +130,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(userAccounts);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccounts", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -144,8 +152,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(userAccounts);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountsByName", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -173,8 +183,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(userAccountInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserByUserType", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -202,6 +214,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByKey", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -231,6 +245,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByRole", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -254,6 +270,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByExpert", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -290,8 +308,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateUserAccount", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -324,6 +344,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UserLogin", "UserAccountController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -366,6 +388,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ChangedPassword", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -415,6 +439,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "RecoveryPassword", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -492,6 +518,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteUserAccount", "UserAccountController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -514,8 +542,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsAccountUnique", "UserAccountController.cs", ex.Message);
+
                 throw;
             }
         }
@@ -538,8 +568,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsCellphoneUnique", "UserAccountController.cs", ex.Message);
+
                 throw;
             }
         }
@@ -568,8 +600,10 @@ namespace TUSO.Api.Controllers
 
                 return userAccounts;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUsersByName", "UserAccountController.cs", ex.Message);
+
                 throw;
             }
         }
@@ -593,8 +627,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsAccountDuplicate", "UserAccountController.cs", ex.Message);
+
                 throw;
             }
         }
@@ -610,8 +646,10 @@ namespace TUSO.Api.Controllers
 
                 return null;
             }
-            catch
+            catch(Exception ex) 
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetUserInfo", "UserAccountController.cs", ex.Message);
+
                 throw;
             }
         }

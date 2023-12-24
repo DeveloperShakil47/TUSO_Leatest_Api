@@ -19,14 +19,16 @@ namespace TUSO.Api.Controllers
     public class ProvinceController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<ProvinceController> logger;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="context"></param>
-        public ProvinceController(IUnitOfWork context)
+        public ProvinceController(IUnitOfWork context, ILogger<ProvinceController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadProvinceByKey", new { key = province.Oid }, province);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateProvince", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -71,8 +75,10 @@ namespace TUSO.Api.Controllers
                
                 return Ok(province);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadProvinces", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -98,8 +104,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(provinceInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadProvinceByKey", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -126,8 +134,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(provinceInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadProvinceByCountries", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -161,8 +171,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadProvinceByCountryPage", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -193,8 +205,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateProvince", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -229,8 +243,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(provinceInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteProvince", "ProvinceController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -252,8 +268,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsProvinceDuplicate", "ProvinceController.cs", ex.Message);
+
                 throw;
             }
         }

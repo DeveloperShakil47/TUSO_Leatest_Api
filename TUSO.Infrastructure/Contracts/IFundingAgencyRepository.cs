@@ -29,7 +29,7 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns all FundingAgency.
         /// </summary>
         /// <returns>List of FundingAgency object.</returns>
-        public Task<IEnumerable<FundingAgency>> GetFindingAgencies(int start,int take);
+        public Task<IEnumerable<FundingAgency>> GetFindingAgenciesByPage(int start,int take);
 
         public Task<IEnumerable<FundingAgency>> GetFindingAgencies();
 

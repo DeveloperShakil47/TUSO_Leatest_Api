@@ -5,9 +5,9 @@ using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
 /*
- * Created by: Rakib
- * Date created: 03.10.2022
- * Last modified: 
+ * Created by: Stephan
+ * Date created: 20.12.2023
+ * Last modified:
  * Modified by: 
  */
 namespace TUSO.Api.Controllers
@@ -20,14 +20,16 @@ namespace TUSO.Api.Controllers
     public class RecoveryRequestController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<RecoveryRequestController> logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public RecoveryRequestController(IUnitOfWork context)
+        public RecoveryRequestController(IUnitOfWork context, ILogger<RecoveryRequestController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -64,8 +66,10 @@ namespace TUSO.Api.Controllers
                     return StatusCode(StatusCodes.Status510NotExtended, MessageConstants.NoMatchFoundError);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -84,8 +88,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(recoveryRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequests", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -111,8 +117,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequestsByPage", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -138,8 +146,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(recoveryRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequestByKey", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -167,8 +177,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -200,8 +212,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(recoveryRequestInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -231,8 +245,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(recoveryRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "SearchRecoveryByUserName", "RecoveryRequestController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -256,8 +272,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsRequestDuplicate", "RecoveryRequestController.cs", ex.Message);
+
                 throw;
             }
         }

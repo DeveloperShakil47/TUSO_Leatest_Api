@@ -54,7 +54,7 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Project>> GetSystem(int start, int take)
+        public async Task<IEnumerable<Project>> GetSystemByPage(int start, int take)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace TUSO.Infrastructure.Repositories
                 throw;
             }
         }
-        public async Task<IEnumerable<Project>> GetAllSystem()
+        public async Task<IEnumerable<Project>> GetSystems()
         {
             try
             {

@@ -14,13 +14,15 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
 
+        private readonly ILogger<FundingAgencyController> logger;
         /// <summary>
         /// FundingAgency constructor.
         /// </summary>
         /// <param name="context"></param>
-        public FundingAgencyController(IUnitOfWork context)
+        public FundingAgencyController(IUnitOfWork context, ILogger<FundingAgencyController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -45,8 +47,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadFundingAgencyByKey", new { key = fundingAgency.Oid }, fundingAgency);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFundingAgency", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -57,15 +61,34 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencies)]
-        public async Task<IActionResult> ReadFundingAgencies(int start, int take, bool isDropdown)
+        public async Task<IActionResult> ReadFundingAgencies()
         {
             try
             {
-                if (isDropdown)
-                {
-                    return Ok(await context.FundingAgencyRepository.GetFindingAgencies());
-                }
-                var fundingAgencyInDb = await context.FundingAgencyRepository.GetFindingAgencies(start, take);
+                var fundingAgencies = await context.FundingAgencyRepository.GetFindingAgencies();
+
+                return Ok(fundingAgencies);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencies", "FundingAgencyController.cs", ex.Message);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+           
+        }
+
+        /// <summary>
+        /// URl: tuso-api/agencies
+        /// </summary>
+        /// <returns>List of table object.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadFundingAgenciesPage)]
+        public async Task<IActionResult> ReadFundingAgencies(int start, int take)
+        {
+            try
+            {
+                var fundingAgencyInDb = await context.FundingAgencyRepository.GetFindingAgenciesByPage(start, take);
 
                 var response = new
                 {
@@ -75,8 +98,10 @@ namespace TUSO.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencies", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -102,8 +127,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(fundingAgencyInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencyByKey", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -129,8 +156,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(fundingAgencyInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencyBySystem", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -161,8 +190,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFundingAgency", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -194,8 +225,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(fundingAgencyInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFundingAgency", "FundingAgencyController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -218,8 +251,10 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsFundingAgencyDuplicate", "FundingAgencyController.cs", ex.Message);
+
                 throw;
             }
         }

@@ -13,14 +13,16 @@ namespace TUSO.Api.Controllers
     public class EmailTemplateController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<EmailTemplateController> logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public EmailTemplateController(IUnitOfWork context)
+        public EmailTemplateController(IUnitOfWork context, ILogger<EmailTemplateController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -55,8 +57,10 @@ namespace TUSO.Api.Controllers
 
                 return CreatedAtAction("ReadEmailTemplateByKey", new { key = emailTemplate.Oid }, emailTemplate);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateEmailTemplate", "EmailTemplateController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -75,8 +79,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(emailTemplates);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailTemplates", "EmailTemplateController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -102,8 +108,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(emailTemplate);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailTemplateByKey", "EmailTemplateController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -130,8 +138,10 @@ namespace TUSO.Api.Controllers
 
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailTemplate", "EmailTemplateController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -163,8 +173,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(emailTemplateInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteEmailTemplate", "EmailTemplateController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
