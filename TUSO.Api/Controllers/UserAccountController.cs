@@ -33,7 +33,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateUserAccount)]
-        public async Task<IActionResult> CreateUserAccount(UserAccountCreateDto user)
+        public async Task<ResponseDto> CreateUserAccount(UserAccountCreateDto user)
         {
             try
             {
@@ -52,12 +52,12 @@ namespace TUSO.Api.Controllers
                 };
 
                 if (await IsAccountDuplicate(userAccount) == true)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateUserAccountError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateUserAccountError, null);
 
                 var userAccountWithSameCellphone = await context.UserAccountRepository.GetUserAccountByCellphone(userAccount.Cellphone);
 
                 if (userAccountWithSameCellphone != null)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateCellphoneError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateCellphoneError, null);
 
                 userAccount.DateCreated = DateTime.Now;
                 userAccount.IsDeleted = false;
@@ -83,14 +83,13 @@ namespace TUSO.Api.Controllers
                         await context.SaveChangesAsync();
                     }
                 }
-
-                return CreatedAtAction("ReadUserAccountByKey", new { key = userAccount.Oid }, userAccount);
+                var currentUser = context.UserAccountRepository.GetUserAccountByKey(userAccount.Oid);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data save successfully", currentUser);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateUserAccount", "UserAccountController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -100,19 +99,17 @@ namespace TUSO.Api.Controllers
         /// <returns> Total,Resolved and Unresolved user account count</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccount)]
-        public async Task<IActionResult> ReadUserCount()
+        public async Task<ResponseDto> ReadUserCount()
         {
             try
             {
                 UserAccountCountDto useraccountDto = await context.UserAccountRepository.UserAccountCount();
-
-                return Ok(useraccountDto);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, useraccountDto);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserCount", "UserAccountController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -122,19 +119,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountPage)]
-        public async Task<IActionResult> ReadUserAccounts(int start, int take)
+        public async Task<ResponseDto> ReadUserAccounts(int start, int take)
         {
             try
             {
                 var userAccounts = await context.UserAccountRepository.GetUsers(start, take);
 
-                return Ok(userAccounts);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, userAccounts);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccounts", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -144,19 +141,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountsByName)]
-        public async Task<IActionResult> ReadUserAccountsByName(string name, int start, int take)
+        public async Task<ResponseDto> ReadUserAccountsByName(string name, int start, int take)
         {
             try
             {
                 var userAccounts = await context.UserAccountRepository.GetUsersByName(name, start, take);
 
-                return Ok(userAccounts);
+                return new ResponseDto(HttpStatusCode.InternalServerError, true, "", userAccounts);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountsByName", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -169,25 +166,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserByDeviceType)]
-        public async Task<IActionResult> ReadUserByUserType(int devicetypeId)
+        public async Task<ResponseDto> ReadUserByUserType(int devicetypeId)
         {
             try
             {
                 if (devicetypeId <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                   return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccountInDb = await context.UserAccountRepository.GetUserByDevicetypeByKey(devicetypeId);
 
                 if (userAccountInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                   return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                return Ok(userAccountInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, userAccountInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserByUserType", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -198,25 +195,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByKey)]
-        public async Task<IActionResult> ReadUserAccountByKey(long key)
+        public async Task<ResponseDto> ReadUserAccountByKey(long key)
         {
             try
             {
                 if (String.IsNullOrEmpty(key.ToString()))
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                  return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccount = await context.UserAccountRepository.GetClientAccountByKey(key);
 
                 if (userAccount == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                return Ok(userAccount);
+
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, userAccount);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByKey", "UserAccountController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -229,25 +226,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByRole)]
-        public async Task<IActionResult> ReadUserAccountByRole(int key, int start, int take)
+        public async Task<ResponseDto> ReadUserAccountByRole(int key, int start, int take)
         {
             try
             {
                 if (String.IsNullOrEmpty(key.ToString()))
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccount = await context.UserAccountRepository.GetUserAccountByRole(key, start, take);
 
                 if (userAccount == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                return Ok(userAccount);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, userAccount);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByRole", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -257,22 +254,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByExpert)]
-        public async Task<IActionResult> ReadUserAccountByExpert()
+        public async Task<ResponseDto> ReadUserAccountByExpert()
         {
             try
             {
                 var userAccount = await context.UserAccountRepository.GetUserAccountByExpert();
 
                 if (userAccount == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                return Ok(userAccount);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, userAccount);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserAccountByExpert", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -284,35 +281,36 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateUserAccount)]
-        public async Task<IActionResult> UpdateUserAccount(long key, UserAccount userAccount)
+        public async Task<ResponseDto> UpdateUserAccount(long key, UserAccount userAccount)
         {
             try
             {
 
                 if (key != userAccount.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                     return new ResponseDto(HttpStatusCode.Unauthorized, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsAccountDuplicate(userAccount) == true)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateUserAccountError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateUserAccountError, null);
 
                 var userAccountWithSameCellphone = await context.UserAccountRepository.GetUserAccountByCellphone(userAccount.Cellphone);
 
 
                 if (userAccountWithSameCellphone != null && userAccountWithSameCellphone.Oid != userAccount.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateCellphoneError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateCellphoneError, null);
 
                 userAccount.DateModified = DateTime.Now;
 
                 context.UserAccountRepository.Update(userAccount);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+
+                return new ResponseDto(HttpStatusCode.OK, true, "Update Successfully", null);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateUserAccount", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -357,7 +355,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.ChangedPassword)]
-        public async Task<IActionResult> ChangedPassword(ResetPasswordDto changePassword)
+        public async Task<ResponseDto> ChangedPassword(ResetPasswordDto changePassword)
         {
             try
             {
@@ -366,8 +364,8 @@ namespace TUSO.Api.Controllers
 
                 var user = await context.UserAccountRepository.GetUserByUserNamePassword(changePassword.UserName, encryptedOldPassword);
 
-                if (user.Password != encryptedOldPassword)
-                    return BadRequest(MessageConstants.WrongPasswordError);
+                if (user.Password != encryptedOldPassword)              
+                   return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.WrongPasswordError, null);
 
                 if (user != null)
                 {
@@ -379,18 +377,18 @@ namespace TUSO.Api.Controllers
                     context.UserAccountRepository.Update(user);
                     await context.SaveChangesAsync();
 
-                    return Ok(user);
+                    return new ResponseDto(HttpStatusCode.OK, true, "Password Successfully Changed", user);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                 
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ChangedPassword", "UserAccountController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -401,7 +399,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.RecoveryPassword)]
-        public async Task<IActionResult> RecoveryPassword(RecoveryPasswordDto recoveryPassword)
+        public async Task<ResponseDto> RecoveryPassword(RecoveryPasswordDto recoveryPassword)
         {
             try
             {
@@ -425,23 +423,24 @@ namespace TUSO.Api.Controllers
                         context.RecoveryRequestRepository.Update(recovery);
                         await context.SaveChangesAsync();
 
-                        return Ok();
+                        return new ResponseDto(HttpStatusCode.OK, true, "Password Recovery Successfull", null);
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                      
+                        return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
                     }
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "RecoveryPassword", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -452,24 +451,24 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteUserAccount)]
-        public async Task<IActionResult> DeleteUserAccount(long key)
+        public async Task<ResponseDto> DeleteUserAccount(long key)
         {
             try
             {
                 if (String.IsNullOrEmpty(key.ToString()))
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccountInDb = await context.UserAccountRepository.GetUserAccountByKey(key);
 
                 if (userAccountInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                   return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 if (userAccountInDb.RoleId == 1)
                 {
                     var totalOpenTicketUnderClient = await context.UserAccountRepository.TotalOpenTicketUnderClient(userAccountInDb.Oid);
 
                     if (totalOpenTicketUnderClient > 0)
-                        return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                    return new ResponseDto(HttpStatusCode.MethodNotAllowed, false, MessageConstants.DependencyError, null);
                 }
                 else if (userAccountInDb.RoleId == 4)
                 {
@@ -504,7 +503,8 @@ namespace TUSO.Api.Controllers
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                        return new ResponseDto(HttpStatusCode.MethodNotAllowed, false, MessageConstants.DependencyError, null);
+
                     }
                 }
 
@@ -514,13 +514,15 @@ namespace TUSO.Api.Controllers
                 context.UserAccountRepository.Update(userAccountInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(userAccountInDb);
+
+                return new ResponseDto(HttpStatusCode.OK, true, "Delete Successfully", userAccountInDb);
+
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteUserAccount", "UserAccountController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -531,22 +533,21 @@ namespace TUSO.Api.Controllers
         /// <returns>Boolean</returns>
         [HttpGet]
         [Route(RouteConstants.IsUniqueUserName)]
-        public async Task<bool> IsAccountUnique(string key)
+        public async Task<ResponseDto> IsAccountUnique(string key)
         {
             try
             {
                 var userAccountInDb = await context.UserAccountRepository.GetUserAccountByName(key);
 
                 if (userAccountInDb != null)
-                    return true;
-
-                return false;
+                    return new ResponseDto(HttpStatusCode.OK, true, "This is unique username", null);
+                return new ResponseDto(HttpStatusCode.NotAcceptable, false, "This username already used", null);
             }
             catch(Exception ex) 
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsAccountUnique", "UserAccountController.cs", ex.Message);
 
-                throw;
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, ex.Message, null);
             }
         }
 
@@ -557,22 +558,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Boolean</returns>
         [HttpGet]
         [Route(RouteConstants.IsUniqueCellphone)]
-        public async Task<bool> IsCellphoneUnique(string key)
+        public async Task<ResponseDto> IsCellphoneUnique(string key)
         {
             try
             {
                 var userAccountInDb = await context.UserAccountRepository.GetUserAccountByCellphone(key);
 
                 if (userAccountInDb != null)
-                    return true;
+                    return new ResponseDto(HttpStatusCode.OK, true, "This is unique cellphone", null);
 
-                return false;
+                return new ResponseDto(HttpStatusCode.NotAcceptable, false, "This cellphone already used", null);
             }
             catch(Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsCellphoneUnique", "UserAccountController.cs", ex.Message);
 
-                throw;
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, ex.Message, null);
             }
         }
 
@@ -584,27 +585,24 @@ namespace TUSO.Api.Controllers
         /// <returns>Boolean</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUsersByName)]
-        public async Task<List<UserAccount>> ReadUsersByName(string name)
+        public async Task<ResponseDto> ReadUsersByName(string name)
         {
             try
             {
                 List<UserAccount> userAccounts = new List<UserAccount>();
 
                 if (name.Length < 3)
-                    return userAccounts;
+                       return new ResponseDto(HttpStatusCode.NotAcceptable, false, "Must be put more than 3 characters", null);
 
                 userAccounts = await context.UserAccountRepository.GetUserAccountByFullName(name);
 
-                if (userAccounts != null)
-                    return userAccounts;
-
-                return userAccounts;
+                return new ResponseDto(HttpStatusCode.OK, true, userAccounts != null?string.Empty: "Data Not Found", userAccounts);
             }
             catch(Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUsersByName", "UserAccountController.cs", ex.Message);
 
-                throw;
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, ex.Message, null);
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Security.AccessControl;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,30 +40,35 @@ namespace TUSO.Api.Controllers
         ///
         [HttpPost]
         [Route(RouteConstants.CreateModule)]
-        public async Task<IActionResult> CreateModule(Module module)
+        public async Task<ResponseDto> CreateModule(ModuleDto model)
         {
             try
             {
+                Module module = new Module()
+                {
+                    ModuleName = model.ModuleName,
+                    Description = model.Description,
+                    DateCreated = DateTime.Now,
+                    IsDeleted = false
+                };
                 if (await IsModuleDuplicate(module))
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
-                module.DateCreated = DateTime.Now;
-                module.IsDeleted = false;
 
                 context.ModuleRepository.Add(module);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadModuleByKey", new { key = module.Oid }, module);
+                return new ResponseDto(HttpStatusCode.OK, true, "Module Sccessfully Created", null);
 
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateModule", "ModuleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
-       
+
 
         /// <summary>
         /// URl: tuso-api/modules-option
@@ -69,16 +76,17 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModules)]
-        public async Task<IActionResult> ReadModules()
+        public async Task<ResponseDto> ReadModules()
         {
             try
             {
                 var moduleInDb = await context.ModuleRepository.GetModules();
-                return Ok(moduleInDb);
+
+                return new ResponseDto(HttpStatusCode.OK, true, moduleInDb==null ? "Data Not Found" : string.Empty, moduleInDb);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -88,7 +96,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModulesByPage)]
-        public async Task<IActionResult> ReadModulesByPage(int start, int take)
+        public async Task<ResponseDto> ReadModulesByPage(int start, int take)
         {
             try
             {
@@ -99,13 +107,14 @@ namespace TUSO.Api.Controllers
                     currentPage = start + 1,
                     totalRows = await context.ModuleRepository.GetModuleCount()
                 };
-                return Ok(response);
+
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadModulesByPage", "ModuleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -117,25 +126,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModuleByKey)]
-        public async Task<IActionResult> ReadModuleByKey(int key)
+        public async Task<ResponseDto> ReadModuleByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var moduleInDb = await context.ModuleRepository.GetModuleByKey(key);
 
-                if (moduleInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(moduleInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, moduleInDb==null ? "Data Not Found" : string.Empty, moduleInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadModuleByKey", "ModuleController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -147,29 +153,29 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateModule)]
-        public async Task<IActionResult> UpdateModule(int key, Module module)
+        public async Task<ResponseDto> UpdateModule(int key, Module module)
         {
             try
             {
                 if (key != module.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsModuleDuplicate(module) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
                 module.DateModified = DateTime.Now;
                 module.IsDeleted = false;
 
                 context.ModuleRepository.Update(module);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", null);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateModule", "ModuleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -181,17 +187,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteModule)]
-        public async Task<IActionResult> DeleteModule(int key)
+        public async Task<ResponseDto> DeleteModule(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var moduleInDb = await context.ModuleRepository.GetModuleByKey(key);
 
                 if (moduleInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 moduleInDb.IsDeleted = true;
                 moduleInDb.DateModified = DateTime.Now;
@@ -199,13 +205,13 @@ namespace TUSO.Api.Controllers
                 context.ModuleRepository.Update(moduleInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(moduleInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", null);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteModule", "ModuleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
