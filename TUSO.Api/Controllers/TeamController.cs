@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,26 +40,30 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateTeam)]
-        public async Task<IActionResult> CreateTeam(Team team)
+        public async Task<ResponseDto> CreateTeam(TeamDto model)
         {
             try
             {
+                Team team = new Team()
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    DateCreated = DateTime.Now,
+                    IsDeleted = false
+                };
                 if (await IsTeamDuplicate(team) == true)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateError);
-
-                team.DateCreated = DateTime.Now;
-                team.IsDeleted = false;
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateError, null);
 
                 context.TeamRepository.Add(team);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadTeamByKey", new { key = team.Oid }, team);
+                return new ResponseDto(HttpStatusCode.OK, true, "Team Created Successfully", null);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateTeam", "TeamController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
