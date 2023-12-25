@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,12 +41,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateDeviceType)]
-        public async Task<IActionResult> CreateDeviceType(DeviceType deviceType)
+        public async Task<ResponseDto> CreateDeviceType(DeviceType deviceType)
         {
             try
             {
                 if (await IsDeviceTypeDuplicate(deviceType) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 deviceType.DateCreated = DateTime.Now;
                 deviceType.IsDeleted = false;
@@ -51,13 +54,13 @@ namespace TUSO.Api.Controllers
                 context.DeviceTypeRepository.Add(deviceType);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadDeviceTypeByKey", new { key = deviceType.Oid }, deviceType);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", deviceType);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateDeviceType", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -67,19 +70,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypes)]
-        public async Task<IActionResult> ReadDeviceTypes()
+        public async Task<ResponseDto> ReadDeviceTypes()
         {
             try
             {
                 var deviceTypes = await context.DeviceTypeRepository.GetDeviceTypes();
 
-                return Ok(deviceTypes);
+                return new ResponseDto(HttpStatusCode.OK, true, deviceTypes == null ? "Data Not Found" : "Successfully Get All Data", deviceTypes);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypes", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -89,7 +92,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypeByPage)]
-        public async Task<IActionResult> ReadDeviceTypeByPage(int start, int take)
+        public async Task<ResponseDto> ReadDeviceTypeByPage(int start, int take)
         {
             try
             {
@@ -101,13 +104,13 @@ namespace TUSO.Api.Controllers
                     TotalRows = await context.DeviceTypeRepository.GetDeviceTypeCount()
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypeByPage", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -118,25 +121,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypeByKey)]
-        public async Task<IActionResult> ReadDeviceTypeByKey(int key)
+        public async Task<ResponseDto> ReadDeviceTypeByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var deviceType = await context.DeviceTypeRepository.GetDeviceTypeByKey(key);
 
-                if (deviceType == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(deviceType);
+                return new ResponseDto(HttpStatusCode.OK, true, deviceType == null ? "Data Not Found" : "Successfully Get Data by Key", deviceType);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceTypeByKey", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -148,15 +148,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateDeviceType)]
-        public async Task<IActionResult> UpdateDeviceType(int key, DeviceType deviceType)
+        public async Task<ResponseDto> UpdateDeviceType(int key, DeviceType deviceType)
         {
             try
             {
                 if (key != deviceType.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsDeviceTypeDuplicate(deviceType) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 deviceType.DateModified = DateTime.Now;
                 deviceType.IsDeleted = false;
@@ -164,13 +164,13 @@ namespace TUSO.Api.Controllers
                 context.DeviceTypeRepository.Update(deviceType);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", deviceType);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateDeviceType", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -182,17 +182,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteDeviceType)]
-        public async Task<IActionResult> DeleteDeviceType(int key)
+        public async Task<ResponseDto> DeleteDeviceType(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var deviceTypeInDb = context.DeviceTypeRepository.Get(key);
 
                 if (deviceTypeInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 deviceTypeInDb.IsDeleted = true;
                 deviceTypeInDb.DateModified = DateTime.Now;
@@ -200,13 +200,13 @@ namespace TUSO.Api.Controllers
                 context.DeviceTypeRepository.Update(deviceTypeInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(deviceTypeInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", deviceTypeInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteDeviceType", "DeviceTypeController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

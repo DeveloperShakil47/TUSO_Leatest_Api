@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -39,12 +41,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateCountry)]
-        public async Task<IActionResult> CreateCountry(Country country)
+        public async Task<ResponseDto> CreateCountry(Country country)
         {
             try
             {
                 if (await IsCountryDuplicate(country) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 country.DateCreated = DateTime.Now;
                 country.IsDeleted = false;
@@ -52,12 +54,13 @@ namespace TUSO.Api.Controllers
                 context.CountryRepository.Add(country);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadCountryByKey", new { key = country.Oid }, country);
+                return new ResponseDto(HttpStatusCode.OK, true , "Data Create Successfully",country);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}",DateTime.Now, "BusinessLayer", "CreateCountry", "CountryController.cs", ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+               
+                return new ResponseDto(HttpStatusCode.InternalServerError, false,  MessageConstants.GenericError, null);
             }
         }
 
@@ -67,18 +70,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountries)]
-        public async Task<IActionResult> ReadCountries()
+        public async Task<ResponseDto> ReadCountries()
         {
             try
             {
                 var country = await context.CountryRepository.GetCountries();
 
-                return Ok(country);
+                return new ResponseDto(HttpStatusCode.OK, true, country == null ? "Data Not Found" : "Successfully Get All Data", country);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountries", "CountryController.cs", ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+               
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError,null);
             }
         }
 
@@ -88,7 +92,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountriesbyPage)]
-        public async Task<IActionResult> ReadCountriesbyPage(int start, int take)
+        public async Task<ResponseDto> ReadCountriesbyPage(int start, int take)
         {
             try
             {
@@ -100,13 +104,13 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.CountryRepository.GetCountryCount()
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found":"Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountriesbyPage", "CountryController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -117,25 +121,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountryByKey)]
-        public async Task<IActionResult> ReadCountryByKey(int key)
+        public async Task<ResponseDto> ReadCountryByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var country = await context.CountryRepository.GetCountryByKey(key);
 
-                if (country == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(country);
+                return new ResponseDto(HttpStatusCode.OK, true, country == null ? "Data Not Found" : "Successfully Get Data by Key",country);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadCountryByKey", "CountryController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false,  MessageConstants.GenericError,null);
             }
         }
 
@@ -147,15 +148,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateCountry)]
-        public async Task<IActionResult> UpdateCountry(int key, Country country)
+        public async Task<ResponseDto> UpdateCountry(int key, Country country)
         {
             try
             {
                 if (key != country.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsCountryDuplicate(country) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 country.DateModified = DateTime.Now;
                 country.IsDeleted = false;
@@ -163,13 +164,13 @@ namespace TUSO.Api.Controllers
                 context.CountryRepository.Update(country);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", country);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateCountry", "CountryController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -180,20 +181,20 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteCountry)]
-        public async Task<IActionResult> DeleteCountry(int key)
+        public async Task<ResponseDto> DeleteCountry(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var countryInDb = await context.CountryRepository.GetCountryByKey(key);
 
                 if (countryInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 if (countryInDb.Provinces.Where(w => w.IsDeleted == false).ToList().Count > 0)
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                    return new(HttpStatusCode.MethodNotAllowed, false,  MessageConstants.DependencyError, null);
 
                 countryInDb.IsDeleted = true;
                 countryInDb.DateModified = DateTime.Now;
@@ -201,13 +202,13 @@ namespace TUSO.Api.Controllers
                 context.CountryRepository.Update(countryInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(countryInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", countryInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteCountry", "CountryController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

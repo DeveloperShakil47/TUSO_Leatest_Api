@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -39,12 +41,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFacility)]
-        public async Task<IActionResult> CreateFacility(Facility facility)
+        public async Task<ResponseDto> CreateFacility(Facility facility)
         {
             try
             {
                 if (await IsFacilityDuplicate(facility) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 facility.DateCreated = DateTime.Now;
                 facility.IsDeleted = false;
@@ -52,13 +54,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityRepository.Add(facility);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadFacilityByKey", new { key = facility.Oid }, facility);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", facility);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFacility", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -68,19 +70,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilities)]
-        public async Task<IActionResult> ReadFacilities()
+        public async Task<ResponseDto> ReadFacilities()
         {
             try
             {
                 var facilityInDb = await context.FacilityRepository.GetFacilities();
 
-                return Ok(facilityInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, facilityInDb == null ? "Data Not Found" : "Successfully Get All Data", facilityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilities", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -91,25 +93,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByKey)]
-        public async Task<IActionResult> ReadFacilityByKey(int key)
+        public async Task<ResponseDto> ReadFacilityByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var facilityInDb = await context.FacilityRepository.GetFacilityByKey(key);
 
-                if (facilityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, facilityInDb == null ? "Data Not Found" : "Successfully Get Data by Key", facilityInDb);
 
-                return Ok(facilityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByKey", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -120,25 +120,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByDistrict)]
-        public async Task<IActionResult> ReadFacilityByDistrict(int key)
+        public async Task<ResponseDto> ReadFacilityByDistrict(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var facilityInDb = await context.FacilityRepository.GetFacilityByDistrict(key);
 
-                if (facilityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, facilityInDb == null ? "Data Not Found" : "Successfully Get Data by Key", facilityInDb);
 
-                return Ok(facilityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByDistrict", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -149,14 +147,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilitieByDistrictPage)]
-        public async Task<IActionResult> ReadFacilitiesByDistrict(int key, int start, int take, string? search = "")
+        public async Task<ResponseDto> ReadFacilitiesByDistrict(int key, int start, int take, string? search = "")
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var facilityInDb = await context.FacilityRepository.GetFacilitiesByDistrict(key, start, take, search);
+
                 var response = new
                 {
                     facility = facilityInDb,
@@ -164,16 +163,14 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.FacilityRepository.GetFacilitieCount(key)
                 };
 
-                if (facilityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
 
-                return Ok(response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilitiesByDistrict", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -184,27 +181,27 @@ namespace TUSO.Api.Controllers
         /// <returns>Http Status Code: Ok.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByName)]
-        public async Task<IActionResult> ReadFacilityByName(string name)
+        public async Task<ResponseDto> ReadFacilityByName(string name)
         {
             try
             {
                 if (string.IsNullOrEmpty(name))
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 var facilityIndb = await context.FacilityRepository.GetFacilityByFacilityName(name);
 
                 if (facilityIndb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError,null);
 
                 var facilityInOrder = facilityIndb.OrderByDescending(c => c.DateCreated);
 
-                return Ok(facilityInOrder);
+                return new ResponseDto(HttpStatusCode.OK, true, "Successfully Get Data by Key", facilityInOrder);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityByName", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -216,15 +213,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFacility)]
-        public async Task<IActionResult> UpdateFacility(int key, Facility facility)
+        public async Task<ResponseDto> UpdateFacility(int key, Facility facility)
         {
             try
             {
                 if (key != facility.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsFacilityDuplicate(facility) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 facility.DateModified = DateTime.Now;
                 facility.IsDeleted = false;
@@ -232,13 +229,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityRepository.Update(facility);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", facility);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFacility", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -249,17 +246,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFacility)]
-        public async Task<IActionResult> DeleteFacility(int key)
+        public async Task<ResponseDto> DeleteFacility(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var facilityInDb = await context.FacilityRepository.GetFacilityByKey(key);
 
                 if (facilityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 facilityInDb.IsDeleted = true;
                 facilityInDb.DateModified = DateTime.Now;
@@ -267,13 +264,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityRepository.Update(facilityInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(facilityInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", facilityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFacility", "FacilityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

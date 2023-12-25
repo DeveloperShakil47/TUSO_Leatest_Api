@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -32,12 +34,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFundingAgency)]
-        public async Task<IActionResult> CreateFundingAgency(FundingAgency fundingAgency)
+        public async Task<ResponseDto> CreateFundingAgency(FundingAgency fundingAgency)
         {
             try
             {
                 if (await IsFundingAgencyDuplicate(fundingAgency) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 fundingAgency.DateCreated = DateTime.Now;
                 fundingAgency.IsDeleted = false;
@@ -45,13 +47,13 @@ namespace TUSO.Api.Controllers
                 context.FundingAgencyRepository.Add(fundingAgency);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadFundingAgencyByKey", new { key = fundingAgency.Oid }, fundingAgency);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", fundingAgency);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFundingAgency", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -61,21 +63,21 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencies)]
-        public async Task<IActionResult> ReadFundingAgencies()
+        public async Task<ResponseDto> ReadFundingAgencies()
         {
             try
             {
                 var fundingAgencies = await context.FundingAgencyRepository.GetFindingAgencies();
 
-                return Ok(fundingAgencies);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", fundingAgencies);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencies", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
-           
+
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgenciesPage)]
-        public async Task<IActionResult> ReadFundingAgencies(int start, int take)
+        public async Task<ResponseDto> ReadFundingAgencies(int start, int take)
         {
             try
             {
@@ -93,16 +95,16 @@ namespace TUSO.Api.Controllers
                 var response = new
                 {
                     fundingAgency = fundingAgencyInDb,
-                    currentPage = start+1,
+                    currentPage = start + 1,
                     totalRows = await context.FundingAgencyRepository.GetFindingAgenciesCount()
                 };
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencies", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -113,25 +115,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencyByKey)]
-        public async Task<IActionResult> ReadFundingAgencyByKey(int key)
+        public async Task<ResponseDto> ReadFundingAgencyByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var fundingAgencyInDb = await context.FundingAgencyRepository.GetFundingAgencyByKey(key);
 
-                if (fundingAgencyInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(fundingAgencyInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, fundingAgencyInDb == null ? "Data Not Found" : "Successfully Get Data by Key", fundingAgencyInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencyByKey", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -142,25 +141,26 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencyBySystem)]
-        public async Task<IActionResult> ReadFundingAgencyBySystem(int key)
+        public async Task<ResponseDto> ReadFundingAgencyBySystem(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var fundingAgencyInDb = await context.FundingAgencyRepository.GetFundingAgencyBySystem(key);
 
                 if (fundingAgencyInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                return Ok(fundingAgencyInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Successfully Get Data by Key", fundingAgencyInDb);
+
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFundingAgencyBySystem", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -172,15 +172,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFundingAgency)]
-        public async Task<IActionResult> UpdateFundingAgency(int key, FundingAgency fundingAgency)
+        public async Task<ResponseDto> UpdateFundingAgency(int key, FundingAgency fundingAgency)
         {
             try
             {
                 if (key != fundingAgency.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsFundingAgencyDuplicate(fundingAgency) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 fundingAgency.DateModified = DateTime.Now;
                 fundingAgency.IsDeleted = false;
@@ -188,13 +188,13 @@ namespace TUSO.Api.Controllers
                 context.FundingAgencyRepository.Update(fundingAgency);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", fundingAgency);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFundingAgency", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -205,17 +205,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFundingAgency)]
-        public async Task<IActionResult> DeleteFundingAgency(int key)
+        public async Task<ResponseDto> DeleteFundingAgency(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var fundingAgencyInDb = await context.FundingAgencyRepository.GetFundingAgencyByKey(key);
 
                 if (fundingAgencyInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 fundingAgencyInDb.IsDeleted = true;
                 fundingAgencyInDb.DateModified = DateTime.Now;
@@ -223,13 +223,13 @@ namespace TUSO.Api.Controllers
                 context.FundingAgencyRepository.Update(fundingAgencyInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(fundingAgencyInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", fundingAgencyInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFundingAgency", "FundingAgencyController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

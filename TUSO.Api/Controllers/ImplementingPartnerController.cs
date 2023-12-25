@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -32,12 +34,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateImplementingPartner)]
-        public async Task<IActionResult> CreateImplementingPartner(ImplementingPartner implementingPartner)
+        public async Task<ResponseDto> CreateImplementingPartner(ImplementingPartner implementingPartner)
         {
             try
             {
                 if (await IsImplementingPartnerDuplicate(implementingPartner) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 implementingPartner.DateCreated = DateTime.Now;
                 implementingPartner.IsDeleted = false;
@@ -45,13 +47,13 @@ namespace TUSO.Api.Controllers
                 context.ImplementingPartnerRepository.Add(implementingPartner);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadImplementingPartnerByKey", new { key = implementingPartner.Oid }, implementingPartner);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", implementingPartner);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -61,23 +63,20 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartners)]
-        public async Task<IActionResult> ReadImplementingPartners()
+        public async Task<ResponseDto> ReadImplementingPartners()
         {
             try
             {
                 var impelementingPartner = await context.ImplementingPartnerRepository.GetImplementingPatrners();
 
-                return Ok(impelementingPartner);
+                return new ResponseDto(HttpStatusCode.OK, true, impelementingPartner == null ? "Data Not Found" : "Successfully Get All Data", impelementingPartner);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartners", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
-
-
         }
 
         /// <summary>
@@ -86,10 +85,11 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnersPage)]
-        public async Task<IActionResult> ReadImplementingPartnersPage(int start, int take)
+        public async Task<ResponseDto> ReadImplementingPartnersPage(int start, int take)
         {
             try
             {
+
                 var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPatrnerByPage(start, take);
 
                 var response = new
@@ -99,13 +99,13 @@ namespace TUSO.Api.Controllers
                     totaRows = await context.ImplementingPartnerRepository.GetImplementingPatrnersCount()
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnersPage", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -116,25 +116,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnerByKey)]
-        public async Task<IActionResult> ReadImplementingPartnerByKey(int key)
+        public async Task<ResponseDto> ReadImplementingPartnerByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPartnerByKey(key);
 
-                if (implementingPartnerInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, implementingPartnerInDb == null ? "Data Not Found" : "Successfully Get Data by Key", implementingPartnerInDb);
 
-                return Ok(implementingPartnerInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnerByKey", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -145,25 +143,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnerBySystem)]
-        public async Task<IActionResult> ReadImplementingPartnerBySystem(int key)
+        public async Task<ResponseDto> ReadImplementingPartnerBySystem(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPartnerBySystem(key);
 
-                if (implementingPartnerInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, implementingPartnerInDb == null ? "Data Not Found" : "Successfully Get Data by Key", implementingPartnerInDb);
 
-                return Ok(implementingPartnerInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadImplementingPartnerBySystem", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -175,15 +171,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateImplementingPartner)]
-        public async Task<IActionResult> UpdateImplementingPartner(int key, ImplementingPartner implementingPartner)
+        public async Task<ResponseDto> UpdateImplementingPartner(int key, ImplementingPartner implementingPartner)
         {
             try
             {
                 if (key != implementingPartner.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsImplementingPartnerDuplicate(implementingPartner) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 implementingPartner.DateModified = DateTime.Now;
                 implementingPartner.IsDeleted = false;
@@ -191,13 +187,13 @@ namespace TUSO.Api.Controllers
                 context.ImplementingPartnerRepository.Update(implementingPartner);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", implementingPartner);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -208,17 +204,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteImplementingPartner)]
-        public async Task<IActionResult> DeleteImplementingPartner(int key)
+        public async Task<ResponseDto> DeleteImplementingPartner(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var implementingPartnerInDb = await context.ImplementingPartnerRepository.GetImplementingPartnerByKey(key);
 
                 if (implementingPartnerInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 implementingPartnerInDb.IsDeleted = true;
                 implementingPartnerInDb.DateModified = DateTime.Now;
@@ -226,13 +222,13 @@ namespace TUSO.Api.Controllers
                 context.ImplementingPartnerRepository.Update(implementingPartnerInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(implementingPartnerInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", implementingPartnerInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteImplementingPartner", "ImplementingPartnerController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

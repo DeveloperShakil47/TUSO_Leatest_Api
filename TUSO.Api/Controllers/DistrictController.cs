@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,12 +42,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateDistrict)]
-        public async Task<IActionResult> CreateDistrict(District district)
+        public async Task<ResponseDto> CreateDistrict(District district)
         {
             try
             {
                 if (await IsDistrictDuplicate(district) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 district.DateCreated = DateTime.Now;
                 district.IsDeleted = false;
@@ -51,13 +55,13 @@ namespace TUSO.Api.Controllers
                 context.DistrictRepository.Add(district);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadDistrictByKey", new { key = district.Oid }, district);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", district);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateDistrict", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -67,19 +71,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrict)]
-        public async Task<IActionResult> ReadDistricts()
+        public async Task<ResponseDto> ReadDistricts()
         {
             try
             {
                 var district = await context.DistrictRepository.GetDistricts();
 
-                return Ok(district);
+                return new ResponseDto(HttpStatusCode.OK, true, district == null ? "Data Not Found" : "Successfully Get All Data", district);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDistricts", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -90,25 +94,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByKey)]
-        public async Task<IActionResult> ReadDistrictByKey(int key)
+        public async Task<ResponseDto> ReadDistrictByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var district = await context.DistrictRepository.GetDistrictByKey(key);
 
-                if (district == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(district);
+                return new ResponseDto(HttpStatusCode.OK, true, district == null ? "Data Not Found" : "Successfully Get All Data", district);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDistrictByKey", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -119,25 +120,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByProvince)]
-        public async Task<IActionResult> ReadDistrictByProvince(int key)
+        public async Task<ResponseDto> ReadDistrictByProvince(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var provinceInDb = await context.DistrictRepository.GetDistrictByProvince(key);
 
-                if (provinceInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(provinceInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, provinceInDb == null ? "Data Not Found" : "Successfully Get All Data", provinceInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDistrictByProvince", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -148,12 +146,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByProvincePage)]
-        public async Task<IActionResult> ReadDistrictsByProvince(int key, int start, int take)
+        public async Task<ResponseDto> ReadDistrictsByProvince(int key, int start, int take)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError,null);
 
                 var district = await context.DistrictRepository.GetDistrictsByProvince(key, start, take);
                 var response = new
@@ -163,16 +161,14 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.DistrictRepository.GetDistrictCount(key)
                 };
 
-                if (district == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
 
-                return Ok(response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDistrictsByProvince", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -184,15 +180,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateDistrict)]
-        public async Task<IActionResult> UpdateDistrict(int key, District district)
+        public async Task<ResponseDto> UpdateDistrict(int key, District district)
         {
             try
             {
                 if (key != district.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsDistrictDuplicate(district) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 district.DateModified = DateTime.Now;
                 district.IsDeleted = false;
@@ -200,13 +196,13 @@ namespace TUSO.Api.Controllers
                 context.DistrictRepository.Update(district);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", district);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateDistrict", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -217,20 +213,20 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteDistrict)]
-        public async Task<IActionResult> DeleteDistrict(int key)
+        public async Task<ResponseDto> DeleteDistrict(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var districtInDb = await context.DistrictRepository.GetDistrictByKey(key);
 
                 if (districtInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 if (districtInDb.Facilities.Where(w => w.IsDeleted == false).ToList().Count > 0)
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                    return new(HttpStatusCode.MethodNotAllowed, false, MessageConstants.DependencyError, null);
 
                 districtInDb.IsDeleted = true;
                 districtInDb.DateModified = DateTime.Now;
@@ -238,13 +234,13 @@ namespace TUSO.Api.Controllers
                 context.DistrictRepository.Update(districtInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(districtInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", districtInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteDistrict", "DistrictController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -266,7 +262,7 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsDistrictDuplicate", "DistrictController.cs", ex.Message);
 

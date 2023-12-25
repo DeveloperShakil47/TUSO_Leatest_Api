@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -32,7 +34,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateEmailTemplate)]
-        public async Task<IActionResult> CreateEmailTemplate(EmailTemplate emailTemplate)
+        public async Task<ResponseDto> CreateEmailTemplate(EmailTemplate emailTemplate)
         {
             try
             {
@@ -46,7 +48,8 @@ namespace TUSO.Api.Controllers
 
                     context.EmailTemplateRepository.Update(emailTemplateInDb);
                     await context.SaveChangesAsync();
-                    return CreatedAtAction("ReadEmailTemplateByKey", new { key = emailTemplateInDb.Oid }, emailTemplateInDb);
+
+                    return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", emailTemplateInDb);
                 }
 
                 emailTemplate.DateCreated = DateTime.Now;
@@ -55,13 +58,13 @@ namespace TUSO.Api.Controllers
                 context.EmailTemplateRepository.Add(emailTemplate);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadEmailTemplateByKey", new { key = emailTemplate.Oid }, emailTemplate);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", emailTemplate);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateEmailTemplate", "EmailTemplateController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -71,19 +74,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailTemplates)]
-        public async Task<IActionResult> ReadEmailTemplates()
+        public async Task<ResponseDto> ReadEmailTemplates()
         {
             try
             {
                 var emailTemplates = await context.EmailTemplateRepository.GetEmailTemplates();
 
-                return Ok(emailTemplates);
+                return new ResponseDto(HttpStatusCode.OK, true, emailTemplates == null ? "Data Not Found" : "Successfully Get All Data", emailTemplates);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailTemplates", "EmailTemplateController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -94,25 +97,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailTemplateByKey)]
-        public async Task<IActionResult> ReadEmailTemplateByKey(int key)
+        public async Task<ResponseDto> ReadEmailTemplateByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var emailTemplate = await context.EmailTemplateRepository.GetEmailTemplateByKey(key);
 
-                if (emailTemplate == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, emailTemplate == null ? "Data Not Found" : "Successfully Get Data by Key", emailTemplate);
 
-                return Ok(emailTemplate);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailTemplateByKey", "EmailTemplateController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -124,25 +125,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateEmailTemplate)]
-        public async Task<IActionResult> UpdateEmailTemplate(int key, EmailTemplate emailTemplate)
+        public async Task<ResponseDto> UpdateEmailTemplate(int key, EmailTemplate emailTemplate)
         {
             try
             {
                 if (key != emailTemplate.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 emailTemplate.DateModified = DateTime.Now;
 
                 context.EmailTemplateRepository.Update(emailTemplate);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", emailTemplate);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailTemplate", "EmailTemplateController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -153,17 +154,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteEmailTemplate)]
-        public async Task<IActionResult> DeleteEmailTemplate(int key)
+        public async Task<ResponseDto> DeleteEmailTemplate(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var emailTemplateInDb = await context.EmailTemplateRepository.GetEmailTemplateByKey(key);
 
                 if (emailTemplateInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 emailTemplateInDb.IsDeleted = true;
                 emailTemplateInDb.DateModified = DateTime.Now;
@@ -171,13 +172,13 @@ namespace TUSO.Api.Controllers
                 context.EmailTemplateRepository.Update(emailTemplateInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(emailTemplateInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", emailTemplateInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteEmailTemplate", "EmailTemplateController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
     }
