@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -36,12 +39,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncidentCategory)]
-        public async Task<IActionResult> CreateIncidentCategory(IncidentCategory incidentCategory)
+        public async Task<ResponseDto> CreateIncidentCategory(IncidentCategory incidentCategory)
         {
             try
             {
                 if (await IsIncidentCategoryDuplicate(incidentCategory) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.NoMatchFoundError, null);
 
                 incidentCategory.DateCreated = DateTime.Now;
                 incidentCategory.IsDeleted = false;
@@ -49,11 +52,12 @@ namespace TUSO.Api.Controllers
                 context.IncidentCategoryRepository.Add(incidentCategory);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadIncidentCategoryByKey", new { key = incidentCategory.Oid }, incidentCategory);
+
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, null);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -63,17 +67,17 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategorys)]
-        public async Task<IActionResult> ReadIncidentCategorys()
+        public async Task<ResponseDto> ReadIncidentCategorys()
         {
             try
             {
                 var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategories();
 
-                return Ok(incidentCategoryInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentCategoryInDb);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -83,7 +87,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByFirstLevel)]
-        public async Task<IActionResult> ReadIncidentCategorybyPage(int start, int take)
+        public async Task<ResponseDto> ReadIncidentCategorybyPage(int start, int take)
         {
             try
             {
@@ -97,15 +101,15 @@ namespace TUSO.Api.Controllers
                     currentPage = start+1,
                     totalRows = await context.IncidentCategoryRepository.GetIncidentCategoryCount(0)
                 };
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, response);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
-    
+
 
 
 
@@ -116,7 +120,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByLevel)]
-        public async Task<IActionResult> ReadIncidentCategoryByPage(int key, int start, int take)
+        public async Task<ResponseDto> ReadIncidentCategoryByPage(int key, int start, int take)
         {
             try
             {
@@ -131,11 +135,11 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.IncidentCategoryRepository.GetIncidentCategoryCount(key)
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, response);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -147,23 +151,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryBySingleKey)]
-        public async Task<IActionResult> GetIncidentCategoryBySingleKey(int key)
+        public async Task<ResponseDto> GetIncidentCategoryBySingleKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.DuplicateError, null);
 
                 var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategoryBySingleKey(key);
 
-                if (incidentCategoryInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
 
-                return Ok(incidentCategoryInDb);
+
+                return new ResponseDto(HttpStatusCode.OK, true, incidentCategoryInDb== null ? "Data Not Found" : string.Empty, incidentCategoryInDb);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -175,26 +178,27 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateIncidentCategory)]
-        public async Task<IActionResult> UpdateIncidentCategory(int key, IncidentCategory incidentCategory)
+        public async Task<ResponseDto> UpdateIncidentCategory(int key, IncidentCategory incidentCategory)
         {
             try
             {
                 if (key != incidentCategory.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsIncidentCategoryDuplicate(incidentCategory) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 incidentCategory.DateModified = DateTime.Now;
 
                 context.IncidentCategoryRepository.Update(incidentCategory);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -205,33 +209,32 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteIncidentCategory)]
-        public async Task<IActionResult> DeleteIncidentCategory(int key)
+        public async Task<ResponseDto> DeleteIncidentCategory(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategoryBySingleKey(key);
                 var isExist = await context.IncidentCategoryRepository.GetIncidentCategoriesByKey(key);
 
                 if (isExist.ToList().Count > 0)
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                    return new ResponseDto(HttpStatusCode.MethodNotAllowed, false, MessageConstants.DependencyError, null);
 
                 if (incidentCategoryInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 incidentCategoryInDb.IsDeleted = true;
                 incidentCategoryInDb.DateModified = DateTime.Now;
 
                 context.IncidentCategoryRepository.Update(incidentCategoryInDb);
                 await context.SaveChangesAsync();
-
-                return Ok(incidentCategoryInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.DeleteMessage, incidentCategoryInDb);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -282,7 +285,7 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategoryByName(incidentCategory.IncidentCategorys,incidentCategory.ParentId);
+                var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategoryByName(incidentCategory.IncidentCategorys, incidentCategory.ParentId);
 
                 if (incidentCategoryInDb != null)
 

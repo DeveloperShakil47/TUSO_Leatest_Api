@@ -55,5 +55,11 @@ namespace TUSO.Utilities.Constants
         public const string OpenTicketFoundUnderSystemError = "System can't be deleted, there is open ticket under the system.";
 
         public const string OpenTicketFoundUnderTeamError = "This Team Has Opened Tickets, Can't Delete this Team.";
+
+        public const string UpdateMessage = "Record Successfully Updated";
+
+        public const string SaveMessage = "Record Successfully Saved";
+
+        public const string DeleteMessage = "Record Successfully Deleted";
     }
 }
