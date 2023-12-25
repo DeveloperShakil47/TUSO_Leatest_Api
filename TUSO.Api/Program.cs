@@ -3,6 +3,7 @@ using TUSO.Infrastructure.Repositories;
 using TUSO.Infrastructure;
 using TUSO.Infrastructure.SqlServer;
 using TUSO.Infrastructure.Contracts;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -20,6 +21,12 @@ builder.Services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =
 {
     builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddSerilog();
+});
 
 var app = builder.Build();
 
