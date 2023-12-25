@@ -58,7 +58,7 @@ namespace TUSO.Api.Controllers
                 context.ModuleRepository.Add(module);
                 await context.SaveChangesAsync();
 
-                return new ResponseDto(HttpStatusCode.OK, true, "Module Sccessfully Created", null);
+                return new ResponseDto(HttpStatusCode.OK, true, "Module Sccessfully Created", module);
 
             }
             catch (Exception ex)
@@ -82,7 +82,7 @@ namespace TUSO.Api.Controllers
             {
                 var moduleInDb = await context.ModuleRepository.GetModules();
 
-                return new ResponseDto(HttpStatusCode.OK, true, moduleInDb==null ? "Data Not Found" : string.Empty, moduleInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, moduleInDb==null ? "Data Not Found" : "Successfully Get All Data", moduleInDb);
             }
             catch (Exception)
             {
@@ -108,7 +108,7 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.ModuleRepository.GetModuleCount()
                 };
 
-                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found":  string.Empty, response);
             }
             catch (Exception ex)
             {
@@ -162,6 +162,7 @@ namespace TUSO.Api.Controllers
 
                 if (await IsModuleDuplicate(module) == true)
                     return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
+
                 module.DateModified = DateTime.Now;
                 module.IsDeleted = false;
 

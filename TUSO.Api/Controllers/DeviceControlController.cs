@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using System.Diagnostics.Metrics;
+using System.Net;
+using TUSO.Domain.Dto;
 
 /*
 * Created by: Stephan
@@ -40,33 +42,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.UpdateDeviceControl)]
-        public async Task<IActionResult> UpdateDeviceControl(int key, DeviceControl deviceControl )
+        public async Task<ResponseDto> UpdateDeviceControl(int key, DeviceControl deviceControl)
         {
             try
             {
-                try
-                {
-                    if (key != deviceControl.Oid)
-                        return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                if (key != deviceControl.Oid)
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
-                    deviceControl.DateModified = DateTime.Now;
-                    deviceControl.IsDeleted = false;
+                deviceControl.DateModified = DateTime.Now;
+                deviceControl.IsDeleted = false;
 
-                    context.DeviceControlRepository.Update(deviceControl);
-                    await context.SaveChangesAsync();
+                context.DeviceControlRepository.Update(deviceControl);
+                await context.SaveChangesAsync();
 
-                    return StatusCode(StatusCodes.Status204NoContent);
-                }
-                catch (Exception)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-                }
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", deviceControl);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateDeviceControl", " DeviceControlController.cs", ex.Message);
-
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -76,22 +70,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceControl)]
-        public async Task<IActionResult> ReadDeviceControl()
+        public async Task<ResponseDto> ReadDeviceControl()
         {
             try
             {
                 var deviceControlInDb = await context.DeviceControlRepository.GetDeviceControl();
 
-                if (deviceControlInDb.Count() == 0)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(deviceControlInDb.FirstOrDefault());
+                return new(HttpStatusCode.OK, true, deviceControlInDb == null ? "Data Not Found" : "Successfully Get All Data", deviceControlInDb);
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadDeviceControl", " DeviceControlController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,12 +40,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateEmailControl)]
-        public async Task<IActionResult> CreateEmailControl(EmailControl emailControl)
+        public async Task<ResponseDto> CreateEmailControl(EmailControl emailControl)
         {
             try
             {
                 if (emailControl is null)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 emailControl.DateCreated = DateTime.Now;
                 emailControl.IsDeleted = false;
@@ -51,13 +53,13 @@ namespace TUSO.Api.Controllers
                 context.EmailControlRepository.Add(emailControl);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadEmailControlByKey", new { key = emailControl.Oid }, emailControl);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", emailControl);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateEmailControl", "EmailControlController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -67,19 +69,24 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailControlByKey)]
-        public async Task<IActionResult> ReadEmailControlByKey(int key)
+        public async Task<ResponseDto> ReadEmailControlByKey(int key)
         {
             try
             {
-                var configuration = await context.EmailControlRepository.GetEmailControlByKey(key);
+                if(key <= 0)
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
-                return Ok(configuration);
+
+                var emailControl = await context.EmailControlRepository.GetEmailControlByKey(key);
+
+                return new ResponseDto(HttpStatusCode.OK, true, emailControl == null ? "Data Not Found" : "Successfully Get Data by Key", emailControl);
+
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailControlByKey", "EmailControlController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -92,14 +99,14 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateEmailControl)]
-        public async Task<IActionResult> UpdateEmailControl(int key, EmailControl emailControl)
+        public async Task<ResponseDto> UpdateEmailControl(int key, EmailControl emailControl)
         {
             try
             {
                 if (key != emailControl.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
-               
+
                 emailControl.DateModified = DateTime.Now;
                 emailControl.IsDeleted = false;
 
@@ -107,13 +114,13 @@ namespace TUSO.Api.Controllers
                 context.EmailControlRepository.Update(emailControl);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", emailControl);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailControl", "EmailControlController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -124,31 +131,31 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteEmailControl)]
-        public async Task<IActionResult> DeleteEmailControl(int key)
+        public async Task<ResponseDto> DeleteEmailControl(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
-                var configuration = await context.EmailControlRepository.GetEmailControlByKey(key);
+                var emailControl = await context.EmailControlRepository.GetEmailControlByKey(key);
 
-                if (configuration == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                if (emailControl == null)
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
-                configuration.IsDeleted = true;
-                configuration.DateModified = DateTime.Now;
+                emailControl.IsDeleted = true;
+                emailControl.DateModified = DateTime.Now;
 
-                context.EmailControlRepository.Update(configuration);
+                context.EmailControlRepository.Update(emailControl);
                 await context.SaveChangesAsync();
 
-                return Ok(configuration);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", emailControl);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteEmailControl", "EmailControlController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
     }

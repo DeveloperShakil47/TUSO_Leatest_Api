@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -39,12 +41,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFacilityPermission)]
-        public async Task<IActionResult> CreateFacilityPermission(FacilityPermission facilityPermission)
+        public async Task<ResponseDto> CreateFacilityPermission(FacilityPermission facilityPermission)
         {
             try
             {
                 if (await context.FacilityPermissionRepository.IsDuplicatePermission(facilityPermission.FacilityId, facilityPermission.UserId) is not null)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 facilityPermission.DateCreated = DateTime.Now;
                 facilityPermission.IsDeleted = false;
@@ -52,13 +54,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityPermissionRepository.Add(facilityPermission);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadFacilityPermissionsByKey", new { key = facilityPermission.Oid }, facilityPermission);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", facilityPermission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateFacilityPermission", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -69,19 +71,24 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermissionsByKey)]
-        public async Task<IActionResult> ReadFacilityPermissionsByKey(int key)
+        public async Task<ResponseDto> ReadFacilityPermissionsByKey(int key)
         {
             try
             {
+                if (key <= 0)
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
+
+
                 var facilityPermission = await context.FacilityPermissionRepository.GetFacilityPermissionByKey(key);
 
-                return Ok(facilityPermission);
+                return new ResponseDto(HttpStatusCode.OK, true, facilityPermission == null ? "Data Not Found" : "Successfully Get Data by Key", facilityPermission);
+
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityPermissionsByKey", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -93,19 +100,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermission)]
-        public async Task<IActionResult> ReadFacilityUsers(int FacilityId)
+        public async Task<ResponseDto> ReadFacilityUsers(int FacilityId)
         {
             try
             {
                 var facilityPermission = await context.FacilityPermissionRepository.GetFacilityUserByKey(FacilityId);
 
-                return Ok(facilityPermission);
+                return new ResponseDto(HttpStatusCode.OK, true, facilityPermission == null ? "Data Not Found" : "Successfully Get Data by Key", facilityPermission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityUsers", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -116,7 +123,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilitiePermissionPage)]
-        public async Task<IActionResult> ReadFacilitiesUsers(int FacilityId, int start, int take)
+        public async Task<ResponseDto> ReadFacilitiesUsers(int FacilityId, int start, int take)
         {
             try
             {
@@ -128,13 +135,13 @@ namespace TUSO.Api.Controllers
                     totalRows = await context.FacilityPermissionRepository.GetTotalRows(FacilityId)
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilitiesUsers", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -144,7 +151,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermissions)]
-        public async Task<IActionResult> ReadFacilityPermissions()
+        public async Task<ResponseDto> ReadFacilityPermissions()
         {
             try
             {
@@ -166,17 +173,14 @@ namespace TUSO.Api.Controllers
 
                     });
                 }
+                return new ResponseDto(HttpStatusCode.OK, true, facilityPermissions == null ? "Data Not Found" : "Successfully Get All Data", facilityPermissions);
 
-                if (facilitiesPermissionDtos == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(facilitiesPermissionDtos);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadFacilityPermissions", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -188,15 +192,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFacilityPermissions)]
-        public async Task<IActionResult> UpdateFacilityPermissions(int key, FacilityPermission facilityPermission)
+        public async Task<ResponseDto> UpdateFacilityPermissions(int key, FacilityPermission facilityPermission)
         {
             try
             {
                 if (key != facilityPermission.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await context.FacilityPermissionRepository.IsDuplicatePermission(facilityPermission.FacilityId, facilityPermission.UserId) is not null)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 facilityPermission.DateModified = DateTime.Now;
                 facilityPermission.IsDeleted = false;
@@ -204,13 +208,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityPermissionRepository.Update(facilityPermission);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", facilityPermission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateFacilityPermissions", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -221,17 +225,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFacilityPermission)]
-        public async Task<IActionResult> DeleteFacilityPermission(int key)
+        public async Task<ResponseDto> DeleteFacilityPermission(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError,null);
 
                 var facilityPermission = await context.FacilityPermissionRepository.GetFacilityPermissionByKey(key);
 
                 if (facilityPermission == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 facilityPermission.IsDeleted = true;
                 facilityPermission.DateModified = DateTime.Now;
@@ -239,13 +243,13 @@ namespace TUSO.Api.Controllers
                 context.FacilityPermissionRepository.Update(facilityPermission);
                 await context.SaveChangesAsync();
 
-                return Ok(facilityPermission);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", facilityPermission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteFacilityPermission", "FacilityPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
     }
