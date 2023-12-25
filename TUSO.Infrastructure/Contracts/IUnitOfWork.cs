@@ -27,6 +27,10 @@ namespace TUSO.Infrastructure.Contracts
         ITeamRepository TeamRepository { get; }
 
         IMemberRepository MemberRepository { get; }
+        IIncidentCategoryRepository IncidentCategoryRepository { get; }
+        IIncidentPriorityRepository IncidentPriorityRepository { get; }
+
+        IIncidentRepository IncidentRepository { get; }
 
         ILeadMemberRepository LeadMemberRepository { get; }
 
@@ -50,7 +54,6 @@ namespace TUSO.Infrastructure.Contracts
 
         IDeviceTypeRepository DeviceTypeRepository { get; }
 
-        IIncidentPriorityRepository IncidentPriorityRepository { get; }
 
         IModuleRepository ModuleRepository { get; }
 

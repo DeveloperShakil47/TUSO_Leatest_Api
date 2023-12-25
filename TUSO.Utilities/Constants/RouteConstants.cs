@@ -433,7 +433,7 @@ namespace TUSO.Utilities.Constants
 
         public const string ReadIncidentCategoryPageByFirstLevel = "incident-category/pagination-firstlevel";
 
-        public const string ReadIncidentCategoryPageBySecondLevel = "incident-category/pagination-secondlevel/key/{key}";
+        public const string ReadIncidentCategoryPageByLevel = "incident-category/pagination-level/key/{key}";
 
         public const string ReadIncidentCategoryPageByThirdLevel = "incident-category/pagination-thirdlevel/key/{key}";
 

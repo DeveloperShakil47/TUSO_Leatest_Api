@@ -330,5 +330,31 @@ namespace TUSO.Infrastructure
             }
         }
         #endregion
+        #region IncidentRepository
+        private IIncidentRepository incidentRepository;
+        public IIncidentRepository IncidentRepository
+        {
+            get
+            {
+                if (incidentRepository == null)
+                    incidentRepository = new IncidentRepository(context);
+                return incidentRepository;
+            }
+        }
+        #endregion
+
+
+        #region IncidentCategoryRepository
+        private IIncidentCategoryRepository incidentCategoryRepository;
+        public IIncidentCategoryRepository IncidentCategoryRepository
+        {
+            get
+            {
+                if (incidentCategoryRepository == null)
+                    incidentCategoryRepository = new IncidentCategoryRepository(context);
+                return incidentCategoryRepository;
+            }
+        }
+        #endregion
     }
 }

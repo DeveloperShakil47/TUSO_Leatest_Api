@@ -42,14 +42,14 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="key"></param>
         /// <returns>List of IncidentCategory object.</returns>
-        public Task<IEnumerable<IncidentCategory>> GetIncidentCategoryPageBySecondLevel(int key, int start, int take);
+        public Task<IEnumerable<IncidentCategory>> GetIncidentCategoryPageByLevel(int key, int start, int take);
 
         /// <summary>
         /// Returns all IncidentCategory.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>List of IncidentCategory object.</returns>
-        public Task<IEnumerable<IncidentCategory>> GetIncidentCategoryPageByThirdLevel(int key, int start, int take);
+        //public Task<IEnumerable<IncidentCategory>> GetIncidentCategoryPageByThirdLevel(int key, int start, int take);
 
         /// <summary>
         /// Returns all IncidentCategory.
