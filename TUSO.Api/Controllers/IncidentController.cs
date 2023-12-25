@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -33,7 +35,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncident)]
-        public async Task<IActionResult> CreateIncident(Incident incident)
+        public async Task<ResponseDto> CreateIncident(Incident incident)
 
         {
             try
@@ -43,12 +45,11 @@ namespace TUSO.Api.Controllers
                 incident.DateReported= DateTime.Now;
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
-
-                return CreatedAtAction("ReadIncidentByKey", new { key = incident.Oid }, incident);
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, null);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
