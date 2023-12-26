@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -39,20 +40,20 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateMember)]
-        public async Task<IActionResult> CreateMember(MemberDto model)
+        public async Task<ResponseDto> CreateMember(MemberDto memberDto  )
         {
             try
             {
-                if (!model.IsTeamLead)
+                if (!memberDto.IsTeamLead)
                 {
                     Member member = new Member()
                     {
-                        UserAccountId = model.UserAccountId,
-                        TeamId = model.TeamId,
+                        UserAccountId = memberDto.UserAccountId,
+                        TeamId = memberDto.TeamId,
                     };
 
                     if (await IsMemberDuplicate(member) == true)
-                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                        return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                     member.DateCreated = DateTime.Now;
                     member.IsDeleted = false;
@@ -63,12 +64,12 @@ namespace TUSO.Api.Controllers
                 {
                     TeamLead leadMember = new TeamLead()
                     {
-                        UserAccountId = model.UserAccountId,
-                        TeamId = model.TeamId,
+                        UserAccountId = memberDto.UserAccountId,
+                        TeamId = memberDto.TeamId,
                     };
 
                     if (await IsLeadMemberDuplicateAndAlreadyHaveTeamLead(leadMember) == true)
-                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                        return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                     leadMember.DateCreated = DateTime.Now;
                     leadMember.IsDeleted = false;
@@ -78,13 +79,13 @@ namespace TUSO.Api.Controllers
 
                 await context.SaveChangesAsync();
 
-                return Ok();
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", memberDto);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateMember", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -94,19 +95,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMembers)]
-        public async Task<IActionResult> ReadMembers()
+        public async Task<ResponseDto> ReadMembers()
         {
             try
             {
                 var member = await context.MemberRepository.GetMembers();
 
-                return Ok(member);
+                return new ResponseDto(HttpStatusCode.OK, true, member == null ? "Data Not Found" : "Successfully Get All Data", member);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMembers", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -117,25 +118,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByKey)]
-        public async Task<IActionResult> ReadMemberByKey(long key)
+        public async Task<ResponseDto> ReadMemberByKey(long key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var member = await context.MemberRepository.GetMemberByKey(key);
 
-                if (member == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, member == null ? "Data Not Found" : "Successfully Get Data by Key", member);
 
-                return Ok(member);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMemberByKey", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -146,25 +145,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByUser)]
-        public async Task<IActionResult> GetMemberByUser(long key)
+        public async Task<ResponseDto> GetMemberByUser(long key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var member = await context.MemberRepository.GetMemberByUser(key);
 
-                if (member == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, member == null ? "Data Not Found" : "Successfully Get Data by Key", member);
 
-                return Ok(member);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetMemberByUser", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -176,25 +173,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadTeamMemberByKey)]
-        public async Task<IActionResult> GetMemberByTeam(int key)
+        public async Task<ResponseDto> GetMemberByTeam(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var member = await context.MemberRepository.GetMemberByTeam(key);
 
-                if (member == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, member == null ? "Data Not Found" : "Successfully Get Data by Key", member);
 
-                return Ok(member);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetMemberByTeam", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -206,12 +201,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByTeamPage)]
-        public async Task<IActionResult> ReadMembersByTeam(int key, int start, int take)
+        public async Task<ResponseDto> ReadMembersByTeam(int key, int start, int take)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var member = await context.MemberRepository.GetMembersByTeam(key, start, take);
                 var response = new
@@ -220,16 +215,14 @@ namespace TUSO.Api.Controllers
                     currentPage = start+1,
                     totalRows = await context.MemberRepository.GetMemberCount(key)
                 };
-                if (member == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
 
-                return Ok(response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadMembersByTeam", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -241,15 +234,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateMember)]
-        public async Task<IActionResult> UpdateMember(long key, Member member)
+        public async Task<ResponseDto> UpdateMember(long key, Member member)
         {
             try
             {
                 if (key != member.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsMemberDuplicate(member) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 member.DateModified = DateTime.Now;
                 member.IsDeleted = false;
@@ -257,13 +250,13 @@ namespace TUSO.Api.Controllers
                 context.MemberRepository.Update(member);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", member);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateMember", "MemberController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

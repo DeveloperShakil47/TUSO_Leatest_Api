@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -34,7 +35,7 @@ namespace TUSO.Api.Controllers
 
         [HttpPost]
         [Route(RouteConstants.CreateRecoveryRequest)]
-        public async Task<IActionResult> CreateRecoveryRequest(RecoveryRequestDto recoveryRequest)
+        public async Task<ResponseDto> CreateRecoveryRequest(RecoveryRequestDto recoveryRequest)
         {
             try
             {
@@ -43,7 +44,7 @@ namespace TUSO.Api.Controllers
                 if (IsExist != null)
                 {
                     if (await IsRequestDuplicate(recoveryRequest) == true)
-                        return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                        return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                     var userRecovery = new RecoveryRequest()
                     {
@@ -59,18 +60,18 @@ namespace TUSO.Api.Controllers
 
                     context.RecoveryRequestRepository.Add(userRecovery);
                     await context.SaveChangesAsync();
-                    return Ok(userRecovery);
+                    return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", userRecovery);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status510NotExtended, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotExtended, false, MessageConstants.NoMatchFoundError, null);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -80,19 +81,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRecoveryRequests)]
-        public async Task<IActionResult> ReadRecoveryRequests()
+        public async Task<ResponseDto> ReadRecoveryRequests()
         {
             try
             {
                 var recoveryRequest = await context.RecoveryRequestRepository.GetRecoveryRequests();
 
-                return Ok(recoveryRequest);
+                return new ResponseDto(HttpStatusCode.OK, true, recoveryRequest == null ? "Data Not Found" : "Successfully Get All Data", recoveryRequest);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequests", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -102,7 +103,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRecoveryRequestsByPage)]
-        public async Task<IActionResult> ReadRecoveryRequestsByPage(int start, int take)
+        public async Task<ResponseDto> ReadRecoveryRequestsByPage(int start, int take)
         {
             try
             {
@@ -115,13 +116,13 @@ namespace TUSO.Api.Controllers
                     TotalRows = await context.RecoveryRequestRepository.GetRecoveryRequestCount()
                 };
 
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequestsByPage", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -132,25 +133,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRecoveryRequestByKey)]
-        public async Task<IActionResult> ReadRecoveryRequestByKey(int key)
+        public async Task<ResponseDto> ReadRecoveryRequestByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var recoveryRequest = await context.RecoveryRequestRepository.GetRecoveryRequestByKey(key);
 
-                if (recoveryRequest == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, recoveryRequest == null ? "Data Not Found" : "Successfully Get Data by Key", recoveryRequest);
 
-                return Ok(recoveryRequest);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadRecoveryRequestByKey", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -162,12 +161,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateRecoveryRequest)]
-        public async Task<IActionResult> UpdateRecoveryRequest(long key, RecoveryRequest recoveryRequest)
+        public async Task<ResponseDto> UpdateRecoveryRequest(long key, RecoveryRequest recoveryRequest)
         {
             try
             {
                 if (key != recoveryRequest.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 recoveryRequest.DateModified = DateTime.Now;
                 recoveryRequest.IsDeleted = false;
@@ -175,13 +174,13 @@ namespace TUSO.Api.Controllers
                 context.RecoveryRequestRepository.Update(recoveryRequest);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", recoveryRequest);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -192,17 +191,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Delete row from database</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteRecoveryRequest)]
-        public async Task<IActionResult> DeleteRecoveryRequest(long key)
+        public async Task<ResponseDto> DeleteRecoveryRequest(long key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var recoveryRequestInDb = await context.RecoveryRequestRepository.GetRecoveryRequestByKey(key);
 
                 if (recoveryRequestInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 recoveryRequestInDb.IsDeleted = true;
                 recoveryRequestInDb.DateModified = DateTime.Now;
@@ -210,13 +209,13 @@ namespace TUSO.Api.Controllers
                 context.RecoveryRequestRepository.Update(recoveryRequestInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(recoveryRequestInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", recoveryRequestInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteRecoveryRequest", "RecoveryRequestController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

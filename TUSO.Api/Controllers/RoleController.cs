@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -38,12 +40,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateUserRole)]
-        public async Task<IActionResult> CreateUserRole(Role role)
+        public async Task<ResponseDto> CreateUserRole(Role role)
         {
             try
             {
                 if (await IsRoleDuplicate(role) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 role.DateCreated = DateTime.Now;
                 role.IsDeleted = false;
@@ -51,13 +53,13 @@ namespace TUSO.Api.Controllers
                 context.RoleRepository.Add(role);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadUserRoleByKey", new { key = role.Oid }, role);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", role);
             }
             catch (Exception ex )
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateUserRole", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -67,18 +69,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRoles)]
-        public async Task<IActionResult> ReadUserRoles()
+        public async Task<ResponseDto> ReadUserRoles()
         {
             try
             { 
                 var role = await context.RoleRepository.GetRoles();
-                return Ok(role);
+
+                return new ResponseDto(HttpStatusCode.OK, true, role == null ? "Data Not Found" : "Successfully Get All Data", role);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRoles", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -88,7 +91,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRolesPage)]
-        public async Task<IActionResult> ReadUserRolesPage(int start, int take)
+        public async Task<ResponseDto> ReadUserRolesPage(int start, int take)
         {
             try
             {
@@ -100,13 +103,13 @@ namespace TUSO.Api.Controllers
                     currentPage = start + 1,
                     totalRows = await context.RoleRepository.GetRoleCount()
                 };
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRolesPage", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -117,25 +120,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRoleByKey)]
-        public async Task<IActionResult> ReadUserRoleByKey(int key)
+        public async Task<ResponseDto> ReadUserRoleByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccount = await context.RoleRepository.GetRoleByKey(key);
 
-                if (userAccount == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, userAccount == null ? "Data Not Found" : "Successfully Get Data by Key", userAccount);
 
-                return Ok(userAccount);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadUserRoleByKey", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -147,15 +148,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateUserRole)]
-        public async Task<IActionResult> UpdateUserRole(int key, Role role)
+        public async Task<ResponseDto> UpdateUserRole(int key, Role role)
         {
             try
             {
                 if (key != role.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 if (await IsRoleDuplicate(role) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 role.DateModified = DateTime.Now;
                 role.IsDeleted = false;
@@ -163,13 +164,13 @@ namespace TUSO.Api.Controllers
                 context.RoleRepository.Update(role);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", role);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateUserRole", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -180,17 +181,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteUserRole)]
-        public async Task<IActionResult> DeleteUserRole(int key)
+        public async Task<ResponseDto> DeleteUserRole(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var userAccountInDb = context.RoleRepository.Get(key);
 
                 if (userAccountInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 userAccountInDb.IsDeleted = true;
                 userAccountInDb.DateModified = DateTime.Now;
@@ -198,13 +199,13 @@ namespace TUSO.Api.Controllers
                 context.RoleRepository.Update(userAccountInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(userAccountInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", userAccountInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteUserRole", "RoleController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

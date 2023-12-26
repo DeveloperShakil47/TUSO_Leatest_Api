@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -40,12 +42,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateSystem)]
-        public async Task<IActionResult> CreateSystem(Project system)
+        public async Task<ResponseDto> CreateSystem(Project system)
         {
             try
             {
                 if (await IsSystemDuplicate(system) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 system.DateCreated = DateTime.Now;
                 system.IsDeleted = false;
@@ -53,13 +55,13 @@ namespace TUSO.Api.Controllers
                 context.SystemRepository.Add(system);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadSystemByKey", new { key = system.Oid }, system);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", system);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateSystem", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -69,19 +71,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystems)]
-        public async Task<IActionResult> ReadSystems()
+        public async Task<ResponseDto> ReadSystems()
         {
             try
             {
                 var systems = await context.SystemRepository.GetSystems();
 
-                return Ok(systems);
+                return new ResponseDto(HttpStatusCode.OK, true, systems == null ? "Data Not Found" : "Successfully Get All Data", systems);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystems", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -91,7 +93,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemsPagination)]
-        public async Task<IActionResult> ReadSystemsPagination(int start, int take)
+        public async Task<ResponseDto> ReadSystemsPagination(int start, int take)
         {
             try
             {
@@ -103,13 +105,13 @@ namespace TUSO.Api.Controllers
                     currentPage = start+1,
                     totalRows = await context.SystemRepository.GetSystemCount()
                 };
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemsPagination", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -122,25 +124,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemByKey)]
-        public async Task<IActionResult> ReadSystemByKey(int key)
+        public async Task<ResponseDto> ReadSystemByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var system = await context.SystemRepository.GetSystemByKey(key);
 
-                if (system == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, system == null ? "Data Not Found" : "Successfully Get Data by Key", system);
 
-                return Ok(system);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemByKey", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -152,15 +152,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateSystem)]
-        public async Task<IActionResult> UpdateSystem(int key, Project system)
+        public async Task<ResponseDto> UpdateSystem(int key, Project system)
         {
             try
             {
                 if (key != system.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 if (await IsSystemDuplicate(system) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 system.DateModified = DateTime.Now;
                 system.IsDeleted = false;
@@ -168,13 +168,13 @@ namespace TUSO.Api.Controllers
                 context.SystemRepository.Update(system);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", system);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateSystem", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -185,24 +185,25 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteSystem)]
-        public async Task<IActionResult> DeleteSystem(int key)
+        public async Task<ResponseDto> DeleteSystem(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var systemInDb = await context.SystemRepository.GetSystemByKey(key);
 
                 if (systemInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 var totalOpenTicketUnderSystem = await context.SystemRepository.TotalOpenTicketUnderSystem(systemInDb.Oid);
 
                 if (totalOpenTicketUnderSystem > 0)
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
+                    return new ResponseDto(HttpStatusCode.MethodNotAllowed, false, MessageConstants.DependencyError, null);
 
                 var systemPermissions = await context.SystemPermissionRepository.GetSystemPermissionBySystem(systemInDb.Oid);
+
                 if (systemPermissions != null)
                 {
                     foreach(var systemPermission in systemPermissions)
@@ -218,13 +219,13 @@ namespace TUSO.Api.Controllers
                 context.SystemRepository.Update(systemInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(systemInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", systemInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteSystem", "SystemController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 

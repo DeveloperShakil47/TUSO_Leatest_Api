@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -36,12 +39,12 @@ namespace TUSO.Api.Controllers
         /// </summary>
         [HttpPost]
         [Route(RouteConstants.CreateSystemPermission)]
-        public async Task<IActionResult> CreateSystemPermission(SystemPermission permission)
+        public async Task<ResponseDto> CreateSystemPermission(SystemPermission permission)
         {
             try
             {
                 if (await IsPermissionDuplicate(permission) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 permission.DateCreated = DateTime.Now;
                 permission.IsDeleted = false;
@@ -49,13 +52,13 @@ namespace TUSO.Api.Controllers
                 context.SystemPermissionRepository.Add(permission);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadSystemPermissionByKey", new { key = permission.Oid }, permission);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", permission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateSystemPermission", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -65,18 +68,18 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissions)]
-        public async Task<IActionResult> ReadSystemPermissions()
+        public async Task<ResponseDto> ReadSystemPermissions()
         {
             try
             {
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissions();
-                return Ok(permissionInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, permissionInDb == null ? "Data Not Found" : "Successfully Get All Data", permissionInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissions", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -87,25 +90,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByKey)]
-        public async Task<IActionResult> ReadSystemPermissionByKey(int key)
+        public async Task<ResponseDto> ReadSystemPermissionByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissionByKey(key);
 
-                if (permissionInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, permissionInDb == null ? "Data Not Found" : "Successfully Get Data by Key", permissionInDb);
 
-                return Ok(permissionInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByKey", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -116,25 +117,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByUser)]
-        public async Task<IActionResult> ReadSystemPermissionByUser(int userAccountId)
+        public async Task<ResponseDto> ReadSystemPermissionByUser(int userAccountId)
         {
             try
             {
                 if (userAccountId <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissionByUser(userAccountId);
 
-                if (permissionInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, permissionInDb == null ? "Data Not Found" : "Successfully Get Data by Key", permissionInDb);
 
-                return Ok(permissionInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByUser", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -145,12 +144,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByUserPage)]
-        public async Task<IActionResult> ReadSystemPermissionByUserPage(int key, int start, int take)
+        public async Task<ResponseDto> ReadSystemPermissionByUserPage(int key, int start, int take)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var systemPermissionInDb = await context.SystemPermissionRepository.GetSystemPermissionByUserPage(key, start, take);
 
@@ -160,17 +159,15 @@ namespace TUSO.Api.Controllers
                     currentPage = start + 1,
                     totalRows = await context.SystemPermissionRepository.GetSystemPermissionCount(key)
                 };
-                if (systemPermissionInDb == null)
 
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
 
-                return Ok(response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByUserPage", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -182,25 +179,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByProject)]
-        public async Task<IActionResult> ReadSystemPermissionByProject(int systemId)
+        public async Task<ResponseDto> ReadSystemPermissionByProject(int systemId)
         {
             try
             {
                 if (systemId <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissionBySystem(systemId);
 
-                if (permissionInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, permissionInDb == null ? "Data Not Found" : "Successfully Get All Data", permissionInDb);
 
-                return Ok(permissionInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermissionByProject", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -212,26 +207,22 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermission)]
-        public async Task<IActionResult> ReadSystemPermission(long userAccountId, int systemId)
+        public async Task<ResponseDto> ReadSystemPermission(long userAccountId, int systemId)
         {
             try
             {
                 if (userAccountId <= 0 && systemId <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermission(userAccountId, systemId);
 
-                if (permissionInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(permissionInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, permissionInDb == null ? "Data Not Found" : "Successfully Get All Data", permissionInDb);
             }
-
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadSystemPermission", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -243,28 +234,28 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateSystemPermission)]
-        public async Task<IActionResult> UpdateSystemPermission(int key, SystemPermission permission)
+        public async Task<ResponseDto> UpdateSystemPermission(int key, SystemPermission permission)
         {
             try
             {
                 if (key != permission.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 if (await IsPermissionDuplicate(permission) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 permission.DateModified = DateTime.Now;
 
                 context.SystemPermissionRepository.Update(permission);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", permission);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateSystemPermission", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -275,17 +266,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteSystemPermission)]
-        public async Task<IActionResult> DeleteSystemPermission(int key)
+        public async Task<ResponseDto> DeleteSystemPermission(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var permissionInDb = await context.SystemPermissionRepository.GetSystemPermissionByKey(key);
 
                 if (permissionInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 permissionInDb.IsDeleted = true;
                 permissionInDb.DateModified = DateTime.Now;
@@ -293,13 +284,13 @@ namespace TUSO.Api.Controllers
                 context.SystemPermissionRepository.Update(permissionInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(permissionInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", permissionInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteSystemPermission", "SystemPermissionController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -319,7 +310,7 @@ namespace TUSO.Api.Controllers
 
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "IsPermissionDuplicate", "SystemPermissionController.cs", ex.Message);
 
