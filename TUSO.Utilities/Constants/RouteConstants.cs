@@ -425,7 +425,7 @@ namespace TUSO.Utilities.Constants
         #region IncidentCategory
         public const string CreateIncidentCategory = "incident-category";
 
-        public const string ReadIncidentCategorys = "incident-categorys";
+        public const string ReadIncidentCategories = "incident-categories";
 
         public const string ReadIncidentCategoryByKeyParent = "incident-category/parent/key/{key}";
 

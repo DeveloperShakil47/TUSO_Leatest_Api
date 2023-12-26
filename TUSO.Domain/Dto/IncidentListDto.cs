@@ -59,7 +59,7 @@ namespace TUSO.Domain.Dto
         /// <summary>
         /// The project/system name.
         /// </summary>
-        public string Projectname { get; set; }
+        public string ProjectName { get; set; }
 
         /// <summary>
         /// Foreign Key. Primary key of the entity Facility.

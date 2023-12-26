@@ -66,8 +66,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadIncidentCategorys)]
-        public async Task<ResponseDto> ReadIncidentCategorys()
+        [Route(RouteConstants.ReadIncidentCategories)]
+        public async Task<ResponseDto> ReadIncidentCategories()
         {
             try
             {
@@ -238,42 +238,7 @@ namespace TUSO.Api.Controllers
             }
         }
 
-        ///// <summary>
-        ///// URL: tuso-api/incident-category/{key}
-        ///// </summary>
-        ///// <param name="key">Primary key of the table</param>
-        ///// <returns>Deletes a row from the table.</returns>
-        //[HttpDelete]
-        //[Route(RouteConstants.DeleteIncidentCategory)]
-        //public async Task<IActionResult> DeleteIncidentCategory(int key, int start, int take)
-        //{
-        //    try
-        //    {
-        //        if (key <= 0)
-        //            return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
-
-        //        var incidentCategoryInDb = await context.IncidentCategoryRepository.GetIncidentCategoryByKey(key);
-        //        var isExist = await context.IncidentCategoryRepository.GetIncidentCategoriesByPage(key,   start,  take);
-
-        //        if (isExist.ToList().Count > 0)
-        //            return StatusCode(StatusCodes.Status405MethodNotAllowed, MessageConstants.DependencyError);
-
-        //        if (incidentCategoryInDb == null)
-        //            return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-        //        incidentCategoryInDb.IsDeleted = true;
-        //        incidentCategoryInDb.DateModified = DateTime.Now;
-
-        //        context.IncidentCategoryRepository.Update(incidentCategoryInDb);
-        //        await context.SaveChangesAsync();
-
-        //        return Ok(incidentCategoryInDb);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
-        //    }
-        //}
+    
 
 
         /// <summary>

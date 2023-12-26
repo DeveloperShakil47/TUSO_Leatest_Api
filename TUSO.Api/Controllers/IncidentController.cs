@@ -53,5 +53,85 @@ namespace TUSO.Api.Controllers
             }
         }
 
+
+
+        /// <summary>
+        /// URl: tuso-api/incidents
+        /// </summary>
+        /// <returns>List of table object.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadIncidents)]
+        public async Task<ResponseDto> ReadIncidents(int start, int take, int status)
+        {
+            try
+            {
+                var incidentInDb = await context.IncidentRepository.GetIncidents(start, take, status);
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
+            }
+            catch (Exception)
+            {
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
+            }
+        }
+
+        /// <summary>
+        /// URl: tuso-api/incidents/key
+        /// </summary>
+        /// <returns>List of table object.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadIncidentsByKey)]
+        public async Task<IActionResult> ReadIncidentsByKey(long key, long UserAccountID, int start, int take, int status)
+        {
+            try
+            {
+                var incidentInDb = await context.IncidentRepository.GetIncidentsByKey(key, UserAccountID, start, take, status);
+                return Ok(incidentInDb);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+        }
+
+        /// <summary>
+        /// URl: tuso-api/incidents/status
+        /// </summary>
+        /// <returns>List of incident status.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadIncidentsByStatus)]
+        public async Task<IActionResult> ReadIncidentsByStatus(bool key, int start, int take)
+        {
+            try
+            {
+                var incidentInDb = await context.IncidentRepository.GetIncidentsByStatus(key, start, take);
+                return Ok(incidentInDb);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+        }
+
+        /// <summary>
+        /// URl: tuso-api/incidents/expart
+        /// </summary>
+        /// <returns>List of Expart incident.</returns>
+        [HttpGet]
+        [Route(RouteConstants.ReadIncidentsByExpert)]
+        public async Task<IActionResult> GetIncidentsByExpart(long key, int start, int take, int status)
+        {
+            try
+            {
+                var incidentInDb = await context.IncidentRepository.GetIncidentsByExpart(key, start, take, status);
+
+                return Ok(incidentInDb);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+            }
+        }
+
+
     }
 }
