@@ -47,9 +47,10 @@ namespace TUSO.Api.Controllers
                 incident.DateCreated = DateTime.Now;
                 incident.IsDeleted = false;
                 incident.DateReported = DateTime.Now;
+
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
-                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, null);
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incident);
             }
             catch (Exception)
             {
