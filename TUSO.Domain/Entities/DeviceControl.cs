@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TUSO.Utilities.Constants;
 
 /*
@@ -22,12 +23,14 @@ namespace TUSO.Domain.Entities
         /// Show the CPU uses percentage of the device.
         /// </summary>
         [Display(Name = "CPU Uses")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? CPUUses { get; set; }
 
         /// <summary>
         /// Show the memory uses percentage of the device.
         /// </summary>
         [Display(Name = "Memory Uses")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? MemoryUses { get; set; }
     }
 }

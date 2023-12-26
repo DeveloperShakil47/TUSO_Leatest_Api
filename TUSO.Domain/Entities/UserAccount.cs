@@ -83,7 +83,7 @@ namespace TUSO.Domain.Entities
         /// Cellphone number.
         /// </summary>        
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
-        [StringLength(15)]
+        [StringLength(11)]
         [DataType(DataType.Text)]
         [Display(Name = "Cellphone")]
         [IfNotInteger]

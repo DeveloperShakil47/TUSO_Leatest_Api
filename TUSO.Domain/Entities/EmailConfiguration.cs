@@ -7,7 +7,6 @@ using TUSO.Utilities.Constants;
  * Last modified:
  * Modified by: 
  */
-
 namespace TUSO.Domain.Entities
 {
     /// <summary>
