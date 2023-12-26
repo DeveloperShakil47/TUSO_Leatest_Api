@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
@@ -48,7 +46,7 @@ namespace TUSO.Api.Controllers
             {
                 incident.DateCreated = DateTime.Now;
                 incident.IsDeleted = false;
-                incident.DateReported= DateTime.Now;
+                incident.DateReported = DateTime.Now;
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, null);
