@@ -4,11 +4,11 @@ using TUSO.Infrastructure.Contracts;
 using TUSO.Infrastructure.SqlServer;
 
 /*
- * Created by: Sakhawat
- * Date created: 04.09.2022
- * Last modified: 06.09.2022
- * Modified by: Bithy
- */
+* Created by: Stephan
+* Date created: 17.12.2023
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Infrastructure.Repositories
 {
     public class IncidentCategoryRepository : Repository<IncidentCategory>, IIncidentCategoryRepository
@@ -30,7 +30,6 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-
         public async Task<IEnumerable<IncidentCategory>> GetIncidentCategoriesByKey(int key)
         {
             try
@@ -43,14 +42,11 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-
         public async Task<IncidentCategory> GetIncidentCategoryByName(string name, int ParentId)
         {
             try
             {
                 return await FirstOrDefaultAsync(i => i.IncidentCategorys.ToLower().Trim() == name.ToLower().Trim()&& i.ParentId == ParentId && i.IsDeleted == false);
-
-
             }
             catch (Exception)
             {
@@ -58,13 +54,13 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-
         public async Task<IEnumerable<IncidentCategory>> GetIncidentCategoryPageByLevel(int key, int start, int take)
         {
             try
             {
 
                 var data = await context.IncidentCategories.Where(c => c.IsDeleted == false && c.ParentId == key).Include(x => x.Incidents).OrderBy(x => x.Oid).Skip((start - 1) * take).Take(take).ToListAsync();
+                
                 return data;
             }
             catch (Exception)
@@ -90,6 +86,7 @@ namespace TUSO.Infrastructure.Repositories
             try
             {
                 var data = await context.IncidentCategories.Where(c => c.IsDeleted==false  && c.ParentId == 0).Include(x=>x.Incidents).OrderBy(x => x.Oid).Skip((start - 1) *take).Take(take).ToListAsync();
+                
                 return data;
             }
             catch (Exception)

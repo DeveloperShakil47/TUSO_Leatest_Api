@@ -7,6 +7,12 @@ using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
+/*
+* Created by: Stephan
+* Date created: 17.12.2023
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Api.Controllers
 {
     [Route(RouteConstants.BaseRoute)]
