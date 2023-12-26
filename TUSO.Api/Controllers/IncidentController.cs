@@ -40,7 +40,6 @@ namespace TUSO.Api.Controllers
         [HttpPost]
         [Route(RouteConstants.CreateIncident)]
         public async Task<ResponseDto> CreateIncident(Incident incident)
-
         {
             try
             {
@@ -57,6 +56,5 @@ namespace TUSO.Api.Controllers
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
-
     }
 }
