@@ -12,6 +12,11 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(configuration.GetConnectionString("TusoCon")));
 
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+{
+    loggerConfiguration.ReadFrom.Configuration(configuration);
+});
+
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
@@ -38,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("ApiCorsPolicy");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

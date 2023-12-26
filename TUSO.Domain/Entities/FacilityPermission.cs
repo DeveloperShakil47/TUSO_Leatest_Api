@@ -8,7 +8,6 @@ using System.Text.Json.Serialization;
  * Last modified:
  * Modified by: 
  */
-
 namespace TUSO.Domain.Entities
 {
     /// <summary>

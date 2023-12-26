@@ -46,12 +46,10 @@ namespace TUSO.Domain.Entities
         [JsonIgnore]
         public virtual IEnumerable<Facility> Facilities { get; set; }
 
-
         /// <summary>
         /// This field in not insert.
         /// </summary>
         [NotMapped]
         public int CountryId { get; set; }
-
     }
 }

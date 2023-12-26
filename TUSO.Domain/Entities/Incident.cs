@@ -28,6 +28,7 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [Column(TypeName = "smalldatetime")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         [Display(Name = "Date of Incident")]
         public DateTime? DateOfIncident { get; set; }
 
@@ -36,6 +37,7 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [Column(TypeName = "smalldatetime")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         [Display(Name = "Date Reported")]
         public DateTime DateReported { get; set; }
 
@@ -51,6 +53,7 @@ namespace TUSO.Domain.Entities
         /// TicketTitle of an Incident.
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
+        [StringLength(90)]
         [DataType(DataType.Text)]
         [Display(Name = "Ticket Title")]
         public string TicketTitle { get; set; }
@@ -65,6 +68,7 @@ namespace TUSO.Domain.Entities
         ///  DateResolved of an Incident.
         /// </summary>       
         [Column(TypeName = "smalldatetime")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         [Display(Name = "Date Resolved")]
         public DateTime? DateResolved { get; set; }
 
@@ -139,6 +143,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Reassaigned date of an Incident.
         /// </summary>
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         [Column(TypeName = "smalldatetime")]
         [Display(Name = "Reassign Date")]
         public DateTime? ReassignDate { get; set; }
@@ -154,15 +159,17 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Country Code of the Caller cellphone.
         /// </summary>
-        [StringLength(20)]
+        
         [DataType(DataType.Text)]
+        [StringLength(4)]
+        [MaxLength(4), MinLength(2)]
         [Display(Name = "Caller Country Code")]
         public string? CallerCountryCode { get; set; }
 
         /// <summary>
         ///caller Cellphone number.
         /// </summary>        
-        [StringLength(15)]
+        [StringLength(11)]
         [DataType(DataType.Text)]
         [Display(Name = "Caller Phone No")]
         public string? CallerCellphone { get; set; }
@@ -170,7 +177,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Email of the Caller.
         /// </summary>
-        [StringLength(90)]
+        [StringLength(60)]
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Caller Email")]
         [IfNotEmailAddress]
@@ -179,7 +186,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Job description of the Caller.
         /// </summary>
-        [StringLength(90)]
+        [StringLength(60)]
         [DataType(DataType.Text)]
         [Display(Name = "Caller Job Title")]
         public string? CallerJobTitle { get; set; }

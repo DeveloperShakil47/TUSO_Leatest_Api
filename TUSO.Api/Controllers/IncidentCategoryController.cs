@@ -7,11 +7,11 @@ using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
 /*
- * Created by: Sakhawat
- * Date created: 04.09.2022
- * Last modified: 14.09.2022,17.09.2022, 06.11.2022
- * Modified by: Bithy, Sakhawat, Rakib, Bithy
- */
+* Created by: Stephan
+* Date created: 17.12.2023
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Api.Controllers
 {
     /// <summary>
@@ -87,7 +87,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByFirstLevel)]
-        public async Task<ResponseDto> ReadIncidentCategorybyPage(int start, int take)
+        public async Task<ResponseDto> ReadIncidentCategoryPageByFirstLevel(int start, int take)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByLevel)]
-        public async Task<ResponseDto> ReadIncidentCategoryByPage(int key, int start, int take)
+        public async Task<ResponseDto> ReadIncidentCategoryPageByLevel(int key, int start, int take)
         {
             try
             {

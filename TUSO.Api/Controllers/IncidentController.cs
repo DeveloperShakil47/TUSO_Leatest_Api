@@ -1,12 +1,16 @@
-﻿
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
+/*
+* Created by: Stephan
+* Date created: 17.12.2023
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Api.Controllers
 {
     [Route(RouteConstants.BaseRoute)]
@@ -36,16 +40,16 @@ namespace TUSO.Api.Controllers
         [HttpPost]
         [Route(RouteConstants.CreateIncident)]
         public async Task<ResponseDto> CreateIncident(Incident incident)
-
         {
             try
             {
                 incident.DateCreated = DateTime.Now;
                 incident.IsDeleted = false;
-                incident.DateReported= DateTime.Now;
+                incident.DateReported = DateTime.Now;
+
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
-                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, null);
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incident);
             }
             catch (Exception)
             {

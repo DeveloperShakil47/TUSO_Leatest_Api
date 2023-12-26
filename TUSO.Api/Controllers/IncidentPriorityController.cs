@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -33,12 +35,12 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncidentPriority)]
-        public async Task<IActionResult> CreateIncidentPriority(IncidentPriority incidentPriority)
+        public async Task<ResponseDto> CreateIncidentPriority(IncidentPriority incidentPriority)
         {
             try
             {
                 if (await IsIncidentPriorityDuplicate(incidentPriority) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 incidentPriority.DateCreated = DateTime.Now;
                 incidentPriority.IsDeleted = false;
@@ -46,13 +48,13 @@ namespace TUSO.Api.Controllers
                 context.IncidentPriorityRepository.Add(incidentPriority);
                 await context.SaveChangesAsync();
 
-                return CreatedAtAction("ReadIncidentPriorityByKey", new { key = incidentPriority.Oid }, incidentPriority);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Create Successfully", incidentPriority);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateIncidentPriority", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -62,19 +64,19 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPriorities)]
-        public async Task<IActionResult> ReadIncidentPriorities()
+        public async Task<ResponseDto> ReadIncidentPriorities()
         {
             try
             {
                 var incidentPriorityInDb = await context.IncidentPriorityRepository.GetIncidentPriorities();
 
-                return Ok(incidentPriorityInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, incidentPriorityInDb == null ? "Data Not Found" : "Successfully Get All Data", incidentPriorityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorities", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -84,7 +86,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPrioritiesPage)]
-        public async Task<IActionResult> ReadIncidentPriorities(int start, int take)
+        public async Task<ResponseDto> ReadIncidentPriorities(int start, int take)
         {
             try
             {
@@ -96,13 +98,13 @@ namespace TUSO.Api.Controllers
                     currentPage = start + 1,
                     totalRows = await context.IncidentPriorityRepository.GetIncidentPriorityCount()
                 };
-                return Ok(response);
+                return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorities", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -113,25 +115,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPriorityByKey)]
-        public async Task<IActionResult> ReadIncidentPriorityByKey(int key)
+        public async Task<ResponseDto> ReadIncidentPriorityByKey(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.InvalidParameterError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var incidentPriorityInDb = await context.IncidentPriorityRepository.GetIncidentPriorityByKey(key);
 
-                if (incidentPriorityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                return new ResponseDto(HttpStatusCode.OK, true, incidentPriorityInDb == null ? "Data Not Found" : "Successfully Get Data by Key", incidentPriorityInDb);
 
-                return Ok(incidentPriorityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentPriorityByKey", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -143,15 +143,15 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateIncidentPriority)]
-        public async Task<IActionResult> UpdateIncidentPriority(int key, IncidentPriority incidentPriority)
+        public async Task<ResponseDto> UpdateIncidentPriority(int key, IncidentPriority incidentPriority)
         {
             try
             {
                 if (key != incidentPriority.Oid)
-                    return StatusCode(StatusCodes.Status400BadRequest, MessageConstants.UnauthorizedAttemptOfRecordUpdateError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 if (await IsIncidentPriorityDuplicate(incidentPriority) == true)
-                    return StatusCode(StatusCodes.Status409Conflict, MessageConstants.DuplicateError);
+                    return new ResponseDto(HttpStatusCode.Conflict, false, MessageConstants.DuplicateError, null);
 
                 incidentPriority.DateModified = DateTime.Now;
                 incidentPriority.IsDeleted = false;
@@ -159,13 +159,13 @@ namespace TUSO.Api.Controllers
                 context.IncidentPriorityRepository.Update(incidentPriority);
                 await context.SaveChangesAsync();
 
-                return StatusCode(StatusCodes.Status204NoContent);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Updated Successfully", incidentPriority);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateIncidentPriority", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -176,17 +176,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteIncidentPriority)]
-        public async Task<IActionResult> DeleteIncidentPriority(int key)
+        public async Task<ResponseDto> DeleteIncidentPriority(int key)
         {
             try
             {
                 if (key <= 0)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var incidentPriorityInDb = await context.IncidentPriorityRepository.GetIncidentPriorityByKey(key);
 
                 if (incidentPriorityInDb == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.NoMatchFoundError, null);
 
                 incidentPriorityInDb.IsDeleted = true;
                 incidentPriorityInDb.DateModified = DateTime.Now;
@@ -194,13 +194,13 @@ namespace TUSO.Api.Controllers
                 context.IncidentPriorityRepository.Update(incidentPriorityInDb);
                 await context.SaveChangesAsync();
 
-                return Ok(incidentPriorityInDb);
+                return new ResponseDto(HttpStatusCode.OK, true, "Data Delete Successfully", incidentPriorityInDb);
             }
             catch (Exception ex)
             {
                 logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "DeleteIncidentPriority", "IncidentPriorityController.cs", ex.Message);
 
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -216,6 +216,7 @@ namespace TUSO.Api.Controllers
                 var incidentPriorityInDb = await context.IncidentPriorityRepository.GetIncidentPriorityByName(incidentPriority.Priority);
 
                 if (incidentPriorityInDb != null)
+
                     if (incidentPriorityInDb.Oid != incidentPriority.Oid)
                         return true;
 

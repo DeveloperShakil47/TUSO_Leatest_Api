@@ -435,8 +435,6 @@ namespace TUSO.Utilities.Constants
 
         public const string ReadIncidentCategoryPageByLevel = "incident-category/pagination-level/key/{key}";
 
-        public const string ReadIncidentCategoryPageByThirdLevel = "incident-category/pagination-thirdlevel/key/{key}";
-
         public const string UpdateIncidentCategory = "incident-category/{key}";
 
         public const string DeleteIncidentCategory = "incident-category/{key}";
