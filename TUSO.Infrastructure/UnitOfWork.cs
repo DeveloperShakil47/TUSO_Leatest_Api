@@ -343,7 +343,6 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
-
         #region IncidentCategoryRepository
         private IIncidentCategoryRepository incidentCategoryRepository;
         public IIncidentCategoryRepository IncidentCategoryRepository
@@ -353,6 +352,51 @@ namespace TUSO.Infrastructure
                 if (incidentCategoryRepository == null)
                     incidentCategoryRepository = new IncidentCategoryRepository(context);
                 return incidentCategoryRepository;
+            }
+        }
+        #endregion
+
+        #region IncidentActionLogRepository
+        public IIncidentActionLogRepository incidentActionLogRepository;
+        public IIncidentActionLogRepository IncidentActionLogRepository
+        {
+            get
+            {
+                if (incidentActionLogRepository == null)
+                    incidentActionLogRepository = new IncidentActionLogRepository(context);
+
+                return incidentActionLogRepository;
+            }
+
+        }
+
+        #endregion
+
+        #region IncidentAdminActionLogRepository
+        public IIncidentAdminActionLogRepository incidentAdminActionLogRepository;
+        public IIncidentAdminActionLogRepository IncidentAdminActionLogRepository
+        {
+            get
+            {
+                if (incidentAdminActionLogRepository == null)
+                    incidentAdminActionLogRepository = new IncidentAdminActionLogRepository(context);
+
+                return incidentAdminActionLogRepository;
+            }
+
+        }
+
+        #endregion
+
+        #region MessageRepository
+        private IMessageRepository messageRepository;
+        public IMessageRepository MessageRepository
+        {
+            get
+            {
+                if (messageRepository == null)
+                    messageRepository = new MessageRepository(context);
+                return messageRepository;
             }
         }
         #endregion

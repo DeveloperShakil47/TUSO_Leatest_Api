@@ -45,26 +45,34 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IncidentListReturnDto> GetIncidentsByKey(long key, long UserAccountId, int start, int take, int status)
+        public async Task<IncidentListReturnDto> GetIncidentsByKey(long key, long userAccountId, int start, int take, int status)
         {
             try
             {
-                Expression<Func<Incident, bool>> predicate = w => w.IsDeleted == false;
+                Expression<Func<Incident, bool>> predicate = w => !w.IsDeleted;
 
-                var role = (from u in context.UserAccounts.Where(w => w.Oid == UserAccountId)
+                var role = await (from u in context.UserAccounts.AsNoTracking().Where(w => w.Oid == userAccountId)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
-                            select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true }).FirstOrDefault();
+                            join teamlead in context.TeamLeads on u.Oid equals teamlead.UserAccountId into lead
+                            from teamlead in lead.DefaultIfEmpty()
+                            select new
+                            {
+                                RoleName = u.Roles.RoleName,
+                                u.Oid,
+                                TeamId = m == null && teamlead == null ? 0 : m.TeamId != null ? m.TeamId: teamlead.TeamId,
+                                Leader = teamlead == null ? false : true
+                            }).FirstOrDefaultAsync();
 
-                if (role.RoleName == "Client")
+                if (role?.RoleName == "Client")
                 {
                     predicate = predicate.And(w => w.ReportedBy == role.Oid);
                 }
-                else if (role.RoleName == "Expert")
+                else if (role?.RoleName == "Expert")
                 {
                     if (role.Leader)
                     {
-                        predicate = predicate.Or(w => w.TeamId == role.TeamId).And(w => w.AssignedTo != null);
+                        predicate = predicate.Or(w => w.TeamId == role.TeamId && w.AssignedTo != null);
                     }
                     else
                     {
@@ -74,27 +82,26 @@ namespace TUSO.Infrastructure.Repositories
 
                 var length = key.ToString().Length;
 
-                bool st = false;
-
-                if (status == 0)
+                if (status != 0)
                 {
-                    predicate = predicate.And(i => i.Oid.ToString().Substring(0, length) == key.ToString() && i.IsDeleted == false);
-
+                    bool isOpen = status == 1;
+                    predicate = predicate.And(i => i.Oid.ToString().Substring(0, length) == key.ToString() && !i.IsDeleted && i.IsOpen == isOpen);
                 }
                 else
                 {
-                    st = status == 1 ? true : false;
-                    predicate = predicate.And(i => i.Oid.ToString().Substring(0, length) == key.ToString() && i.IsDeleted == false && i.IsOpen == st);
-
+                    predicate = predicate.And(i => i.Oid.ToString().Substring(0, length) == key.ToString() && !i.IsDeleted);
                 }
 
-                return GetIncidentList(predicate, start, take);
+                return await GetIncidentList(predicate, start, take);
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+     
+
 
 
         public async Task<ClientIncidentCountDto> IncidentClientCount(string? UserName)
@@ -138,13 +145,13 @@ namespace TUSO.Infrastructure.Repositories
 
                 if (status == 0)
                 {
-                    return GetIncidentList(i => i.ReportedBy == key && i.IsDeleted == false, start, take);
+                    return await GetIncidentList(i => i.ReportedBy == key && i.IsDeleted == false, start, take);
                 }
                 else
                 {
                     st = status == 1 ? true : false;
 
-                    return GetIncidentList(i => i.ReportedBy == key && i.IsDeleted == false && i.IsOpen == st, start, take);
+                    return await GetIncidentList(i => i.ReportedBy == key && i.IsDeleted == false && i.IsOpen == st, start, take);
                 }
             }
             catch (Exception)
@@ -160,13 +167,13 @@ namespace TUSO.Infrastructure.Repositories
                 bool st = false;
                 if (status == 0)
                 {
-                    return GetIncidentList(i => i.AssignedTo == key && i.IsDeleted == false, start, take);
+                    return await GetIncidentList(i => i.AssignedTo == key && i.IsDeleted == false, start, take);
                 }
                 else
                 {
                     st = status == 1 ? true : false;
 
-                    return GetIncidentList(i => i.AssignedTo == key && i.IsDeleted == false && i.IsOpen == st, start, take);
+                    return await GetIncidentList(i => i.AssignedTo == key && i.IsDeleted == false && i.IsOpen == st, start, take);
                 }
             }
             catch (Exception)
@@ -271,7 +278,7 @@ namespace TUSO.Infrastructure.Repositories
                     }
                 }
 
-                return GetIncidentList(predicate, start, take);
+                return await GetIncidentList(predicate, start, take);
             }
             catch (Exception)
             {
@@ -314,9 +321,9 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public IncidentListReturnDto GetIncidentList(Expression<Func<Incident, bool>> predicate, int start, int take)
+        public async Task<IncidentListReturnDto> GetIncidentList(Expression<Func<Incident, bool>> predicate, int start, int take)
         {
-            var data = (from i in context.Incidents.Where(predicate)
+            var data = await (from i in context.Incidents.Where(predicate)
                         join f in context.Facilities on i.FacilityId equals f.Oid
                         join d in context.Districts on f.DistrictId equals d.Oid
                         join pv in context.Provinces on d.ProvinceId equals pv.Oid
@@ -342,7 +349,7 @@ namespace TUSO.Infrastructure.Repositories
                             FullName = u.Name,
                             PhoneNumber = u.CountryCode + u.Cellphone,
                             SystemId = i.SystemId,
-                            Projectname = p.Title,
+                            ProjectName = p.Title,
                             FirstLevelCategoryId = i.FirstLevelCategoryId,
                             SecondLevelCategoryId = i.SecondLevelCategoryId,
                             ThirdLevelCategoryId = i.ThirdLevelCategoryId,
@@ -380,7 +387,7 @@ namespace TUSO.Infrastructure.Repositories
                             TeamName = t == null ? "" : t.Title,
                             AssignedName = m == null ? "" : m.Name,
                             HasImg = s == null ? false : true
-                        }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToList();
+                        }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToListAsync();
 
             List<IncidentListDto> dto = new List<IncidentListDto>();
             dto = data;
@@ -479,7 +486,7 @@ namespace TUSO.Infrastructure.Repositories
                 dto.TicketTitle = data.TicketTitle;
                 dto.PhoneNumber = data.PhoneNumber;
                 dto.PriorityId = data.PriorityId;
-                dto.Projectname = data.Title;
+                dto.ProjectName = data.Title;
                 dto.ReportedBy = data.ReportedBy;
                 dto.SecondLevelCategoryId = data.SecondLevelCategoryId;
                 dto.SystemId = data.SystemId;
@@ -544,7 +551,7 @@ namespace TUSO.Infrastructure.Repositories
                     predicate = predicate.And(x => x.FacilityId == Facilty);
 
 
-                var incident = context.Incidents.Where(predicate).Include(Incident => Incident.Facilities)
+                var incident = await context.Incidents.AsNoTracking().Where(predicate).Include(Incident => Incident.Facilities)
 
                          .Include(T => T.Teams).Join(context.UserAccounts,
                           userAccount => userAccount.ReportedBy,
@@ -695,7 +702,7 @@ namespace TUSO.Infrastructure.Repositories
                                 .Select(IncidentPriority => IncidentPriority.Priority)
                                 .FirstOrDefault() : null
 
-                         }).Skip(start).Take(take).ToList();
+                         }).Skip(start).Take(take).ToListAsync();
 
                 foreach (var ticket in incident)
                 {
@@ -1172,6 +1179,8 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
                             select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                             .FirstOrDefault();
 
@@ -1202,7 +1211,7 @@ namespace TUSO.Infrastructure.Repositories
                     predicate = predicate.And(i => i.IsDeleted == false && i.IsOpen == st);
                 }
 
-                return GetIncidentList(predicate, start, take);
+                return await GetIncidentList(predicate, start, take);
             }
             catch (Exception)
             {
@@ -1220,6 +1229,8 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
                             select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                             .FirstOrDefault();
 
@@ -1242,7 +1253,7 @@ namespace TUSO.Infrastructure.Repositories
                     predicate = predicate.And(i => i.IsDeleted == false && i.IsOpen == st);
                 }
 
-                return GetIncidentList(predicate, start, take);
+                return await GetIncidentList(predicate, start, take);
             }
             catch (Exception)
             {
@@ -1257,7 +1268,9 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
-                            select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false :true })
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
+                            select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                            .FirstOrDefault();
 
                 Expression<Func<Incident, bool>> TotalIncidentsPredicate = w => w.IsDeleted == false;

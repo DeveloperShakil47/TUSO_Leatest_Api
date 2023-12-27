@@ -14,4 +14,5 @@ namespace TUSO.Domain.Dto
 
         public IEnumerable<Message> Messages { get; set; }
     }
+    
 }

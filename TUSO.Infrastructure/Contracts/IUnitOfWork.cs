@@ -54,7 +54,9 @@ namespace TUSO.Infrastructure.Contracts
 
         IDeviceTypeRepository DeviceTypeRepository { get; }
 
-
+        IMessageRepository MessageRepository { get; }
+        IIncidentActionLogRepository IncidentActionLogRepository { get; }
+        IIncidentAdminActionLogRepository IncidentAdminActionLogRepository { get; }
         IModuleRepository ModuleRepository { get; }
 
         Task<int> SaveChangesAsync();
