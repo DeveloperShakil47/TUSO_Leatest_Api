@@ -8,8 +8,8 @@ using TUSO.Infrastructure.SqlServer;
 
 /*
  * Created by: Stephan
- * Date created: 05.09.2022
- * Last modified: 06.09.2022, 4.10.2022
+ * Date created: 25.12.2023
+ * Last modified: 
  * Modified by: Stephan
  */
 namespace TUSO.Infrastructure.Repositories
@@ -52,17 +52,17 @@ namespace TUSO.Infrastructure.Repositories
                 Expression<Func<Incident, bool>> predicate = w => !w.IsDeleted;
 
                 var role = await (from u in context.UserAccounts.AsNoTracking().Where(w => w.Oid == userAccountId)
-                            join m in context.Members on u.Oid equals m.UserAccountId into mm
-                            from m in mm.DefaultIfEmpty()
-                            join teamlead in context.TeamLeads on u.Oid equals teamlead.UserAccountId into lead
-                            from teamlead in lead.DefaultIfEmpty()
-                            select new
-                            {
-                                RoleName = u.Roles.RoleName,
-                                u.Oid,
-                                TeamId = m == null && teamlead == null ? 0 : m.TeamId != null ? m.TeamId: teamlead.TeamId,
-                                Leader = teamlead == null ? false : true
-                            }).FirstOrDefaultAsync();
+                                  join m in context.Members on u.Oid equals m.UserAccountId into mm
+                                  from m in mm.DefaultIfEmpty()
+                                  join teamlead in context.TeamLeads on u.Oid equals teamlead.UserAccountId into lead
+                                  from teamlead in lead.DefaultIfEmpty()
+                                  select new
+                                  {
+                                      RoleName = u.Roles.RoleName,
+                                      u.Oid,
+                                      TeamId = m == null && teamlead == null ? 0 : m.TeamId != null ? m.TeamId : teamlead.TeamId,
+                                      Leader = teamlead == null ? false : true
+                                  }).FirstOrDefaultAsync();
 
                 if (role?.RoleName == "Client")
                 {
@@ -100,16 +100,12 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-     
-
-
-
-        public async Task<ClientIncidentCountDto> IncidentClientCount(string? UserName)
+        public async Task<ClientIncidentCountDto> IncidentClientCount(string? userName)
         {
             try
             {
                 ClientIncidentCountDto clientIncident = new ClientIncidentCountDto();
-                UserAccount userAccount = context.UserAccounts.FirstOrDefault(x => x.Username == UserName && x.IsDeleted == false);
+                UserAccount userAccount = context.UserAccounts.FirstOrDefault(x => x.Username == userName && x.IsDeleted == false);
 
                 if (userAccount is not null && userAccount.RoleId == 1)
                 {
@@ -324,70 +320,70 @@ namespace TUSO.Infrastructure.Repositories
         public async Task<IncidentListReturnDto> GetIncidentList(Expression<Func<Incident, bool>> predicate, int start, int take)
         {
             var data = await (from i in context.Incidents.Where(predicate)
-                        join f in context.Facilities on i.FacilityId equals f.Oid
-                        join d in context.Districts on f.DistrictId equals d.Oid
-                        join pv in context.Provinces on d.ProvinceId equals pv.Oid
-                        join p in context.Projects on i.SystemId equals p.Oid
-                        join u in context.UserAccounts on i.ReportedBy equals u.Oid
-                        join t in context.Teams on i.TeamId equals t.Oid into tt
-                        from t in tt.DefaultIfEmpty()
-                        join m in context.UserAccounts on i.AssignedTo equals m.Oid into mm
-                        from m in mm.DefaultIfEmpty()
-                        join s in context.Screenshots on i.Oid equals s.Oid into ss
-                        from s in ss.DefaultIfEmpty()
-                        select new IncidentListDto
-                        {
-                            Oid = i.Oid,
-                            FacilityId = i.FacilityId,
-                            FacilityName = f.FacilityName,
-                            DistrictName=d.DistrictName,
-                            ProvincName=pv.ProvinceName,
-                            PriorityId = i.PriorityId,
-                            ReportedBy = i.ReportedBy,
-                            Description = i.Description,
-                            TicketTitle = i.TicketTitle,
-                            FullName = u.Name,
-                            PhoneNumber = u.CountryCode + u.Cellphone,
-                            SystemId = i.SystemId,
-                            ProjectName = p.Title,
-                            FirstLevelCategoryId = i.FirstLevelCategoryId,
-                            SecondLevelCategoryId = i.SecondLevelCategoryId,
-                            ThirdLevelCategoryId = i.ThirdLevelCategoryId,
-                            FirstLevelCategory = i.FirstLevelCategoryId != null ? context.IncidentCategories
-                                 .Where(IncidentCategories => IncidentCategories.Oid == i.FirstLevelCategoryId)
-                                 .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
-                                 .FirstOrDefault() : null,
-                            SecondLevelCategory = i.SecondLevelCategoryId != null ? context.IncidentCategories
-                                 .Where(IncidentCategories => IncidentCategories.Oid == i.SecondLevelCategoryId)
-                                 .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
-                                 .FirstOrDefault() : null,
-                            ThirdLevelCategory = i.ThirdLevelCategoryId != null ? context.IncidentCategories
-                                 .Where(IncidentCategories => IncidentCategories.Oid == i.ThirdLevelCategoryId)
-                                 .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
-                                 .FirstOrDefault() : null,
-                            FundingAgencyName = i.Projects.FundingAgencies
-                                  .Where(fundingAgency => fundingAgency.IsDeleted == false)
-                                  .Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
-                            ImplementingPartnerName = i.Projects.ImplementingPartners
-                                  .Where(implementingPartner => implementingPartner.IsDeleted == false)
-                                  .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
-                            DateReported = i.DateReported,
-                            DateResolved = i.DateResolved,
-                            AssignedTo = i.AssignedTo,
-                            IsOpen = i.IsOpen,
-                            TeamId = i.TeamId,
-                            IsResolved = i.IsResolved,
-                            IsReassigned = i.IsReassigned,
-                            CallerName = i.CallerName,
-                            CallerCountryCode = i.CallerCountryCode,
-                            CallerCellphone = i.CallerCellphone,
-                            CallerEmail = i.CallerEmail,
-                            CallerJobTitle = i.CallerJobTitle,
-                            DateOfIncident = i.DateOfIncident,
-                            TeamName = t == null ? "" : t.Title,
-                            AssignedName = m == null ? "" : m.Name,
-                            HasImg = s == null ? false : true
-                        }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToListAsync();
+                              join f in context.Facilities on i.FacilityId equals f.Oid
+                              join d in context.Districts on f.DistrictId equals d.Oid
+                              join pv in context.Provinces on d.ProvinceId equals pv.Oid
+                              join p in context.Projects on i.SystemId equals p.Oid
+                              join u in context.UserAccounts on i.ReportedBy equals u.Oid
+                              join t in context.Teams on i.TeamId equals t.Oid into tt
+                              from t in tt.DefaultIfEmpty()
+                              join m in context.UserAccounts on i.AssignedTo equals m.Oid into mm
+                              from m in mm.DefaultIfEmpty()
+                              join s in context.Screenshots on i.Oid equals s.Oid into ss
+                              from s in ss.DefaultIfEmpty()
+                              select new IncidentListDto
+                              {
+                                  Oid = i.Oid,
+                                  FacilityId = i.FacilityId,
+                                  FacilityName = f.FacilityName,
+                                  DistrictName = d.DistrictName,
+                                  ProvincName = pv.ProvinceName,
+                                  PriorityId = i.PriorityId,
+                                  ReportedBy = i.ReportedBy,
+                                  Description = i.Description,
+                                  TicketTitle = i.TicketTitle,
+                                  FullName = u.Name,
+                                  PhoneNumber = u.CountryCode + u.Cellphone,
+                                  SystemId = i.SystemId,
+                                  ProjectName = p.Title,
+                                  FirstLevelCategoryId = i.FirstLevelCategoryId,
+                                  SecondLevelCategoryId = i.SecondLevelCategoryId,
+                                  ThirdLevelCategoryId = i.ThirdLevelCategoryId,
+                                  FirstLevelCategory = i.FirstLevelCategoryId != null ? context.IncidentCategories
+                                       .Where(IncidentCategories => IncidentCategories.Oid == i.FirstLevelCategoryId)
+                                       .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
+                                       .FirstOrDefault() : null,
+                                  SecondLevelCategory = i.SecondLevelCategoryId != null ? context.IncidentCategories
+                                       .Where(IncidentCategories => IncidentCategories.Oid == i.SecondLevelCategoryId)
+                                       .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
+                                       .FirstOrDefault() : null,
+                                  ThirdLevelCategory = i.ThirdLevelCategoryId != null ? context.IncidentCategories
+                                       .Where(IncidentCategories => IncidentCategories.Oid == i.ThirdLevelCategoryId)
+                                       .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
+                                       .FirstOrDefault() : null,
+                                  FundingAgencyName = i.Projects.FundingAgencies
+                                        .Where(fundingAgency => fundingAgency.IsDeleted == false)
+                                        .Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
+                                  ImplementingPartnerName = i.Projects.ImplementingPartners
+                                        .Where(implementingPartner => implementingPartner.IsDeleted == false)
+                                        .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
+                                  DateReported = i.DateReported,
+                                  DateResolved = i.DateResolved,
+                                  AssignedTo = i.AssignedTo,
+                                  IsOpen = i.IsOpen,
+                                  TeamId = i.TeamId,
+                                  IsResolved = i.IsResolved,
+                                  IsReassigned = i.IsReassigned,
+                                  CallerName = i.CallerName,
+                                  CallerCountryCode = i.CallerCountryCode,
+                                  CallerCellphone = i.CallerCellphone,
+                                  CallerEmail = i.CallerEmail,
+                                  CallerJobTitle = i.CallerJobTitle,
+                                  DateOfIncident = i.DateOfIncident,
+                                  TeamName = t == null ? "" : t.Title,
+                                  AssignedName = m == null ? "" : m.Name,
+                                  HasImg = s == null ? false : true
+                              }).OrderByDescending(o => o.Oid).Skip(start).Take(take).ToListAsync();
 
             List<IncidentListDto> dto = new List<IncidentListDto>();
             dto = data;
@@ -476,7 +472,7 @@ namespace TUSO.Infrastructure.Repositories
                 dto.Description = data.Description;
                 dto.FacilityId = data.FacilityId;
                 dto.FacilityName = data.FacilityName;
-                dto.DistrictName= data.DistrictName;
+                dto.DistrictName = data.DistrictName;
                 dto.ProvincName = data.ProvinceName;
                 dto.FirstLevelCategoryId = data.FirstLevelCategoryId;
                 dto.FullName = data.Name;
@@ -734,7 +730,7 @@ namespace TUSO.Infrastructure.Repositories
                             string weekString = totalWeeks == 1 ? "Week" : "Weeks";
                             ticket.TotalTime = $"{totalWeeks} {weekString}";
                         }
-                        else if (totalDays>0)
+                        else if (totalDays > 0)
                         {
                             string dayString = totalDays == 1 ? "Day" : "Days";
                             ticket.TotalTime = $"{totalDays} {dayString}";
@@ -794,7 +790,7 @@ namespace TUSO.Infrastructure.Repositories
                                 string weekString = totalWeeks == 1 ? "Week" : "Weeks";
                                 ticket.TotalPendingTime = $"{totalWeeks} {weekString}";
                             }
-                            else if (totalDays>0)
+                            else if (totalDays > 0)
                             {
                                 string dayString = totalDays == 1 ? "Day" : "Days";
                                 ticket.TotalPendingTime = $"{totalDays} {dayString}";
@@ -839,7 +835,7 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IncidentLifeCycleListDto> GetWeeklyIncidentBySearch(int start, int take, int? status, int? TicketNo, int? Facilty, int? Province, int? District, int? SystemId)
+        public async Task<IncidentLifeCycleListDto> GetWeeklyIncidentBySearch(int start, int take, int? status, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId)
         {
             Expression<Func<Incident, bool>> predicate = x => x.IsDeleted == false;
             bool ticketStatus = false;
@@ -859,20 +855,20 @@ namespace TUSO.Infrastructure.Repositories
 
             predicate = predicate.And(i => i.DateOfIncident.Value.Date < ToDate.Value.Date);
 
-            if (TicketNo != null)
-                predicate = predicate.And(x => x.Oid == TicketNo);
+            if (ticketNo != null)
+                predicate = predicate.And(x => x.Oid == ticketNo);
 
-            if (SystemId != null)
-                predicate = predicate.And(x => x.SystemId == SystemId);
+            if (systemId != null)
+                predicate = predicate.And(x => x.SystemId == systemId);
 
-            if (Province != null)
-                predicate = predicate.And(x => x.Facilities.Districts.Provinces.Oid == Province);
+            if (provinceId != null)
+                predicate = predicate.And(x => x.Facilities.Districts.Provinces.Oid == provinceId);
 
-            if (District != null)
-                predicate = predicate.And(x => x.Facilities.Districts.Oid == District);
+            if (districtId != null)
+                predicate = predicate.And(x => x.Facilities.Districts.Oid == districtId);
 
-            if (Facilty != null)
-                predicate = predicate.And(x => x.FacilityId == Facilty);
+            if (faciltyId != null)
+                predicate = predicate.And(x => x.FacilityId == faciltyId);
 
 
             var incident = context.Incidents.Where(predicate).Include(Incident => Incident.Facilities)
@@ -1053,7 +1049,7 @@ namespace TUSO.Infrastructure.Repositories
                         string weekString = totalWeeks == 1 ? "Week" : "Weeks";
                         ticket.TotalTime = $"{totalWeeks} {weekString}";
                     }
-                    else if (totalDays>0)
+                    else if (totalDays > 0)
                     {
                         string dayString = totalDays == 1 ? "Day" : "Days";
                         ticket.TotalTime = $"{totalDays} {dayString}";
@@ -1114,7 +1110,7 @@ namespace TUSO.Infrastructure.Repositories
                             string weekString = totalWeeks == 1 ? "Week" : "Weeks";
                             ticket.TotalPendingTime = $"{totalWeeks} {weekString}";
                         }
-                        else if (totalDays>0)
+                        else if (totalDays > 0)
                         {
                             string dayString = totalDays == 1 ? "Day" : "Days";
                             ticket.TotalPendingTime = $"{totalDays} {dayString}";

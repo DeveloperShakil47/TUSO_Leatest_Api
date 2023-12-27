@@ -6,10 +6,10 @@ using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
 /*
- * Created by: Bithy
- * Date created: 14.09.2022
- * Last modified: 14.09.2022, 17.09.2022
- * Modified by: Bithy, Rakib
+ * Created by: Stephan
+ * Date created: 25.12.2023
+ * Last modified: 
+ * Modified by: Stephan
  */
 namespace TUSO.Api.Controllers
 {
@@ -90,7 +90,6 @@ namespace TUSO.Api.Controllers
             {
                 if (key <= 0)
                     return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
-
 
                 var message = await context.MessageRepository.GetMessageByKey(key);
 

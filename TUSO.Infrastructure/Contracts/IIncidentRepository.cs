@@ -30,7 +30,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="key">UserID of the table Incident</param>
         /// <returns>Instance of a Incident object.</returns>
-        public Task<IncidentListReturnDto> GetIncidentsByKey(long key, long UserAccountID, int start, int take, int status);
+        public Task<IncidentListReturnDto> GetIncidentsByKey(long key, long userAccountId, int start, int take, int status);
 
         /// <summary>
         /// Returns a Incident if key matched.
@@ -76,13 +76,13 @@ namespace TUSO.Infrastructure.Contracts
         /// Returns all Incident by date range, status, facility and ticket no.
         /// </summary>
         /// <returns>List of Incident object.</returns>
-        public Task<IncidentLifeCycleListDto> GetIncidentBySearch(int start, int take, int? Status, DateTime? FromDate, DateTime? ToDate, int? TicketNo, int? Facilty, int? Province, int? District, int? SystemID);
+        public Task<IncidentLifeCycleListDto> GetIncidentBySearch(int start, int take, int? Status, DateTime? fromDate, DateTime? toDate, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId);
 
         /// <summary>
         /// Returns all Incident by status, facility and ticket no.
         /// </summary>
         /// <returns>List of Incident object.</returns>
-        public Task<IncidentLifeCycleListDto> GetWeeklyIncidentBySearch(int start, int take, int? Status, int? TicketNo, int? Facilty, int? Province, int? District, int? SystemID);
+        public Task<IncidentLifeCycleListDto> GetWeeklyIncidentBySearch(int start, int take, int? status, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId);
 
         /// <summary>
         /// Returns all Incident of expert member.
@@ -95,20 +95,20 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <param name="UserName">Username of associated user of an incident</param>
         /// <returns>Instance of a Incident object.</returns>
-        public Task<IncidentListReturnDto> GetIncidentsByUserName(string UserName, int start, int take, int status);
+        public Task<IncidentListReturnDto> GetIncidentsByUserName(string userName, int start, int take, int status);
 
-        public Task<IncidentListReturnDto> GetIncidentsByAssignUserName(string UserName, int start, int take, int status);
+        public Task<IncidentListReturnDto> GetIncidentsByAssignUserName(string userName, int start, int take, int status);
 
         /// <summary>
         /// Returns Total,Resolved and Unresolved incidents count.
         /// </summary>
         /// <returns>Instance of a Incident object.</returns>
-        public Task<IncidentCountDto> IncidentCount(string? UserName);
+        public Task<IncidentCountDto> IncidentCount(string? userName);
 
         /// <summary>
         /// Returns Client incidents count.
         /// </summary>
         /// <returns>Instance of a Incident object.</returns>
-        public Task<ClientIncidentCountDto> IncidentClientCount(string? UserName);
+        public Task<ClientIncidentCountDto> IncidentClientCount(string? userName);
     }
 }
