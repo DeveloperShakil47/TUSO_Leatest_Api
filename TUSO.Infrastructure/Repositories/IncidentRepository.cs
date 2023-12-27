@@ -551,7 +551,7 @@ namespace TUSO.Infrastructure.Repositories
                     predicate = predicate.And(x => x.FacilityId == Facilty);
 
 
-                var incident = context.Incidents.Where(predicate).Include(Incident => Incident.Facilities)
+                var incident = await context.Incidents.AsNoTracking().Where(predicate).Include(Incident => Incident.Facilities)
 
                          .Include(T => T.Teams).Join(context.UserAccounts,
                           userAccount => userAccount.ReportedBy,
@@ -702,7 +702,7 @@ namespace TUSO.Infrastructure.Repositories
                                 .Select(IncidentPriority => IncidentPriority.Priority)
                                 .FirstOrDefault() : null
 
-                         }).Skip(start).Take(take).ToList();
+                         }).Skip(start).Take(take).ToListAsync();
 
                 foreach (var ticket in incident)
                 {
@@ -1179,6 +1179,8 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
                             select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                             .FirstOrDefault();
 
@@ -1227,6 +1229,8 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
                             select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                             .FirstOrDefault();
 
@@ -1264,7 +1268,9 @@ namespace TUSO.Infrastructure.Repositories
                 var role = (from u in context.UserAccounts.Where(w => w.Username == UserName)
                             join m in context.Members on u.Oid equals m.UserAccountId into mm
                             from m in mm.DefaultIfEmpty()
-                            select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false :true })
+                            join lead in context.Members on u.Oid equals lead.UserAccountId into leadMember
+                            from lead in leadMember.DefaultIfEmpty()
+                            select new { RoleName = u.Roles.RoleName, u.Oid, TeamId = m == null ? 0 : m.TeamId, Leader = m == null ? false : true })
                            .FirstOrDefault();
 
                 Expression<Func<Incident, bool>> TotalIncidentsPredicate = w => w.IsDeleted == false;
