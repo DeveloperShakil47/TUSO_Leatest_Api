@@ -21,16 +21,17 @@ namespace TUSO.Api.Controllers
         private readonly IUnitOfWork context;
         private readonly IConfiguration config;
         private readonly ILogger<IncidentController> logger;
-
+        private readonly EmailConfigurationController _emailConfigController;
         /// <summary>
         /// Default contructor
         /// </summary>
         /// <param name="context"></param>
-        public IncidentController(IUnitOfWork context, IConfiguration config, ILogger<IncidentController> logger)
+        public IncidentController(IUnitOfWork context, IConfiguration config, ILogger<IncidentController> logger, EmailConfigurationController emailConfigController)
         {
             this.context = context;
             this.config = config;
             this.logger = logger;
+            _emailConfigController = emailConfigController;
         }
 
         /// <summary>
@@ -50,8 +51,12 @@ namespace TUSO.Api.Controllers
 
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
-              
-                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incident);
+
+                var incidentDb = await context.IncidentRepository.GetIncidentDataByKey(incident.Oid);
+                
+                var result = _emailConfigController.SendTicketCreationEmail(incidentDb);
+
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incidentDb);
             }
             catch (Exception)
             {
