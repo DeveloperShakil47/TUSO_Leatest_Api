@@ -113,11 +113,11 @@ namespace TUSO.Infrastructure.Repositories
 
                 if (userAccount is not null && userAccount.RoleId == 1)
                 {
-                    clientIncident.TotalTickets = context.Incidents.Count(x => x.CreatedBy == userAccount.Oid && x.IsDeleted == false);
+                    clientIncident.TotalTickets = await context.Incidents.CountAsync(x => x.CreatedBy == userAccount.Oid && x.IsDeleted == false);
 
-                    clientIncident.TotalOpenTickets = context.Incidents.Count(x => x.CreatedBy == userAccount.Oid && x.IsOpen == true);
+                    clientIncident.TotalOpenTickets = await context.Incidents.CountAsync(x => x.CreatedBy == userAccount.Oid && x.IsOpen == true);
 
-                    clientIncident.TotalCloseTickets = context.Incidents.Count(x => x.CreatedBy == userAccount.Oid && x.IsDeleted == false && x.IsOpen == false);
+                    clientIncident.TotalCloseTickets = await context.Incidents.CountAsync(x => x.CreatedBy == userAccount.Oid && x.IsDeleted == false && x.IsOpen == false);
 
 
                     clientIncident.LastMonthTotalTickets = context.Incidents
@@ -128,7 +128,7 @@ namespace TUSO.Infrastructure.Repositories
                     clientIncident.LastMonthTotalTickets = clientIncident.LastMonthTotalTickets.TakeLast(5).ToList();
                 }
 
-                return await Task.Run(() => clientIncident);
+                return clientIncident;
             }
             catch (Exception)
             {
