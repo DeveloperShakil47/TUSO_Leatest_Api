@@ -52,6 +52,36 @@ namespace TUSO.Api.Controllers
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
 
+                if (incident.FundingAgencyList != null)
+                {
+                    foreach (var item in incident.FundingAgencyList)
+                    {
+                        FundingAgencyItem fundingAgencyItem = new FundingAgencyItem();
+
+                        fundingAgencyItem.FundingAgencyId = item;
+                        fundingAgencyItem.IncidentId = incident.Oid;
+                        fundingAgencyItem.DateCreated = DateTime.Now;
+                        fundingAgencyItem.IsDeleted = false;
+                        context.FundingAgencyItemRepository.Add(fundingAgencyItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
+                if (incident.ImplementingList != null)
+                {
+                    foreach (var item in incident.ImplementingList)
+                    {
+                        ImplemenentingItem implemenentingItem  = new ImplemenentingItem();
+
+                        implemenentingItem.FundingAgencyId = item;
+                        implemenentingItem.IncidentId = incident.Oid;
+                        implemenentingItem.DateCreated = DateTime.Now;
+                        implemenentingItem.IsDeleted = false;
+                        context.ImplementingItemRepository.Add(implemenentingItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
                 var incidentDb = await context.IncidentRepository.GetIncidentDataByKey(incident.Oid);
                 
                 var result = _emailConfigController.SendTicketCreationEmail(incidentDb);

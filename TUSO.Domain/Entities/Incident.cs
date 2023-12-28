@@ -299,5 +299,11 @@ namespace TUSO.Domain.Entities
 
         [NotMapped]
         public DateTime? DateClosed { get; set; }
+
+        [NotMapped]
+        public int[] FundingAgencyList { get; set; }
+
+        [NotMapped]
+        public int[] ImplementingList { get; set; }
     }
 }

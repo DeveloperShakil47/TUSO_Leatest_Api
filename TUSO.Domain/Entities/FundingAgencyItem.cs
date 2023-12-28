@@ -16,8 +16,5 @@ namespace TUSO.Domain.Entities
         public virtual Incident Incident { get; set; }
 
         public int FundingAgencyId { get; set; }
-        [ForeignKey("FundingAgencyId")]
-        [JsonIgnore]
-        public virtual FundingAgency FundingAgency { get; set; }
     }
 }
