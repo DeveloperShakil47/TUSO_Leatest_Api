@@ -159,7 +159,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Country Code of the Caller cellphone.
         /// </summary>
-        
+
         [DataType(DataType.Text)]
         [StringLength(4)]
         [MaxLength(4), MinLength(2)]
@@ -252,6 +252,18 @@ namespace TUSO.Domain.Entities
         [JsonIgnore]
         public virtual IEnumerable<Screenshot> Screenshots { get; set; }
 
+        /// <summary>
+        /// FundingAgencyItems of a Incident.
+        /// </summary>
+        [JsonIgnore]
+        public virtual IEnumerable<FundingAgencyItem> FundingAgencyItems { get; set; }
+
+        /// <summary>
+        /// FundingAgencyItems of a Incident.
+        /// </summary>
+        [JsonIgnore]
+        public virtual IEnumerable<ImplemenentingItem> ImplemenentingItems { get; set; }
+
         [NotMapped]
         public long? AgentId { get; set; }
 
@@ -287,5 +299,11 @@ namespace TUSO.Domain.Entities
 
         [NotMapped]
         public DateTime? DateClosed { get; set; }
+
+        [NotMapped]
+        public int[] FundingAgencyList { get; set; }
+
+        [NotMapped]
+        public int[] ImplementingList { get; set; }
     }
 }

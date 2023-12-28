@@ -84,6 +84,12 @@ namespace TUSO.Infrastructure.Contracts
         /// <returns>Retrieved object.</returns>
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
+        Task<T> LoadWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] expressionList);
+
+        Task<IEnumerable<T>> LoadListWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] expressionList);
+
+        Task<IEnumerable<T>> LoadListWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, int skip, int take, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] expressionList);
+
         /// <summary>
         /// Returns first matched row as an object from the table.
         /// </summary>

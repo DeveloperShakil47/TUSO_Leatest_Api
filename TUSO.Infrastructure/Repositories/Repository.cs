@@ -83,6 +83,63 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
+        /// <summary>
+        /// Include child a row from the table.
+        /// </summary>
+        /// <param name="entity">Object to be deleted.</param>
+        public async Task<T> LoadWithChildWithOrderByAsync<TEntity>(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] expressionList)
+        {
+            var query = context.Set<T>().AsQueryable();
+
+            foreach (var expression in expressionList)
+            {
+                query = query.Include(expression);
+            }
+
+            if (orderBy != null)
+                query = orderBy(query);
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<T> LoadWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] expressionList)
+        {
+            var query = context.Set<T>().AsQueryable();
+
+            foreach (var expression in expressionList)
+            {
+                query = query.Include(expression);
+            }
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<IEnumerable<T>> LoadListWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] expressionList)
+        {
+            var query = context.Set<T>().AsQueryable();
+
+            foreach (var expression in expressionList)
+            {
+                query = query.Include(expression);
+            }
+
+            return await query.Where(predicate).ToListAsync();
+        }
+        
+        public async Task<IEnumerable<T>> LoadListWithChildAsync<TEntity>(Expression<Func<T, bool>> predicate, int skip, int take, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] expressionList)
+        {
+            var query = context.Set<T>().AsQueryable();
+
+            foreach (var expression in expressionList)
+            {
+                query = query.Include(expression);
+            }
+            if (orderBy != null)
+                query = orderBy(query);
+
+            return await query.Where(predicate).Skip(skip).Take(take).ToListAsync();
+        }
+
         public virtual async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> order)
         {
             try

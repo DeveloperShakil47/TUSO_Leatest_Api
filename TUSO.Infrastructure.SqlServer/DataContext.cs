@@ -187,5 +187,15 @@ namespace TUSO.Infrastructure.SqlServer
         /// Represents TeamLeads entity.
         /// </summary>
         public DbSet<TeamLead> TeamLeads { get; set; }
+
+        /// <summary>
+        /// Represents FundingAgenciesItems entity.
+        /// </summary>
+        public DbSet<FundingAgencyItem> FundingAgenciesItems { get; set; }
+
+        /// <summary>
+        /// Represents ImplemenentingItems entity.
+        /// </summary>
+        public DbSet<ImplemenentingItem> ImplemenentingItems { get; set; }
     }
 }

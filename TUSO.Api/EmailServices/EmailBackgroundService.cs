@@ -17,32 +17,32 @@
 
 //        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 
-//        {
-//            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(100));
-//            while (
-//                !stoppingToken.IsCancellationRequested &&
-//                await timer.WaitForNextTickAsync(stoppingToken))
-//            {
-//                try
-//                {
-//                    if (IsEnabled)
-//                    {
-//                        await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-//                        DeviceEmailService deviceService = asyncScope.ServiceProvider.GetRequiredService<DeviceEmailService>();
-//                        await deviceService.DoSomethingAsync(MilliSecond);
-//                        _executionCount++;
-//                        _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
-//                    }
-//                    else
-//                    {
-//                        _logger.LogInformation("Email Not Sending");
-//                    }
-//                }
-//                catch (Exception ex)
-//                {
-//                    _logger.LogInformation($"Failed to execute PeriodicHostedService with exception message {ex.Message}. Good luck next round!");
-//                }
-//            }
-//        }
-//    }
-//}
+        {
+            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(100));
+            while (
+                !stoppingToken.IsCancellationRequested &&
+                await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                try
+                {
+                    if (IsEnabled)
+                    {
+                        await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
+                        DeviceEmailService deviceService = asyncScope.ServiceProvider.GetRequiredService<DeviceEmailService>();
+                        //await deviceService.DoSomethingAsync(MilliSecond);
+                        _executionCount++;
+                        _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Email Not Sending");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInformation($"Failed to execute PeriodicHostedService with exception message {ex.Message}. Good luck next round!");
+                }
+            }
+        }
+    }
+}

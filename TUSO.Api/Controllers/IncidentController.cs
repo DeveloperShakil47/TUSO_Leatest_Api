@@ -52,6 +52,36 @@ namespace TUSO.Api.Controllers
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
 
+                if (incident.FundingAgencyList != null)
+                {
+                    foreach (var item in incident.FundingAgencyList)
+                    {
+                        FundingAgencyItem fundingAgencyItem = new FundingAgencyItem();
+
+                        fundingAgencyItem.FundingAgencyId = item;
+                        fundingAgencyItem.IncidentId = incident.Oid;
+                        fundingAgencyItem.DateCreated = DateTime.Now;
+                        fundingAgencyItem.IsDeleted = false;
+                        context.FundingAgencyItemRepository.Add(fundingAgencyItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
+                if (incident.ImplementingList != null)
+                {
+                    foreach (var item in incident.ImplementingList)
+                    {
+                        ImplemenentingItem implemenentingItem  = new ImplemenentingItem();
+
+                        implemenentingItem.FundingAgencyId = item;
+                        implemenentingItem.IncidentId = incident.Oid;
+                        implemenentingItem.DateCreated = DateTime.Now;
+                        implemenentingItem.IsDeleted = false;
+                        context.ImplementingItemRepository.Add(implemenentingItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
                 var incidentDb = await context.IncidentRepository.GetIncidentDataByKey(incident.Oid);
                 
                 var result = _emailConfigController.SendTicketCreationEmail(incidentDb);
@@ -75,8 +105,18 @@ namespace TUSO.Api.Controllers
             try
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidents(start, take, status);
-                
-                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
+
+                foreach (var item in incidentInDb.List)
+                {
+                    item.FundingAgencyItems = await context.FundingAgencyItemRepository.LoadListWithChildAsync<FundingAgencyItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.FundingAgencyItems);
+                }
+
+                foreach (var item in incidentInDb.List)
+                {
+                    item.ImplemenentingItems = await context.ImplementingItemRepository.LoadListWithChildAsync<ImplemenentingItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.ImplemenentingItems);
+                }
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb.List);
+
             }
             catch (Exception)
             {

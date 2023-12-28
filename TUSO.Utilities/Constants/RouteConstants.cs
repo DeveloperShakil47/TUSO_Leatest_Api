@@ -466,6 +466,24 @@ namespace TUSO.Utilities.Constants
         public const string DeleteMessage = "message/{key}";
         #endregion
 
+        #region FundingAgencyItem
+        public const string ReadFundingAgencyItems = "funding-agency-items";
+
+        public const string ReadFundingAgencyItemByIncident = "funding-agency-item/incident/{key}";
+
+        public const string ReadFundingAgencyItemsByKey = "funding-agency-item/key/{key}";
+
+        #endregion
+
+        #region ImplementingItem
+        public const string ReadImplementingItems = "implementing-items";
+
+        public const string ReadImplementingItemByIncident = "implementing-item/incident/{key}";
+
+        public const string ReadImplementingItemByKey = "implementing-item/key/{key}";
+
+        #endregion
+
         #region ScreenshotAttachment
         public const string CreateScreenshot = "screenshot/{key}";
 
@@ -525,5 +543,7 @@ namespace TUSO.Utilities.Constants
 
         public const string GetFacilitiesByDevice = "rdp-deviceinfoesbydeviceid";
         #endregion
+
+
     }
 }

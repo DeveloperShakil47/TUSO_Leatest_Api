@@ -4,6 +4,8 @@
  * Last modified: 
  * Modified by: 
  */
+using TUSO.Domain.Entities;
+
 namespace TUSO.Domain.Dto
 {
     /// <summary>
@@ -222,5 +224,9 @@ namespace TUSO.Domain.Dto
         /// The system implementing partner name.
         /// </summary 
         public string ImplementingPartnerName { get; set; }
+
+        public virtual IEnumerable<FundingAgencyItem> FundingAgencyItems { get; set; }
+
+        public virtual IEnumerable<ImplemenentingItem> ImplemenentingItems { get; set; }
     }
 }

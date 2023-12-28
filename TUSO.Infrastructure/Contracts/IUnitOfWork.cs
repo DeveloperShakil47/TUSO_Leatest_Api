@@ -27,7 +27,9 @@ namespace TUSO.Infrastructure.Contracts
         ITeamRepository TeamRepository { get; }
 
         IMemberRepository MemberRepository { get; }
+
         IIncidentCategoryRepository IncidentCategoryRepository { get; }
+
         IIncidentPriorityRepository IncidentPriorityRepository { get; }
 
         IIncidentRepository IncidentRepository { get; }
@@ -55,9 +57,16 @@ namespace TUSO.Infrastructure.Contracts
         IDeviceTypeRepository DeviceTypeRepository { get; }
 
         IMessageRepository MessageRepository { get; }
+
         IIncidentActionLogRepository IncidentActionLogRepository { get; }
+
         IIncidentAdminActionLogRepository IncidentAdminActionLogRepository { get; }
+
         IModuleRepository ModuleRepository { get; }
+
+        IFundingAgencyItemRepository FundingAgencyItemRepository { get; }
+
+        IImplementingItemRepository ImplementingItemRepository { get; }
 
         Task<int> SaveChangesAsync();
 
