@@ -29,7 +29,7 @@
                     {
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                         DeviceEmailService deviceService = asyncScope.ServiceProvider.GetRequiredService<DeviceEmailService>();
-                        await deviceService.DoSomethingAsync(MilliSecond);
+                        //await deviceService.DoSomethingAsync(MilliSecond);
                         _executionCount++;
                         _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
                     }
