@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,12 @@ namespace TUSO.Infrastructure.Repositories
     {
         public FundingAgencyItemRepository(DataContext context) : base(context)
         {
+
+        }
+
+        public async Task<IEnumerable<FundingAgencyItem>> GetFundingAgencyItemByIncident(int key)
+        {
+           return await QueryAsync(p => p.IncidentId == key && p.IsDeleted == false, o => o.Oid);
 
         }
 

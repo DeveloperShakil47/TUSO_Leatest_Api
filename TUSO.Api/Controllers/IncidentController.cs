@@ -105,8 +105,18 @@ namespace TUSO.Api.Controllers
             try
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidents(start, take, status);
-                
-                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
+
+                foreach (var item in incidentInDb.List)
+                {
+                    item.FundingAgencyItems = await context.FundingAgencyItemRepository.LoadListWithChildAsync<FundingAgencyItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.FundingAgencyItems);
+                }
+
+                foreach (var item in incidentInDb.List)
+                {
+                    item.ImplemenentingItems = await context.ImplementingItemRepository.LoadListWithChildAsync<ImplemenentingItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.ImplemenentingItems);
+                }
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb.List);
+
             }
             catch (Exception)
             {

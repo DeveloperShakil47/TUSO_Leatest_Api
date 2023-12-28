@@ -16,5 +16,12 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <returns>Returns a list of all ImplemenentingItem.</returns>
         public Task<IEnumerable<ImplemenentingItem>> GetImplemenentingItems();
+
+        /// <summary>
+        /// The method is used to get a TestItem by key.
+        /// </summary>
+        /// <param name="key">Primary key of the table FundingAgencyItem.</param>
+        /// <returns>Returns a FundingAgencyItem if the key is matched.</returns>
+        public Task<IEnumerable<ImplemenentingItem>> GetImplemenentingItemByIncident(int key);
     }
 }

@@ -18,6 +18,11 @@ namespace TUSO.Infrastructure.Repositories
 
         }
 
+        public async Task<IEnumerable<ImplemenentingItem>> GetImplemenentingItemByIncident(int key)
+        {
+            return await QueryAsync(p => p.IncidentId == key && p.IsDeleted == false, o => o.Oid);
+        }
+
         public async Task<ImplemenentingItem> GetImplemenentingItemByKey(int key)
         {
             try
