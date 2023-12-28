@@ -50,6 +50,7 @@ namespace TUSO.Api.Controllers
 
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
+              
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incident);
             }
             catch (Exception)
@@ -57,8 +58,6 @@ namespace TUSO.Api.Controllers
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
-
-
 
         /// <summary>
         /// URl: tuso-api/incidents
@@ -71,6 +70,7 @@ namespace TUSO.Api.Controllers
             try
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidents(start, take, status);
+                
                 return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
             }
             catch (Exception)
@@ -85,11 +85,12 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByKey)]
-        public async Task<ResponseDto> ReadIncidentsByKey(long key, long UserAccountID, int start, int take, int status)
+        public async Task<ResponseDto> ReadIncidentsByKey(long key, long userAccountId, int start, int take, int status)
         {
             try
             {
-                var incidentInDb = await context.IncidentRepository.GetIncidentsByKey(key, UserAccountID, start, take, status);
+                var incidentInDb = await context.IncidentRepository.GetIncidentsByKey(key, userAccountId, start, take, status);
+                
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
             catch (Exception)
@@ -109,6 +110,7 @@ namespace TUSO.Api.Controllers
             try
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidentsByStatus(key, start, take);
+                
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
             catch (Exception)
@@ -196,7 +198,6 @@ namespace TUSO.Api.Controllers
 
                 dto = await GetIncident(key);
 
-
                 return new ResponseDto(HttpStatusCode.OK, true, dto== null ? "Data Not Found" : string.Empty, dto);
             }
             catch (Exception)
@@ -223,7 +224,9 @@ namespace TUSO.Api.Controllers
                     return new ResponseDto(HttpStatusCode.NotFound, false, MessageConstants.UnauthorizedAttemptOfRecordUpdateError, null);
 
                 var incidentInDb = await context.IncidentRepository.GetIncidentDataByKey(key);
+
                 previousAssignUserId = incidentInDb.AssignedTo;
+
                 if (incidentInDb.IsReassigned == true && incidentInDb.AssignedTo != incidentInDb.AssignedToState)
                 {
                     incidentInDb.ReassignedTo = incident.AssignedTo;
@@ -248,9 +251,12 @@ namespace TUSO.Api.Controllers
                 incidentInDb.CallerCellphone = incident.CallerCellphone;
                 incidentInDb.CallerJobTitle  = incident.CallerJobTitle;
                 incidentInDb.CallerName = incident.CallerName;
+
                 context.IncidentRepository.Update(incidentInDb);
                 await context.SaveChangesAsync();
+
                 IncidentActionLog dbCurrentIncidentActionLog = new();
+
                 dbCurrentIncidentActionLog = await context.IncidentActionLogRepository.GetIncidentActionByIncidentID(incidentInDb.Oid);
 
                 if (dbCurrentIncidentActionLog is null)
@@ -261,12 +267,12 @@ namespace TUSO.Api.Controllers
                     incidentAction.CreatedBy = incidentInDb.CreatedBy;
                     incidentAction.DateCreated =  DateTime.Now;
                     incidentAction.IsDeleted =  false;
+
                     if (incident.AgentId>0)
                     {
                         incidentAction.AgentId =incident.AgentId;
                         incidentAction.AgentDateModified =  DateTime.Now;
                     }
-
                     if (incident.AdminId>0)
                     {
                         incidentAction.AdminId =incident.AdminId;
@@ -285,63 +291,54 @@ namespace TUSO.Api.Controllers
                         incidentAction.SupervisedId = incident.SupervisedId;
                         incidentAction.SupervisedDateModified = DateTime.Now;
                     }
+
                     context.IncidentActionLogRepository.Add(incidentAction);
                     await context.SaveChangesAsync();
                 }
                 else
                 {
-
                     if (incident.AgentId>0)
                     {
-
                         dbCurrentIncidentActionLog.AgentId =incident.AgentId;
                         dbCurrentIncidentActionLog.AgentDateModified =  DateTime.Now;
-
                     }
                     else if (incident.ExpertId>0)
                     {
-
                         dbCurrentIncidentActionLog.ExpertId =incident.ExpertId;
                         dbCurrentIncidentActionLog.ExpertDateModified =  DateTime.Now;
-
                     }
                     else if (incident.SupervisedId>0)
                     {
-
                         dbCurrentIncidentActionLog.SupervisedId =incident.SupervisedId;
                         dbCurrentIncidentActionLog.SupervisedDateModified =  DateTime.Now;
-
                     }
                     else if (incident.TeamLeadId>0)
                     {
                         dbCurrentIncidentActionLog.TeamLeadId =incident.TeamLeadId;
                         dbCurrentIncidentActionLog.TeamLeadDateModified =  DateTime.Now;
-
                     }
                     else if (incident.AdminId>0)
                     {
                         dbCurrentIncidentActionLog.AdminId =incident.AdminId;
                         dbCurrentIncidentActionLog.AdminDateModified =  DateTime.Now;
+
                         if (previousAssignUserId is not null)
                             await AdminLogSave(key, incident, dbCurrentIncidentActionLog, (long)previousAssignUserId);
-
                     }
                     else
                     {
                         dbCurrentIncidentActionLog.ModifiedBy = incident.ModifiedBy;
                         dbCurrentIncidentActionLog.DateModified = DateTime.Now;
                     }
+
                     context.IncidentActionLogRepository.Update(dbCurrentIncidentActionLog);
                     await context.SaveChangesAsync();
-
-
                 }
 
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
             catch (Exception)
             {
-
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -351,24 +348,24 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-
-
                 IncidentAdminActionLog incidentAdminActionLog = await context.IncidentAdminActionLogRepository.GetIncidentAdminActionByIncidentID(key);
 
                 if (incidentAdminActionLog is null)
                 {
                     incidentAdminActionLog = new IncidentAdminActionLog();
+
                     incidentAdminActionLog.IncidentId = key;
                     incidentAdminActionLog.ModifiedBy = incident.CreatedBy;
                     incidentAdminActionLog.DateModified = DateTime.Now;
                     string assignUserName = "Not Assign";
+
                     if (assignTo is not null)
                     {
                         assignUserName = context.UserAccountRepository.GetUserAccountByKey((long)assignTo).Result.Username;
                     }
 
-
                     incidentAdminActionLog.ChangeHistory=$"[Modified Date = {dbCurrentIncidentActionLog?.AdminDateModified}, Assigne User ={assignUserName}]";
+                   
                     context.IncidentAdminActionLogRepository.Add(incidentAdminActionLog);
                     await context.SaveChangesAsync();
                 }
@@ -385,6 +382,7 @@ namespace TUSO.Api.Controllers
                     string reassignUserName = context.UserAccountRepository.GetUserAccountByKey((long)(incident.AssignedTo)).Result.Username;
 
                     StringBuilder stringBuilder = new StringBuilder();
+
                     stringBuilder.Append(incidentAdminActionLog.ChangeHistory);
                     stringBuilder.Append($"\n[Admin Last Modified Date = {dbCurrentIncidentActionLog?.AdminDateModified}, Admin New Modified Date = {DateTime.Now}, Previous Assigne User ={previousAssignUserName}, Reassign User = {reassignUserName}]");
 
@@ -398,7 +396,6 @@ namespace TUSO.Api.Controllers
             {
                 throw;
             }
-
         }
         /// <summary>
         /// URl: tuso-api/incident/close/{key}
@@ -427,6 +424,7 @@ namespace TUSO.Api.Controllers
                 if (dbCurrentIncidentActionLog is null)
                 {
                     IncidentActionLog incidentAction = new IncidentActionLog();
+
                     incidentAction.IncidentId = closeIncident.Oid;
                     incidentAction.DateModified = DateTime.Now;
 
@@ -441,13 +439,13 @@ namespace TUSO.Api.Controllers
                         incidentAction.DateClosed = DateTime.Now;
                     }
 
-
                     context.IncidentActionLogRepository.Add(incidentAction);
                     await context.SaveChangesAsync();
                 }
                 else
                 {
                     IncidentActionLog incidentAction = context.IncidentActionLogRepository.GetIncidentActionsByIncidentID(closeIncident.Oid).Result.FirstOrDefault();
+                    
                     incidentAction.DateModified = DateTime.Now;
                     if (closeIncident.ExpertId>0)
                     {
@@ -459,7 +457,6 @@ namespace TUSO.Api.Controllers
                         incidentAction.CloseUserAccountId = closeIncident.UserId;
                         incidentAction.DateClosed = DateTime.Now;
                     }
-
 
                     context.IncidentActionLogRepository.Update(incidentAction);
                     await context.SaveChangesAsync();
@@ -497,6 +494,7 @@ namespace TUSO.Api.Controllers
 
                 context.IncidentRepository.Update(incidentInDb);
                 await context.SaveChangesAsync();
+                
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.DeleteMessage, incidentInDb);
             }
             catch (Exception)
@@ -512,12 +510,11 @@ namespace TUSO.Api.Controllers
         /// <returns> Single incident </returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByAdvancedSearch)]
-        public async Task<ResponseDto> IncidentAdanvanceSearch(int start, int take, int? Status, DateTime? FromDate, DateTime? ToDate, int? TicketNo, int? Facilty, int? Province, int? District, int? SystemID)
+        public async Task<ResponseDto> ReadIncidentsByAdvancedSearch(int start, int take, int? status, DateTime? fromDate, DateTime? toDate, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId)
         {
             try
             {
-                var Incident = await context.IncidentRepository.GetIncidentBySearch(start, take, Status, FromDate, ToDate, TicketNo, Facilty, Province, District, SystemID);
-
+                var Incident = await context.IncidentRepository.GetIncidentBySearch(start, take, status, fromDate, toDate, ticketNo, faciltyId, provinceId, districtId, systemId);
 
                 return new ResponseDto(HttpStatusCode.OK, true, Incident== null ? "Data Not Found" : string.Empty, Incident);
             }
@@ -533,12 +530,11 @@ namespace TUSO.Api.Controllers
         /// <returns> Single incident </returns>
         [HttpGet]
         [Route(RouteConstants.ReadWeeklyIncidentsByAdvancedSearch)]
-        public async Task<ResponseDto> WeeklyIncidentAdanvanceSearch(int start, int take, int? Status, int? TicketNo, int? Facilty, int? Province, int? District, int? SystemID)
+        public async Task<ResponseDto> ReadWeeklyIncidentsByAdvancedSearch(int start, int take, int? status, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId)
         {
             try
             {
-                var Incident = await context.IncidentRepository.GetWeeklyIncidentBySearch(start, take, Status, TicketNo, Facilty, Province, District, SystemID);
-
+                var Incident = await context.IncidentRepository.GetWeeklyIncidentBySearch(start, take, status, ticketNo, faciltyId, provinceId, districtId, systemId);
 
                 return new ResponseDto(HttpStatusCode.OK, true, Incident== null ? "Data Not Found" : string.Empty, Incident);
             }
@@ -559,6 +555,7 @@ namespace TUSO.Api.Controllers
             try
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidentsByUserName(UserName, start, take, status);
+               
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
             catch (Exception)
@@ -569,11 +566,12 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.GetIncidentsByAssignUserName)]
-        public async Task<ResponseDto> GetIncidentsByAssignUserName(string UserName, int start, int take, int status)
+        public async Task<ResponseDto> GetIncidentsByAssignUserName(string userName, int start, int take, int status)
         {
             try
             {
-                var incidentInDb = await context.IncidentRepository.GetIncidentsByAssignUserName(UserName, start, take, status);
+                var incidentInDb = await context.IncidentRepository.GetIncidentsByAssignUserName(userName, start, take, status);
+               
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
             catch (Exception)
@@ -588,11 +586,11 @@ namespace TUSO.Api.Controllers
         /// <returns> Total,Resolved and Unresolved incidents count</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCount)]
-        public async Task<ResponseDto> ReadIncidentCount(string? UserName)
+        public async Task<ResponseDto> ReadIncidentCount(string? userName)
         {
             try
             {
-                var incidentCountDto = await context.IncidentRepository.IncidentCount(UserName);
+                var incidentCountDto = await context.IncidentRepository.IncidentCount(userName);
 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentCountDto== null ? "Data Not Found" : string.Empty, incidentCountDto);
             }
@@ -604,13 +602,13 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.ReadIncidentClientCount)]
-        public async Task<ResponseDto> ReadClientIncidentCount(string? UserName)
+        public async Task<ResponseDto> ReadClientIncidentCount(string? userName)
         {
             try
             {
                 ClientIncidentCountDto clientIncidentCount = new ClientIncidentCountDto();
 
-                clientIncidentCount = await context.IncidentRepository.IncidentClientCount(UserName);
+                clientIncidentCount = await context.IncidentRepository.IncidentClientCount(userName);
 
                 return new ResponseDto(HttpStatusCode.OK, true, clientIncidentCount== null ? "Data Not Found" : string.Empty, clientIncidentCount);
             }
@@ -623,12 +621,12 @@ namespace TUSO.Api.Controllers
         private async Task<IncidentDto> GetIncident(long key)
         {
             IncidentDto dto = new IncidentDto();
+
             dto.Incidents = await context.IncidentRepository.GetIncidentByKey(key);
             dto.Messages = await context.MessageRepository.GetMessageByIncedent(key);
             dto.Messages = dto.Messages.OrderByDescending(o => o.Oid);
+
             return dto;
         }
-
-
     }
 }

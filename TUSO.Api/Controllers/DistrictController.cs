@@ -162,7 +162,6 @@ namespace TUSO.Api.Controllers
                 };
 
                 return new ResponseDto(HttpStatusCode.OK, true, response == null ? "Data Not Found" : "Successfully Get All Data", response);
-
             }
             catch (Exception ex)
             {

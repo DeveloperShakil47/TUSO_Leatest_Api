@@ -59,8 +59,10 @@ namespace TUSO.Api.Controllers
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateEmailConfiguration", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -80,8 +82,10 @@ namespace TUSO.Api.Controllers
                 return new ResponseDto(HttpStatusCode.OK, true, emailConfigurations == null ? "Data Not Found" : "Successfully Get All Data", emailConfigurations);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailConfigurations", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -107,8 +111,10 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, "Successfully Get by Key",emailConfiguration);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadEmailConfigurationByKey", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -135,8 +141,10 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK,true,"Email Update Successfully", emailConfiguration);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailConfiguration", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -168,8 +176,10 @@ namespace TUSO.Api.Controllers
 
                 return Ok(emailConfigurationInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateEmailConfiguration", "EmailConfigurationController.cs", ex.Message);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
             }
         }
@@ -261,8 +271,7 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("Smtp gmail error occurred:" + ex.ToString());
-                logger.LogError("Smtp gmail error occurred:" + ex.Message.ToString());
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "SendTicketCreationEmail", "EmailConfigurationController.cs", ex.Message);
 
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
@@ -365,8 +374,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("Smtp gmail error occurred:" + ex.ToString());
-                logger.LogError("Smtp gmail error occurred:" + ex.Message.ToString());
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "SendTicketCreationEmail", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError,false, MessageConstants.GenericError,null);
             }
         }
@@ -408,7 +417,8 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("Smtp gmail error occurred:" + ex.ToString());
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "SendTicketCreationEmail", "EmailConfigurationController.cs", ex.Message);
+
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
