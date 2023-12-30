@@ -497,6 +497,7 @@ namespace TUSO.Api.Controllers
                     await context.SaveChangesAsync();
                 }
 
+                var result = _emailConfigController.SendTicketCloseEmail(closeIncident.Oid);
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
             catch (Exception)
