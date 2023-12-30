@@ -12,8 +12,8 @@ using TUSO.Infrastructure.SqlServer;
 namespace TUSO.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231228073906_initial migration for new table")]
-    partial class initialmigrationfornewtable
+    [Migration("20231230050528_initial migration for table name change")]
+    partial class initialmigrationfortablenamechange
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -447,78 +447,6 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                     b.ToTable("FundingAgencies");
                 });
 
-            modelBuilder.Entity("TUSO.Domain.Entities.FundingAgencyItem", b =>
-                {
-                    b.Property<int>("Oid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Oid"));
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("smalldatetime");
-
-                    b.Property<DateTime?>("DateModified")
-                        .HasColumnType("smalldatetime");
-
-                    b.Property<int>("FundingAgencyId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("IncidentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Oid");
-
-                    b.HasIndex("IncidentId");
-
-                    b.ToTable("FundingAgenciesItems");
-                });
-
-            modelBuilder.Entity("TUSO.Domain.Entities.ImplemenentingItem", b =>
-                {
-                    b.Property<int>("Oid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Oid"));
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("smalldatetime");
-
-                    b.Property<DateTime?>("DateModified")
-                        .HasColumnType("smalldatetime");
-
-                    b.Property<int>("FundingAgencyId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("IncidentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Oid");
-
-                    b.HasIndex("IncidentId");
-
-                    b.ToTable("ImplemenentingItems");
-                });
-
             modelBuilder.Entity("TUSO.Domain.Entities.ImplementingPartner", b =>
                 {
                     b.Property<int>("Oid")
@@ -555,6 +483,42 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ImplementingPartners");
+                });
+
+            modelBuilder.Entity("TUSO.Domain.Entities.IncidendtFundingAgency", b =>
+                {
+                    b.Property<int>("Oid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Oid"));
+
+                    b.Property<long?>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<int>("FundingAgencyId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("IncidentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Oid");
+
+                    b.HasIndex("IncidentId");
+
+                    b.ToTable("IncidendtFundingAgencies");
                 });
 
             modelBuilder.Entity("TUSO.Domain.Entities.Incident", b =>
@@ -844,6 +808,42 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                     b.HasKey("Oid");
 
                     b.ToTable("IncidentCategories");
+                });
+
+            modelBuilder.Entity("TUSO.Domain.Entities.IncidentImplemenentingPartner", b =>
+                {
+                    b.Property<int>("Oid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Oid"));
+
+                    b.Property<long?>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<int>("ImplementingId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("IncidentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Oid");
+
+                    b.HasIndex("IncidentId");
+
+                    b.ToTable("incidentImplemenentingPartners");
                 });
 
             modelBuilder.Entity("TUSO.Domain.Entities.IncidentPriority", b =>
@@ -1645,28 +1645,6 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                     b.Navigation("Projects");
                 });
 
-            modelBuilder.Entity("TUSO.Domain.Entities.FundingAgencyItem", b =>
-                {
-                    b.HasOne("TUSO.Domain.Entities.Incident", "Incident")
-                        .WithMany("FundingAgencyItems")
-                        .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Incident");
-                });
-
-            modelBuilder.Entity("TUSO.Domain.Entities.ImplemenentingItem", b =>
-                {
-                    b.HasOne("TUSO.Domain.Entities.Incident", "Incident")
-                        .WithMany("ImplemenentingItems")
-                        .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Incident");
-                });
-
             modelBuilder.Entity("TUSO.Domain.Entities.ImplementingPartner", b =>
                 {
                     b.HasOne("TUSO.Domain.Entities.Project", "Projects")
@@ -1676,6 +1654,17 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("TUSO.Domain.Entities.IncidendtFundingAgency", b =>
+                {
+                    b.HasOne("TUSO.Domain.Entities.Incident", "Incident")
+                        .WithMany("IncidendtFundingAgencies")
+                        .HasForeignKey("IncidentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Incident");
                 });
 
             modelBuilder.Entity("TUSO.Domain.Entities.Incident", b =>
@@ -1781,6 +1770,17 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
                     b.HasOne("TUSO.Domain.Entities.UserAccount", null)
                         .WithMany("IncidentAdminActionLogs")
                         .HasForeignKey("UserAccountOid");
+
+                    b.Navigation("Incident");
+                });
+
+            modelBuilder.Entity("TUSO.Domain.Entities.IncidentImplemenentingPartner", b =>
+                {
+                    b.HasOne("TUSO.Domain.Entities.Incident", "Incident")
+                        .WithMany("IncidentImplemenentingPartners")
+                        .HasForeignKey("IncidentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Incident");
                 });
@@ -1968,13 +1968,13 @@ namespace TUSO.Infrastructure.SqlServer.Migrations
 
             modelBuilder.Entity("TUSO.Domain.Entities.Incident", b =>
                 {
-                    b.Navigation("FundingAgencyItems");
-
-                    b.Navigation("ImplemenentingItems");
+                    b.Navigation("IncidendtFundingAgencies");
 
                     b.Navigation("IncidentActionLogs");
 
                     b.Navigation("IncidentAdminActionLogs");
+
+                    b.Navigation("IncidentImplemenentingPartners");
 
                     b.Navigation("Messages");
 

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace TUSO.Domain.Entities
 {
-    public class FundingAgencyItem : BaseModel
+    public class IncidentImplemenentingPartner : BaseModel
     {
         [Key]
         public int Oid { get; set; }
@@ -15,6 +15,6 @@ namespace TUSO.Domain.Entities
         [JsonIgnore]
         public virtual Incident Incident { get; set; }
 
-        public int FundingAgencyId { get; set; }
+        public int ImplementingId { get; set; }
     }
 }

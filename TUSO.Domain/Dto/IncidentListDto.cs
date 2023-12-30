@@ -225,8 +225,8 @@ namespace TUSO.Domain.Dto
         /// </summary 
         public string ImplementingPartnerName { get; set; }
 
-        public virtual IEnumerable<FundingAgencyItem> FundingAgencyItems { get; set; }
+        public virtual IEnumerable<IncidendtFundingAgency> IncidendtFundingAgencies   { get; set; }
 
-        public virtual IEnumerable<ImplemenentingItem> ImplemenentingItems { get; set; }
+        public virtual IEnumerable<IncidentImplemenentingPartner> IncidentImplemenentingPartners  { get; set; }
     }
 }

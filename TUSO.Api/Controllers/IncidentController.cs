@@ -56,7 +56,7 @@ namespace TUSO.Api.Controllers
                 {
                     foreach (var item in incident.FundingAgencyList)
                     {
-                        FundingAgencyItem fundingAgencyItem = new FundingAgencyItem();
+                        IncidendtFundingAgency  fundingAgencyItem = new IncidendtFundingAgency();
 
                         fundingAgencyItem.FundingAgencyId = item;
                         fundingAgencyItem.IncidentId = incident.Oid;
@@ -71,9 +71,9 @@ namespace TUSO.Api.Controllers
                 {
                     foreach (var item in incident.ImplementingList)
                     {
-                        ImplemenentingItem implemenentingItem  = new ImplemenentingItem();
+                        IncidentImplemenentingPartner implemenentingItem  = new IncidentImplemenentingPartner();
 
-                        implemenentingItem.FundingAgencyId = item;
+                        implemenentingItem.ImplementingId = item;
                         implemenentingItem.IncidentId = incident.Oid;
                         implemenentingItem.DateCreated = DateTime.Now;
                         implemenentingItem.IsDeleted = false;
@@ -106,17 +106,7 @@ namespace TUSO.Api.Controllers
             {
                 var incidentInDb = await context.IncidentRepository.GetIncidents(start, take, status);
 
-                foreach (var item in incidentInDb.List)
-                {
-                    item.FundingAgencyItems = await context.FundingAgencyItemRepository.LoadListWithChildAsync<FundingAgencyItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.FundingAgencyItems);
-                }
-
-                foreach (var item in incidentInDb.List)
-                {
-                    item.ImplemenentingItems = await context.ImplementingItemRepository.LoadListWithChildAsync<ImplemenentingItem>(c => c.IsDeleted == false && c.IncidentId == item.Oid, x => x.Incident.ImplemenentingItems);
-                }
-                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb.List);
-
+                return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
             }
             catch (Exception)
             {

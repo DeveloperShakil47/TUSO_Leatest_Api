@@ -10,7 +10,7 @@ using TUSO.Infrastructure.SqlServer;
 
 namespace TUSO.Infrastructure.Repositories
 {
-    public class ImplemenentingItemRepository : Repository<ImplemenentingItem>,IImplementingItemRepository
+    public class ImplemenentingItemRepository : Repository<IncidentImplemenentingPartner>,IImplementingItemRepository
     {
 
         public ImplemenentingItemRepository(DataContext context) : base(context)
@@ -18,12 +18,12 @@ namespace TUSO.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<ImplemenentingItem>> GetImplemenentingItemByIncident(int key)
+        public async Task<IEnumerable<IncidentImplemenentingPartner>> GetImplemenentingItemByIncident(int key)
         {
             return await QueryAsync(p => p.IncidentId == key && p.IsDeleted == false, o => o.Oid);
         }
 
-        public async Task<ImplemenentingItem> GetImplemenentingItemByKey(int key)
+        public async Task<IncidentImplemenentingPartner> GetImplemenentingItemByKey(int key)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<ImplemenentingItem>> GetImplemenentingItems()
+        public async Task<IEnumerable<IncidentImplemenentingPartner>> GetImplemenentingItems()
         {
             try
             {

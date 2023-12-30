@@ -256,13 +256,13 @@ namespace TUSO.Domain.Entities
         /// FundingAgencyItems of a Incident.
         /// </summary>
         [JsonIgnore]
-        public virtual IEnumerable<FundingAgencyItem> FundingAgencyItems { get; set; }
+        public virtual IEnumerable<IncidendtFundingAgency> IncidendtFundingAgencies  { get; set; }
 
         /// <summary>
         /// FundingAgencyItems of a Incident.
         /// </summary>
         [JsonIgnore]
-        public virtual IEnumerable<ImplemenentingItem> ImplemenentingItems { get; set; }
+        public virtual IEnumerable<IncidentImplemenentingPartner> IncidentImplemenentingPartners  { get; set; }
 
         [NotMapped]
         public long? AgentId { get; set; }

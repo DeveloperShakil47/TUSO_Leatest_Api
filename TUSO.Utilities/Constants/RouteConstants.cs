@@ -466,21 +466,21 @@ namespace TUSO.Utilities.Constants
         public const string DeleteMessage = "message/{key}";
         #endregion
 
-        #region FundingAgencyItem
-        public const string ReadFundingAgencyItems = "funding-agency-items";
+        #region IncidentFundingAgency
+        public const string ReadIncidentFundingAgencies = "incident-funding-agencies";
 
-        public const string ReadFundingAgencyItemByIncident = "funding-agency-item/incident/{key}";
+        public const string ReadIncidentFundingAgencyByIncident = "incident-funding-agencies/incident/{key}";
 
-        public const string ReadFundingAgencyItemsByKey = "funding-agency-item/key/{key}";
+        public const string ReadIncidentFundingAgencyByKey = "incident-funding-agencies/key/{key}";
 
         #endregion
 
-        #region ImplementingItem
-        public const string ReadImplementingItems = "implementing-items";
+        #region IncidentImplementingPartner
+        public const string ReadIncidentImplementingPartners = "incident-implementing-partner";
 
-        public const string ReadImplementingItemByIncident = "implementing-item/incident/{key}";
+        public const string ReadIncidentImplementingPartnerByIncident = "incident-implementing-partner/incident/{key}";
 
-        public const string ReadImplementingItemByKey = "implementing-item/key/{key}";
+        public const string ReadIncidentImplementingPartnerByKey = "incident-implementing-partner/key/{key}";
 
         #endregion
 

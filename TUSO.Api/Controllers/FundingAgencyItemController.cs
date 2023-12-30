@@ -32,8 +32,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadFundingAgencyItems)]
-        public async Task<ResponseDto> ReadFundingAgencyItems()
+        [Route(RouteConstants.ReadIncidentFundingAgencies)]
+        public async Task<ResponseDto> ReadIncidentFundingAgencies()
         {
             try
             {
@@ -55,8 +55,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table Countries</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadFundingAgencyItemsByKey)]
-        public async Task<ResponseDto> ReadFundingAgencyItemsByKey(int key)
+        [Route(RouteConstants.ReadIncidentFundingAgencyByKey)]
+        public async Task<ResponseDto> ReadIncidentFundingAgencyByKey(int key)
         {
             try
             {
@@ -82,8 +82,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table Countries</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadFundingAgencyItemByIncident)]
-        public async Task<ResponseDto> ReadFundingAgencyItemByIncident(int key)
+        [Route(RouteConstants.ReadIncidentFundingAgencyByIncident)]
+        public async Task<ResponseDto> ReadIncidentFundingAgencyByIncident(int key)
         {
             try
             {

@@ -191,11 +191,11 @@ namespace TUSO.Infrastructure.SqlServer
         /// <summary>
         /// Represents FundingAgenciesItems entity.
         /// </summary>
-        public DbSet<FundingAgencyItem> FundingAgenciesItems { get; set; }
+        public DbSet<IncidendtFundingAgency> IncidendtFundingAgencies  { get; set; }
 
         /// <summary>
         /// Represents ImplemenentingItems entity.
         /// </summary>
-        public DbSet<ImplemenentingItem> ImplemenentingItems { get; set; }
+        public DbSet<IncidentImplemenentingPartner> incidentImplemenentingPartners { get; set; }
     }
 }

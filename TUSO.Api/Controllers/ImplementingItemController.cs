@@ -32,8 +32,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadImplementingItems)]
-        public async Task<ResponseDto> ReadImplementingItems()
+        [Route(RouteConstants.ReadIncidentImplementingPartners)]
+        public async Task<ResponseDto> ReadIncidentImplementingPartners()
         {
             try
             {
@@ -55,8 +55,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table Countries</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadImplementingItemByKey)]
-        public async Task<ResponseDto> ReadImplementingItemByKey(int key)
+        [Route(RouteConstants.ReadIncidentImplementingPartnerByKey)]
+        public async Task<ResponseDto> ReadIncidentImplementingPartnerByKey(int key)
         {
             try
             {
@@ -82,8 +82,8 @@ namespace TUSO.Api.Controllers
         /// <param name="key">Primary key of the table Countries</param>
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadImplementingItemByIncident)]
-        public async Task<ResponseDto> ReadImplementingItemByIncident(int key)
+        [Route(RouteConstants.ReadIncidentImplementingPartnerByIncident)]
+        public async Task<ResponseDto> ReadIncidentImplementingPartnerByIncident(int key)
         {
             try
             {

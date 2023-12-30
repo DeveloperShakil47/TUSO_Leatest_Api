@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace TUSO.Domain.Entities
 {
-    public class ImplemenentingItem : BaseModel
+    public class IncidendtFundingAgency : BaseModel
     {
         [Key]
         public int Oid { get; set; }

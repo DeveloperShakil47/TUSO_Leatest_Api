@@ -10,20 +10,20 @@ using TUSO.Infrastructure.SqlServer;
 
 namespace TUSO.Infrastructure.Repositories
 {
-    public class FundingAgencyItemRepository : Repository<FundingAgencyItem>, IFundingAgencyItemRepository
+    public class FundingAgencyItemRepository : Repository<IncidendtFundingAgency>, IFundingAgencyItemRepository
     {
         public FundingAgencyItemRepository(DataContext context) : base(context)
         {
 
         }
 
-        public async Task<IEnumerable<FundingAgencyItem>> GetFundingAgencyItemByIncident(int key)
+        public async Task<IEnumerable<IncidendtFundingAgency>> GetFundingAgencyItemByIncident(int key)
         {
            return await QueryAsync(p => p.IncidentId == key && p.IsDeleted == false, o => o.Oid);
 
         }
 
-        public async Task<FundingAgencyItem> GetFundingAgencyItemByKey(int key)
+        public async Task<IncidendtFundingAgency> GetFundingAgencyItemByKey(int key)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<FundingAgencyItem>> GetFundingAgencyItems()
+        public async Task<IEnumerable<IncidendtFundingAgency>> GetFundingAgencyItems()
         {
             try
             {
