@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net;
 using System.Text;
 using TUSO.Domain.Dto;
@@ -45,9 +46,9 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                incident.DateCreated = DateTime.Now;
+                incident.DateCreated = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                 incident.IsDeleted = false;
-                incident.DateReported = DateTime.Now;
+                incident.DateReported = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
@@ -300,18 +301,18 @@ namespace TUSO.Api.Controllers
 
                     incidentAction.IncidentId = incidentInDb.Oid;
                     incidentAction.CreatedBy = incidentInDb.CreatedBy;
-                    incidentAction.DateCreated =  DateTime.Now;
+                    incidentAction.DateCreated =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     incidentAction.IsDeleted =  false;
 
                     if (incident.AgentId>0)
                     {
                         incidentAction.AgentId =incident.AgentId;
-                        incidentAction.AgentDateModified =  DateTime.Now;
+                        incidentAction.AgentDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     if (incident.AdminId>0)
                     {
                         incidentAction.AdminId =incident.AdminId;
-                        incidentAction.AdminDateModified =  DateTime.Now;
+                        incidentAction.AdminDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                         if (incidentInDb.AssignedTo is not null)
                             await AdminLogSave(key, incident, dbCurrentIncidentActionLog, (long)incidentInDb?.AssignedTo);
@@ -319,12 +320,12 @@ namespace TUSO.Api.Controllers
                     if (incident.ExpertId>0)
                     {
                         incidentAction.ExpertId =incident.ExpertId;
-                        incidentAction.ExpertDateModified =  DateTime.Now;
+                        incidentAction.ExpertDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     if (incident.SupervisedId>0)
                     {
                         incidentAction.SupervisedId = incident.SupervisedId;
-                        incidentAction.SupervisedDateModified = DateTime.Now;
+                        incidentAction.SupervisedDateModified = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
 
                     context.IncidentActionLogRepository.Add(incidentAction);
@@ -335,27 +336,27 @@ namespace TUSO.Api.Controllers
                     if (incident.AgentId>0)
                     {
                         dbCurrentIncidentActionLog.AgentId =incident.AgentId;
-                        dbCurrentIncidentActionLog.AgentDateModified =  DateTime.Now;
+                        dbCurrentIncidentActionLog.AgentDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     else if (incident.ExpertId>0)
                     {
                         dbCurrentIncidentActionLog.ExpertId =incident.ExpertId;
-                        dbCurrentIncidentActionLog.ExpertDateModified =  DateTime.Now;
+                        dbCurrentIncidentActionLog.ExpertDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     else if (incident.SupervisedId>0)
                     {
                         dbCurrentIncidentActionLog.SupervisedId =incident.SupervisedId;
-                        dbCurrentIncidentActionLog.SupervisedDateModified =  DateTime.Now;
+                        dbCurrentIncidentActionLog.SupervisedDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     else if (incident.TeamLeadId>0)
                     {
                         dbCurrentIncidentActionLog.TeamLeadId =incident.TeamLeadId;
-                        dbCurrentIncidentActionLog.TeamLeadDateModified =  DateTime.Now;
+                        dbCurrentIncidentActionLog.TeamLeadDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
                     else if (incident.AdminId>0)
                     {
                         dbCurrentIncidentActionLog.AdminId =incident.AdminId;
-                        dbCurrentIncidentActionLog.AdminDateModified =  DateTime.Now;
+                        dbCurrentIncidentActionLog.AdminDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
                         if (previousAssignUserId is not null)
                             await AdminLogSave(key, incident, dbCurrentIncidentActionLog, (long)previousAssignUserId);
@@ -363,13 +364,42 @@ namespace TUSO.Api.Controllers
                     else
                     {
                         dbCurrentIncidentActionLog.ModifiedBy = incident.ModifiedBy;
-                        dbCurrentIncidentActionLog.DateModified = DateTime.Now;
+                        dbCurrentIncidentActionLog.DateModified = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     }
 
                     context.IncidentActionLogRepository.Update(dbCurrentIncidentActionLog);
                     await context.SaveChangesAsync();
                 }
 
+                if (incident.FundingAgencyList != null)
+                {
+                    foreach (var item in incident.FundingAgencyList)
+                    {
+                        IncidendtFundingAgency fundingAgencyItem = new IncidendtFundingAgency();
+
+                        fundingAgencyItem.FundingAgencyId = item;
+                        fundingAgencyItem.IncidentId = incident.Oid;
+                        fundingAgencyItem.DateCreated = DateTime.Now;
+                        fundingAgencyItem.IsDeleted = false;
+                        context.FundingAgencyItemRepository.Add(fundingAgencyItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
+                if (incident.ImplementingList != null)
+                {
+                    foreach (var item in incident.ImplementingList)
+                    {
+                        IncidentImplemenentingPartner implemenentingItem = new IncidentImplemenentingPartner();
+
+                        implemenentingItem.ImplementingId = item;
+                        implemenentingItem.IncidentId = incident.Oid;
+                        implemenentingItem.DateCreated = DateTime.Now;
+                        implemenentingItem.IsDeleted = false;
+                        context.ImplementingItemRepository.Add(implemenentingItem);
+                        await context.SaveChangesAsync();
+                    }
+                }
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
             catch (Exception)
