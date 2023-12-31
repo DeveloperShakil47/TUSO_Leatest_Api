@@ -67,6 +67,11 @@ namespace TUSO.Infrastructure.Contracts
         IFundingAgencyItemRepository FundingAgencyItemRepository { get; }
 
         IImplementingItemRepository ImplementingItemRepository { get; }
+        IRDPDeviceInfoRepository RDPDeviceInfoRepository { get; }
+
+        IRDPRepository RDPRepository { get; }
+        ISyncRepository SyncRepository { get; }
+
 
         Task<int> SaveChangesAsync();
 

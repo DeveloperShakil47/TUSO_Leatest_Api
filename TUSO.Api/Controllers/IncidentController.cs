@@ -46,9 +46,9 @@ namespace TUSO.Api.Controllers
         {
             try
             {
-                incident.DateCreated = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                incident.DateCreated = DateTime.Now;
                 incident.IsDeleted = false;
-                incident.DateReported = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                incident.DateReported = DateTime.Now;
 
                 context.IncidentRepository.Add(incident);
                 await context.SaveChangesAsync();
@@ -301,18 +301,18 @@ namespace TUSO.Api.Controllers
 
                     incidentAction.IncidentId = incidentInDb.Oid;
                     incidentAction.CreatedBy = incidentInDb.CreatedBy;
-                    incidentAction.DateCreated =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    incidentAction.DateCreated =  DateTime.Now;
                     incidentAction.IsDeleted =  false;
 
                     if (incident.AgentId>0)
                     {
                         incidentAction.AgentId =incident.AgentId;
-                        incidentAction.AgentDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        incidentAction.AgentDateModified =  DateTime.Now;
                     }
                     if (incident.AdminId>0)
                     {
                         incidentAction.AdminId =incident.AdminId;
-                        incidentAction.AdminDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        incidentAction.AdminDateModified =  DateTime.Now;
 
                         if (incidentInDb.AssignedTo is not null)
                             await AdminLogSave(key, incident, dbCurrentIncidentActionLog, (long)incidentInDb?.AssignedTo);
@@ -320,12 +320,12 @@ namespace TUSO.Api.Controllers
                     if (incident.ExpertId>0)
                     {
                         incidentAction.ExpertId =incident.ExpertId;
-                        incidentAction.ExpertDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        incidentAction.ExpertDateModified =  DateTime.Now;
                     }
                     if (incident.SupervisedId>0)
                     {
                         incidentAction.SupervisedId = incident.SupervisedId;
-                        incidentAction.SupervisedDateModified = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        incidentAction.SupervisedDateModified = DateTime.Now;
                     }
 
                     context.IncidentActionLogRepository.Add(incidentAction);
@@ -336,27 +336,27 @@ namespace TUSO.Api.Controllers
                     if (incident.AgentId>0)
                     {
                         dbCurrentIncidentActionLog.AgentId =incident.AgentId;
-                        dbCurrentIncidentActionLog.AgentDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.AgentDateModified =  DateTime.Now;
                     }
                     else if (incident.ExpertId>0)
                     {
                         dbCurrentIncidentActionLog.ExpertId =incident.ExpertId;
-                        dbCurrentIncidentActionLog.ExpertDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.ExpertDateModified =  DateTime.Now;
                     }
                     else if (incident.SupervisedId>0)
                     {
                         dbCurrentIncidentActionLog.SupervisedId =incident.SupervisedId;
-                        dbCurrentIncidentActionLog.SupervisedDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.SupervisedDateModified =  DateTime.Now;
                     }
                     else if (incident.TeamLeadId>0)
                     {
                         dbCurrentIncidentActionLog.TeamLeadId =incident.TeamLeadId;
-                        dbCurrentIncidentActionLog.TeamLeadDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.TeamLeadDateModified =  DateTime.Now;
                     }
                     else if (incident.AdminId>0)
                     {
                         dbCurrentIncidentActionLog.AdminId =incident.AdminId;
-                        dbCurrentIncidentActionLog.AdminDateModified =  DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.AdminDateModified =  DateTime.Now;
 
                         if (previousAssignUserId is not null)
                             await AdminLogSave(key, incident, dbCurrentIncidentActionLog, (long)previousAssignUserId);
@@ -364,7 +364,7 @@ namespace TUSO.Api.Controllers
                     else
                     {
                         dbCurrentIncidentActionLog.ModifiedBy = incident.ModifiedBy;
-                        dbCurrentIncidentActionLog.DateModified = DateTime.ParseExact(DateTime.Now.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        dbCurrentIncidentActionLog.DateModified = DateTime.Now;
                     }
 
                     context.IncidentActionLogRepository.Update(dbCurrentIncidentActionLog);

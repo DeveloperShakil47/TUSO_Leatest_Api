@@ -94,6 +94,7 @@ namespace TUSO.Domain.Dto
         public string? UserEmail { get; set; }
     }
 
+
     public class IncidentLifeCycleListDto
     {
         public int TotalIncident { get; set; }

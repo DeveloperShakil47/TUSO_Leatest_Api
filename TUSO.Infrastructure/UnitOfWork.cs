@@ -1,4 +1,6 @@
-﻿using TUSO.Infrastructure.Contracts;
+﻿using Microsoft.Extensions.Options;
+using TUSO.Domain.Dto;
+using TUSO.Infrastructure.Contracts;
 using TUSO.Infrastructure.Repositories;
 using TUSO.Infrastructure.SqlServer;
 
@@ -13,9 +15,11 @@ namespace TUSO.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         protected readonly DataContext context;
-        public UnitOfWork(DataContext context)
+        private readonly IOptions<RemoteDeviceSettings> _remoteDeviceSettings;
+        public UnitOfWork(DataContext context, IOptions<RemoteDeviceSettings> options)
         {
             this.context = context;
+            this._remoteDeviceSettings = options;
         }
         public async Task<int> SaveChangesAsync()
         {
@@ -424,6 +428,47 @@ namespace TUSO.Infrastructure
                 if (implementingItemRepository == null)
                     implementingItemRepository = new ImplemenentingItemRepository(context);
                 return implementingItemRepository;
+            }
+        }
+        #endregion
+
+        #region RDPDeviceInfo
+        private IRDPDeviceInfoRepository iRdpDeviceInfoRepository;
+        public IRDPDeviceInfoRepository RDPDeviceInfoRepository
+        {
+            get
+            {
+                if (iRdpDeviceInfoRepository == null)
+                    iRdpDeviceInfoRepository = new RDPDeviceInfoRepository(context);
+
+                return iRdpDeviceInfoRepository;
+            }
+        }
+        #endregion
+
+        #region SyncRepository
+        private ISyncRepository syncRepository;
+        public ISyncRepository SyncRepository
+        {
+            get
+            {
+                if (syncRepository == null)
+                    syncRepository = new SyncRepository(context);
+
+                return syncRepository;
+            }
+        }
+        #endregion
+        #region RDP
+        private IRDPRepository iRDPRepository;
+        public IRDPRepository RDPRepository
+        {
+            get
+            {
+                if (iRDPRepository == null)
+                    iRDPRepository = new RDPRepository(context, _remoteDeviceSettings);
+
+                return iRDPRepository;
             }
         }
         #endregion

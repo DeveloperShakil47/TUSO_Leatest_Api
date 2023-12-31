@@ -28,7 +28,7 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [Column(TypeName = "smalldatetime")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+
         [Display(Name = "Date of Incident")]
         public DateTime? DateOfIncident { get; set; }
 
@@ -37,7 +37,7 @@ namespace TUSO.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = MessageConstants.RequiredFieldError)]
         [Column(TypeName = "smalldatetime")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+
         [Display(Name = "Date Reported")]
         public DateTime DateReported { get; set; }
 
@@ -68,7 +68,7 @@ namespace TUSO.Domain.Entities
         ///  DateResolved of an Incident.
         /// </summary>       
         [Column(TypeName = "smalldatetime")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+
         [Display(Name = "Date Resolved")]
         public DateTime? DateResolved { get; set; }
 
@@ -143,7 +143,7 @@ namespace TUSO.Domain.Entities
         /// <summary>
         /// Reassaigned date of an Incident.
         /// </summary>
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+
         [Column(TypeName = "smalldatetime")]
         [Display(Name = "Reassign Date")]
         public DateTime? ReassignDate { get; set; }
