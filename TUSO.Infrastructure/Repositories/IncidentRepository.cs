@@ -361,9 +361,11 @@ namespace TUSO.Infrastructure.Repositories
                                        .Where(IncidentCategories => IncidentCategories.Oid == i.ThirdLevelCategoryId)
                                        .Select(IncidentCategory => IncidentCategory.IncidentCategorys)
                                        .FirstOrDefault() : null,
-                                  FundingAgencyName = i.Projects.FundingAgencies
-                                        .Where(fundingAgency => fundingAgency.IsDeleted == false)
-                                        .Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
+                                  FundingAgencyName = string.Join(", ",
+                                            (from f in context.IncidendtFundingAgencies
+                                             join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
+                                             where f.IncidentId == i.Oid
+                                             select a.FundingAgencyName).ToList()),
                                   ImplementingPartnerName = i.Projects.ImplementingPartners
                                         .Where(implementingPartner => implementingPartner.IsDeleted == false)
                                         .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
@@ -446,9 +448,11 @@ namespace TUSO.Infrastructure.Repositories
                             i.CallerEmail,
                             i.CallerJobTitle,
                             i.DateOfIncident,
-                            FundingAgencyName = i.Projects.FundingAgencies
-                                  .Where(fundingAgency => fundingAgency.IsDeleted == false)
-                                  .Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
+                            FundingAgencyName = string.Join(", ",
+                                            (from f in context.IncidendtFundingAgencies
+                                             join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
+                                             where f.IncidentId == i.Oid
+                                             select a.FundingAgencyName).ToList()),
                             ImplementingPartnerName = i.Projects.ImplementingPartners
                                   .Where(implementingPartner => implementingPartner.IsDeleted == false)
                                   .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
@@ -561,7 +565,11 @@ namespace TUSO.Infrastructure.Repositories
 
                              SystemName = x.r.u.Projects.Title,
 
-                             FundingAgencyName = x.r.u.Projects.FundingAgencies.Where(fundingAgency => fundingAgency.IsDeleted == false).Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
+                             FundingAgencyName = string.Join(", ",
+                                            (from f in context.IncidendtFundingAgencies
+                                             join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
+                                             where f.IncidentId == x.r.u.Oid
+                                             select a.FundingAgencyName).ToList()),
 
                              ImplementingPartnerName = x.r.u.Projects.ImplementingPartners.Where(implementingPartner => implementingPartner.IsDeleted == false).Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
 
@@ -884,7 +892,11 @@ namespace TUSO.Infrastructure.Repositories
 
                          SystemName = x.r.u.Projects.Title,
 
-                         FundingAgencyName = x.r.u.Projects.FundingAgencies.Where(fundingAgency => fundingAgency.IsDeleted == false).Select(agnecy => agnecy.FundingAgencyName).FirstOrDefault(),
+                         FundingAgencyName = string.Join(", ",
+                                            (from f in context.IncidendtFundingAgencies
+                                             join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
+                                             where f.IncidentId == x.r.u.Oid
+                                             select a.FundingAgencyName).ToList()),
 
                          ImplementingPartnerName = x.r.u.Projects.ImplementingPartners.Where(implementingPartner => implementingPartner.IsDeleted == false).Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
 
