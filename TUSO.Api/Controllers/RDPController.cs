@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -30,7 +31,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.RDPLogin)]
-        public async Task<IActionResult> UserLogin(LoginDto login)
+        public async Task<ResponseDto> UserLogin(LoginDto login)
         {
             try
             {
@@ -39,16 +40,12 @@ namespace TUSO.Api.Controllers
                 var rdp = await context.RDPRepository.GetSingleRDPServerInfo();
                 var user = await context.UserAccountRepository.GetUserByUserNamePassword(login.UserName, encryptedPassword);
 
-                if (user != null && rdp != null)
-                    return Ok(rdp);
-                else
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-                }
+             
+                return new ResponseDto(HttpStatusCode.OK, true, user != null && rdp != null ? "Data Not Found" : "Data Loaded", rdp);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -57,8 +54,8 @@ namespace TUSO.Api.Controllers
         /// </summary>
         /// <returns>List of table object.</returns>
         [HttpGet]
-        [Route(RouteConstants.ReadDevices)]
-        public async Task<IActionResult> ReadDevices()
+        [Route(RouteConstants.ReadDevicesType)]
+        public async Task<ResponseDto> ReadDevices()
         {
             try
             {
@@ -108,18 +105,18 @@ namespace TUSO.Api.Controllers
                 }
 
 
-                return Ok(devices);
+                return new ResponseDto(HttpStatusCode.OK, true, devices?.Count()==0?"Data Not Found":"Data Loaded", devices);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
 
         [HttpGet]
         [Route(RouteConstants.GetDeviceActivity)]
-        public IActionResult GetDeviceActivity(string fromDate, string? toDate, string? userName)
+        public ResponseDto GetDeviceActivity(string fromDate, string? toDate, string? userName)
         {
             try
             {
@@ -134,7 +131,7 @@ namespace TUSO.Api.Controllers
 
                         foreach (var deviceUser in deviceWithUser)
                         {
-                            if (device.DeviceID == deviceUser.DeviceID)
+                            if (device.DeviceID == deviceUser.DeviceId)
                             {
                                 devices.Add(new DeviceActivityReportDto()
                                 {
@@ -144,8 +141,8 @@ namespace TUSO.Api.Controllers
                                     OfflineHours = device.OfflineHours,
                                     DeviceName = device.DeviceName,
                                     MacAddress = deviceUser.MACAddress,
-                                    PublicIP = deviceUser.PublicIP,
-                                    PrivateIP = deviceUser.PrivateIP,
+                                    PublicIP = deviceUser.PublicIp,
+                                    PrivateIP = deviceUser.PrivateIp,
                                     MotherboardSerial = deviceUser.MotherBoardSerial,
                                     DistrictName = deviceUser.DistrictName,
                                     FacilityName = deviceUser.FacilityName,
@@ -165,13 +162,11 @@ namespace TUSO.Api.Controllers
                         sl++;
                     }
                 }
-
-
-                return Ok(devices);
+                return new ResponseDto(HttpStatusCode.OK, true, devices?.Count()==0 ? "Data Not Found" : "Data Loaded", devices);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -182,26 +177,23 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceByKey)]
-        public IActionResult ReadDeviceByKey(string key)
+        public ResponseDto ReadDeviceByKey(string key)
         {
             try
             {
                 var device = context.RDPRepository.GetDeviceByKey(key);
 
-                if (device == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(device);
+                return new ResponseDto(HttpStatusCode.OK, true, device == null ? MessageConstants.NoMatchFoundError : "Data Loaded", device);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
         [HttpGet]
         [Route(RouteConstants.ReadDeviceUserByKey)]
-        public IActionResult ReadDeviceUserByKey(string key)
+        public ResponseDto ReadDeviceUserByKey(string key)
         {
             try
             {
@@ -209,7 +201,7 @@ namespace TUSO.Api.Controllers
                 if (response == null)
                 {
 
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
+                    return new ResponseDto(HttpStatusCode.NotFound, true, MessageConstants.NoMatchFoundError, null);
                 }
 
                 UserAccountDto userAccount = new()
@@ -219,11 +211,11 @@ namespace TUSO.Api.Controllers
                     SureName = response.Surname,
                     Cellphone = response.Cellphone
                 };
-                return Ok(userAccount);
+                return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.NoMatchFoundError, userAccount);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
 
@@ -234,20 +226,17 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpPost]
         [Route(RouteConstants.UninstallDeviceByKey)]
-        public IActionResult UninstallDeviceByKey(string deviceID)
+        public ResponseDto UninstallDeviceByKey(string deviceID)
         {
             try
             {
                 var device = context.RDPRepository.UninstallDeviceByKey(deviceID);
 
-                if (device == null)
-                    return StatusCode(StatusCodes.Status404NotFound, MessageConstants.NoMatchFoundError);
-
-                return Ok(device);
+                return new ResponseDto(HttpStatusCode.OK, true, device == null? MessageConstants.NoMatchFoundError:"Data Loaded" , device);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, MessageConstants.GenericError);
+                return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
     }

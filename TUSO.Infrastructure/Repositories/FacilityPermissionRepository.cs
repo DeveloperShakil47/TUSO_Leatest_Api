@@ -35,7 +35,20 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await context.FacilityPermissions.Where(c => c.FacilityId == key && c.IsDeleted == false).Include(x => x.UserId).ToListAsync();
+                return await context.FacilityPermissions.Where(c => c.FacilityId == key && c.IsDeleted == false && c.IsITExpart == true).Include(x => x.UserId).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
+        public async Task<FacilityPermission> GetFacilityPermissionByUserId(long key, bool isItExpert)
+        {
+            try
+            {
+                return await context.FacilityPermissions.FirstOrDefaultAsync(c => c.UserId == key && c.IsDeleted == false && c.IsITExpart == isItExpert);
             }
             catch (Exception)
             {

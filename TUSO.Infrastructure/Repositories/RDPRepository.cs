@@ -30,7 +30,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await FirstOrDefaultAsync(u => u.ServerURL == UserName && u.OrganizationID == Password && u.IsDeleted == false);
+                return await FirstOrDefaultAsync(u => u.ServerURL == UserName && u.OrganizationId == Password && u.IsDeleted == false);
             }
             catch (Exception)
             {
@@ -140,7 +140,7 @@ namespace TUSO.Infrastructure.Repositories
             {
                 UserAccount user = new();
 
-                RDPDeviceInfo rDPDevice = context.RDPDeviceInfoes.Where(x => x.DeviceID == key).FirstOrDefault();
+                RDPDeviceInfo rDPDevice = context.RDPDeviceInfoes.Where(x => x.DeviceId == key).FirstOrDefault();
 
                 if (rDPDevice != null)
                 {
@@ -155,11 +155,11 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        public string UninstallDeviceByKey(string deviceID)
+        public string UninstallDeviceByKey(string DeviceId)
         {
             try
             {
-                var client = new RestClient($"{_remoteDeviceSettings.BaseUrl}UninstallDevice/" + deviceID);
+                var client = new RestClient($"{_remoteDeviceSettings.BaseUrl}UninstallDevice/" + DeviceId);
 
                 var request = new RestRequest();
 

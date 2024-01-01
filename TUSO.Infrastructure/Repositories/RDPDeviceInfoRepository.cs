@@ -28,7 +28,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await FirstOrDefaultAsync(d => d.DeviceID == deviceId && d.IsDeleted == false);
+                return await FirstOrDefaultAsync(d => d.DeviceId == deviceId && d.IsDeleted == false);
             }
             catch (Exception)
             {
@@ -40,7 +40,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await QueryAsync(c => c.IsDeleted == false && c.DeviceID == deviceId);
+                return await QueryAsync(c => c.IsDeleted == false && c.DeviceId == deviceId);
             }
             catch (Exception)
             {
@@ -52,7 +52,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await FirstOrDefaultAsync(c => c.OID == key && c.IsDeleted == false);
+                return await FirstOrDefaultAsync(c => c.Oid == key && c.IsDeleted == false);
             }
             catch (Exception)
             {
@@ -64,7 +64,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return await QueryAsync(c => c.IsDeleted == false, o => o.OID);
+                return await QueryAsync(c => c.IsDeleted == false, o => o.Oid);
             }
             catch (Exception)
             {
@@ -76,7 +76,7 @@ namespace TUSO.Infrastructure.Repositories
         {
             try
             {
-                return (IEnumerable<RDPDeviceInfoDto>)await QueryAsync(c => c.IsDeleted == false, o => o.DeviceID);
+                return (IEnumerable<RDPDeviceInfoDto>)await QueryAsync(c => c.IsDeleted == false, o => o.DeviceId);
             }
             catch (Exception)
             {

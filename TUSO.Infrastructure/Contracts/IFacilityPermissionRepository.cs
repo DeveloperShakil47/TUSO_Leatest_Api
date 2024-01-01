@@ -16,7 +16,7 @@ namespace TUSO.Infrastructure.Contracts
         /// <param name="key">Primary key of the table FacilityPermission</param>
         /// <returns>Instance of a FacilityPermission object.</returns>        
         public Task<List<FacilityPermission>> GetFacilitiesUserByKey(int key, int start, int take);
-
+        public Task<FacilityPermission> GetFacilityPermissionByUserId(long key, bool isItExpert);
         public Task<List<FacilityPermission>> GetFacilityUserByKey(int key);
 
         /// <summary>

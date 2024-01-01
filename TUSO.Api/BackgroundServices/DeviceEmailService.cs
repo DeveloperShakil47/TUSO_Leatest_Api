@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using Castle.MicroKernel;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using TUSO.Domain.Dto;
@@ -89,9 +90,10 @@ namespace TUSO.Api.BGService
                     if (user.Email is not null)
                     {
                         string? itExpertMail = string.Empty;
-                        if (user.FacilityID is not null)
+                        var facilityPermission = await context.FacilityPermissionRepository.GetFacilityPermissionByUserId(user.Oid, true);
+                        if (facilityPermission is not null)
                         {
-                            itExpertMail = context.FacilityPermissionRepository.GetFacilityPermissionByKey((int)user.FacilityID).Result.User?.Email;
+                            itExpertMail = facilityPermission.UserAccount.Email;
 
                         }
 
@@ -109,11 +111,10 @@ namespace TUSO.Api.BGService
                     {
                         string? itExpertMail = string.Empty;
 
-                        if (user.FacilityID is not null)
-                        {
-                            itExpertMail = context.FacilityPermissionRepository.GetFacilityPermissionByKey((int)user.FacilityID).Result.User?.Email;
 
-                        }
+                            itExpertMail = context.FacilityPermissionRepository.GetFacilityPermissionByUserId(user.Oid, true).Result.UserAccount?.Email;
+
+                        
                         await MailTemplateConfiguration(userEmailTemplateForUnhealthyDevice, "\\EmailTemplate\\Deviceunhealthymailtemplate.htm", user, itExpertMail);
                     }
                 }
