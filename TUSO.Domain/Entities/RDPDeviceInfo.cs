@@ -46,7 +46,7 @@ namespace TUSO.Domain.Entities
         [StringLength(100)]
         [DataType(DataType.Text)]
         [Display(Name = "Private IP")]
-        public string PrivateIP { get; set; }
+        public string PrivateIp { get; set; }
 
         /// <summary>
         /// MACAddress of the RDPDeviceInfo.
@@ -73,7 +73,7 @@ namespace TUSO.Domain.Entities
         [StringLength(100)]
         [DataType(DataType.Text)]
         [Display(Name = "Public IP")]
-        public string PublicIP { get; set; }
+        public string PublicIp { get; set; }
 
         /// <summary>
         /// This field in not insert

@@ -18,15 +18,15 @@ namespace TUSO.Domain.Dto
 
         public string ProviceName { get; set; }
 
-        public string DeviceID { get; set; }
+        public string DeviceId { get; set; }
 
-        public string PrivateIP { get; set; }
+        public string PrivateIp { get; set; }
 
         public string MACAddress { get; set; }
 
         public string MotherBoardSerial { get; set; }
 
-        public string PublicIP { get; set; }
+        public string PublicIp { get; set; }
 
         public bool IsDeleted { get; set; }
 
