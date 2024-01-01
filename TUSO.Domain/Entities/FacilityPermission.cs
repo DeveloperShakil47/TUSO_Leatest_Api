@@ -38,5 +38,7 @@ namespace TUSO.Domain.Entities
         [ForeignKey("UserId")]
         [JsonIgnore]
         public virtual UserAccount UserAccount  { get; set; }
+
+        public bool IsITExpart {  get; set; }
     }
 }
