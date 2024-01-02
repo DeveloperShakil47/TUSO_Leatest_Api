@@ -7,11 +7,11 @@ using TUSO.Utilities.Constants;
 using Utilities.Encryptions;
 
 /*
- * Created by: Labib
- * Date created: 15.02.2023
- * Last modified:
- * Modified by:
- */
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Api.Controllers
 {
     [Route(RouteConstants.BaseRoute)]

@@ -1,6 +1,12 @@
 ﻿using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 
+/*
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Infrastructure.Contracts
 {
     public interface IRDPDeviceInfoRepository : IRepository<RDPDeviceInfo>

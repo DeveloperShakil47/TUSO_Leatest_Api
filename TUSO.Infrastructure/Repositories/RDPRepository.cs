@@ -8,6 +8,12 @@ using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Infrastructure.SqlServer;
 
+/*
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Infrastructure.Repositories
 {
 
@@ -38,18 +44,10 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-
-
-        Task<RdpServerInfo> IRDPRepository.GetUserByUserNamePassword(string UserName, string Password)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Device>> GetRootobject()
         {
             try
             {
-                //  var localize = _configuration.GetValue<bool>("Formatting:Localize");
                 var client = new RestClient($"{_remoteDeviceSettings.BaseUrl}Devices");
 
                 var request = new RestRequest();
@@ -106,8 +104,6 @@ namespace TUSO.Infrastructure.Repositories
 
             return result;
         }
-
-
 
         public string GetDeviceByKey(string key)
         {

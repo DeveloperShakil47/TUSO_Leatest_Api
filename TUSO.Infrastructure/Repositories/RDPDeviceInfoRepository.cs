@@ -3,6 +3,12 @@ using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Infrastructure.SqlServer;
 
+/*
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Infrastructure.Repositories
 {
     public class RDPDeviceInfoRepository : Repository<RDPDeviceInfo>, IRDPDeviceInfoRepository

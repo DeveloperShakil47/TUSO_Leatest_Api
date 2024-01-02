@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
@@ -8,11 +6,11 @@ using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
 
 /*
- * Created by: Selim
- * Date created: 14.02.2023
- * Last modified: 
- * Modified by: 
- */
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Api.Controllers
 {
     /// <summary>
@@ -51,7 +49,7 @@ namespace TUSO.Api.Controllers
 
                 context.RDPDeviceInfoRepository.Add(rDPDeviceInfo);
                 await context.SaveChangesAsync();
-               var rdp = await context.RDPDeviceInfoRepository.GetRDPDeviceByKey(rDPDeviceInfo.Oid);
+                var rdp = await context.RDPDeviceInfoRepository.GetRDPDeviceByKey(rDPDeviceInfo.Oid);
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, rdp);
 
             }
@@ -92,7 +90,7 @@ namespace TUSO.Api.Controllers
             try
             {
                 if (key <= 0)
-                return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
+                    return new ResponseDto(HttpStatusCode.BadRequest, false, MessageConstants.InvalidParameterError, null);
 
                 var rdp = await context.RDPDeviceInfoRepository.GetRDPDeviceByKey(key);
 
@@ -117,7 +115,7 @@ namespace TUSO.Api.Controllers
             {
                 var rdp = await context.RDPDeviceInfoRepository.GetByUsername(username);
 
-                return new ResponseDto(HttpStatusCode.OK, true, rdp == null? "Data Not Found":"Data Loaded", rdp);
+                return new ResponseDto(HttpStatusCode.OK, true, rdp == null ? "Data Not Found" : "Data Loaded", rdp);
             }
             catch (Exception)
             {

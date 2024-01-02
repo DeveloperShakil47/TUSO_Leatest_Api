@@ -1,6 +1,12 @@
 ﻿using TUSO.Domain.Entities;
 using TUSO.Domain.Dto;
 
+/*
+* Created by: Stephan
+* Date created: 01.01.2024
+* Last modified:
+* Modified by: 
+*/
 namespace TUSO.Infrastructure.Contracts
 {
     public interface IRDPRepository : IRepository<RdpServerInfo>
@@ -44,11 +50,11 @@ namespace TUSO.Infrastructure.Contracts
         public string GetDeviceByKey(string key);
 
         /// <summary>
-        /// Returns a device if deviceID matched.
+        /// Returns a device if deviceId matched.
         /// </summary>
-        /// <param name="deviceID">deviceID key of the table Device</param>
+        /// <param name="deviceId">deviceId key of the table Device</param>
         /// <returns>Instance of a Device object.</returns>
-        public string UninstallDeviceByKey(string deviceID);
+        public string UninstallDeviceByKey(string deviceId);
 
         /// <summary>
         /// Returns a device user by key matched.
