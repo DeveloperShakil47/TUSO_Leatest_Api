@@ -31,7 +31,7 @@ namespace TUSO.Api.BGService
         private async Task CreateMail()
         {
             IEnumerable<Device> devices = await context.RDPRepository.GetRootobject();
-            Sync syncs = await context.SyncRepository.FirstOrDefaultAsync(x => x.IsDeleted == false);
+            DeviceControl syncs = await context.DeviceControlRepository.FirstOrDefaultAsync(x => x.IsDeleted == false);
 
             List<Device> offlineDevices = new();
             List<Device> unhealthyDevices = new();

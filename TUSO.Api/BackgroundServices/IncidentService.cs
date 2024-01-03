@@ -21,13 +21,16 @@ namespace TUSO.Api.BGService
         public async Task DoSomethingAsync(int millisecond = 100)
         {
             await Task.Delay(millisecond);
-           // await CreateMail();
+             await AutoResolveIncident();
 
             _logger.LogInformation(
                 "Mail Sending Done.");
         }
 
-
+        public async Task AutoResolveIncident()
+        {
+            var incident = context.IncidentRepository.GetIncidentForAutoUpdate(DateTime.Now);
+        }
 
        
 

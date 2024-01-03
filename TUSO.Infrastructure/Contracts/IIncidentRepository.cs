@@ -110,5 +110,7 @@ namespace TUSO.Infrastructure.Contracts
         /// </summary>
         /// <returns>Instance of a Incident object.</returns>
         public Task<ClientIncidentCountDto> IncidentClientCount(string? userName);
+
+        public Task<List<Incident>> GetIncidentForAutoUpdate(DateTime currentDateTime);
     }
 }

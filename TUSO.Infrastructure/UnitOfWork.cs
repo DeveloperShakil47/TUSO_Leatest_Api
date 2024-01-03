@@ -446,19 +446,7 @@ namespace TUSO.Infrastructure
         }
         #endregion
 
-        #region SyncRepository
-        private ISyncRepository syncRepository;
-        public ISyncRepository SyncRepository
-        {
-            get
-            {
-                if (syncRepository == null)
-                    syncRepository = new SyncRepository(context);
-
-                return syncRepository;
-            }
-        }
-        #endregion
+     
         #region RDP
         private IRDPRepository iRDPRepository;
         public IRDPRepository RDPRepository

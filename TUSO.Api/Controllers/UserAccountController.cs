@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -15,12 +19,12 @@ namespace TUSO.Api.Controllers
     {
         private readonly IUnitOfWork context;
         private readonly ILogger<UserAccountController> logger;
-
+        private readonly IConfiguration _configuration;
         /// <summary>
         /// System Permission constructor.
         /// </summary>
         /// <param name="context">Inject IUnitOfWork as context</param>
-        public UserAccountController(IUnitOfWork context, ILogger<UserAccountController> logger)
+        public UserAccountController(IConfiguration configuration, IUnitOfWork context, ILogger<UserAccountController> logger)
         {
             this.context = context;
             this.logger = logger;
@@ -333,7 +337,11 @@ namespace TUSO.Api.Controllers
                 if (user != null)
                 {
                     var currentLoginUser = await context.UserAccountRepository.GetClientAccountByKey(user.Oid);
-                    return new ResponseDto(HttpStatusCode.OK, true, "Login Successfull", currentLoginUser);
+                  
+                        var tokenString = GenerateJwtToken(currentLoginUser.Email);
+                      
+                    
+                    return new ResponseDto(HttpStatusCode.OK, true, "Login Successfull",new {token= tokenString, user= currentLoginUser });
                 }
                 else
                 {
@@ -348,6 +356,27 @@ namespace TUSO.Api.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Generate JWT Token after successful login.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        private string GenerateJwtToken(string userName)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", userName) }),
+                Expires = DateTime.UtcNow.AddDays(1),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
         /// <summary>
         /// URL: tuso-api/user-account/changepassword
         /// </summary>

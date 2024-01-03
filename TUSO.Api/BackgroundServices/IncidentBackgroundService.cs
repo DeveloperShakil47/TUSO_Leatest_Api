@@ -18,7 +18,7 @@
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 
         {
-            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(100));
+            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromHours(12));
             while (
                 !stoppingToken.IsCancellationRequested &&
                 await timer.WaitForNextTickAsync(stoppingToken))
@@ -29,7 +29,7 @@
                     {
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                         IncidentService incidentService = asyncScope.ServiceProvider.GetRequiredService<IncidentService>();
-                        //await deviceService.DoSomethingAsync(MilliSecond);
+                        await incidentService.DoSomethingAsync(MilliSecond);
                         _executionCount++;
                         _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
                     }

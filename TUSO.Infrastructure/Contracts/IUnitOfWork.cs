@@ -72,7 +72,7 @@ namespace TUSO.Infrastructure.Contracts
 
         IRDPRepository RDPRepository { get; }
 
-        ISyncRepository SyncRepository { get; }
+
 
         Task<int> SaveChangesAsync();
     }

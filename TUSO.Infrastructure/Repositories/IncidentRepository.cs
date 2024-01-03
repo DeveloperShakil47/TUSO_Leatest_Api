@@ -1400,7 +1400,30 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
-        private string GetFormattedTime(int timeDuration)
+        public async Task<List<Incident>> GetIncidentForAutoUpdate(DateTime currentDateTime)
+        {
+            var data = context.Incidents.Where(x=>x.IsResolved == true && x.IsOpen == true && x.IsDeleted == false).ToList();
+            foreach (var incident in data)
+            {
+                DateTime? resolvedDateTime = incident?.DateResolved;
+                if(resolvedDateTime != null)
+                {
+                    resolvedDateTime.Value.AddDays(14);
+                    if (resolvedDateTime<=currentDateTime)
+                    {
+                        incident.IsOpen = false;
+                        incident.DateClosed = DateTime.Now;
+
+                        context.Update(incident);
+                        await context.SaveChangesAsync();
+                    }
+                }
+
+            }
+            return data;
+
+        }
+         private string GetFormattedTime(int timeDuration)
         {
             var hours = (timeDuration / 3600) < 10 ? "0" + (timeDuration / 3600) : (timeDuration / 3600).ToString();
             var minutes = ((timeDuration % 3600) / 60) < 10 ? "0" + ((timeDuration % 3600) / 60) : ((timeDuration % 3600) / 60).ToString();
