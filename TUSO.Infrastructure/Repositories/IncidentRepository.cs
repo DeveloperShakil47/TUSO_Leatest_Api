@@ -366,9 +366,11 @@ namespace TUSO.Infrastructure.Repositories
                                              join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
                                              where f.IncidentId == i.Oid
                                              select a.FundingAgencyName).ToList()),
-                                  ImplementingPartnerName = i.Projects.ImplementingPartners
-                                        .Where(implementingPartner => implementingPartner.IsDeleted == false)
-                                        .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
+                                  ImplementingPartnerName =  string.Join(", ",
+                                            (from f in context.incidentImplemenentingPartners
+                                             join a in context.ImplementingPartners on f.ImplementingId equals a.Oid
+                                             where f.IncidentId == i.Oid
+                                             select a.ImplementingPartnerName).ToList()),
                                   DateReported = i.DateReported,
                                   DateResolved = i.DateResolved,
                                   AssignedTo = i.AssignedTo,
@@ -453,9 +455,14 @@ namespace TUSO.Infrastructure.Repositories
                                              join a in context.FundingAgencies on f.FundingAgencyId equals a.Oid
                                              where f.IncidentId == i.Oid
                                              select a.FundingAgencyName).ToList()),
-                            ImplementingPartnerName = i.Projects.ImplementingPartners
-                                  .Where(implementingPartner => implementingPartner.IsDeleted == false)
-                                  .Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
+
+                           
+
+                            ImplementingPartnerName = string.Join(", ",
+                                            (from f in context.incidentImplemenentingPartners
+                                             join a in context.ImplementingPartners on f.ImplementingId equals a.Oid
+                                             where f.IncidentId == i.Oid
+                                             select a.ImplementingPartnerName).ToList()),
                             TeamName = t == null ? "" : t.Title,
                             AssaignName = m == null ? "" : m.Name,
                             HasImg = s == null ? false : true
@@ -571,7 +578,11 @@ namespace TUSO.Infrastructure.Repositories
                                              where f.IncidentId == x.r.u.Oid
                                              select a.FundingAgencyName).ToList()),
 
-                             ImplementingPartnerName = x.r.u.Projects.ImplementingPartners.Where(implementingPartner => implementingPartner.IsDeleted == false).Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
+                             ImplementingPartnerName = string.Join(", ",
+                                            (from f in context.incidentImplemenentingPartners
+                                             join a in context.ImplementingPartners on f.ImplementingId equals a.Oid
+                                             where f.IncidentId ==  x.r.u.Oid
+                                             select a.ImplementingPartnerName).ToList()),
 
                              FacilityName = x.r.u.Facilities.FacilityName,
 
@@ -898,7 +909,13 @@ namespace TUSO.Infrastructure.Repositories
                                              where f.IncidentId == x.r.u.Oid
                                              select a.FundingAgencyName).ToList()),
 
-                         ImplementingPartnerName = x.r.u.Projects.ImplementingPartners.Where(implementingPartner => implementingPartner.IsDeleted == false).Select(partner => partner.ImplementingPartnerName).FirstOrDefault(),
+                         
+
+                         ImplementingPartnerName = string.Join(", ",
+                                            (from f in context.incidentImplemenentingPartners
+                                             join a in context.ImplementingPartners on f.ImplementingId equals a.Oid
+                                             where f.IncidentId ==  x.r.u.Oid
+                                             select a.ImplementingPartnerName).ToList()),
 
                          FacilityName = x.r.u.Facilities.FacilityName,
 
