@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -40,6 +41,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateMember)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateMember(MemberDto memberDto  )
         {
             try
@@ -95,6 +97,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMembers)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadMembers()
         {
             try
@@ -118,6 +121,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadMemberByKey(long key)
         {
             try
@@ -145,6 +149,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByUser)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetMemberByUser(long key)
         {
             try
@@ -173,6 +178,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadTeamMemberByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetMemberByTeam(int key)
         {
             try
@@ -201,6 +207,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMemberByTeamPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadMembersByTeam(int key, int start, int take)
         {
             try
@@ -234,6 +241,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateMember)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateMember(long key, Member member)
         {
             try

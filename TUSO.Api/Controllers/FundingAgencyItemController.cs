@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Infrastructure.Contracts;
 using TUSO.Utilities.Constants;
@@ -33,6 +34,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentFundingAgencies)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentFundingAgencies()
         {
             try
@@ -56,6 +58,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentFundingAgencyByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentFundingAgencyByKey(int key)
         {
             try
@@ -83,6 +86,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentFundingAgencyByIncident)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentFundingAgencyByIncident(int key)
         {
             try

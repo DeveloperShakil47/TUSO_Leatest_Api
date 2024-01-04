@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -31,6 +32,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.RDPLogin)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UserLogin(LoginDto login)
         {
             try
@@ -55,6 +57,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDevicesType)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDevices()
         {
             try
@@ -116,6 +119,7 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.GetDeviceActivity)]
+        [CustomAuthorization]
         public ResponseDto GetDeviceActivity(string fromDate, string? toDate, string? userName)
         {
             try
@@ -177,6 +181,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceByKey)]
+        [CustomAuthorization]
         public ResponseDto ReadDeviceByKey(string key)
         {
             try
@@ -193,6 +198,7 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.ReadDeviceUserByKey)]
+        [CustomAuthorization]
         public ResponseDto ReadDeviceUserByKey(string key)
         {
             try
@@ -226,6 +232,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpPost]
         [Route(RouteConstants.UninstallDeviceByKey)]
+        [CustomAuthorization]
         public ResponseDto UninstallDeviceByKey(string deviceID)
         {
             try

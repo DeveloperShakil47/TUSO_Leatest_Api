@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -42,6 +43,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateDistrict)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateDistrict(District district)
         {
             try
@@ -71,6 +73,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrict)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDistricts()
         {
             try
@@ -94,6 +97,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDistrictByKey(int key)
         {
             try
@@ -120,6 +124,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByProvince)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDistrictByProvince(int key)
         {
             try
@@ -146,6 +151,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDistrictByProvincePage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDistrictsByProvince(int key, int start, int take)
         {
             try
@@ -179,6 +185,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateDistrict)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateDistrict(int key, District district)
         {
             try
@@ -212,6 +219,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteDistrict)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteDistrict(int key)
         {
             try

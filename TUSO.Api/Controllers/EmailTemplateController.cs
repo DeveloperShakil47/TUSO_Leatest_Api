@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -34,6 +35,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateEmailTemplate)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateEmailTemplate(EmailTemplate emailTemplate)
         {
             try
@@ -74,6 +76,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailTemplates)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadEmailTemplates()
         {
             try
@@ -97,6 +100,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailTemplateByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadEmailTemplateByKey(int key)
         {
             try
@@ -125,6 +129,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateEmailTemplate)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateEmailTemplate(int key, EmailTemplate emailTemplate)
         {
             try
@@ -154,6 +159,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteEmailTemplate)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteEmailTemplate(int key)
         {
             try

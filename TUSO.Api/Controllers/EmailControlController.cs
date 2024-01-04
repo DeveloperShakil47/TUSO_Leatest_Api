@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -40,6 +41,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateEmailControl)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateEmailControl(EmailControl emailControl)
         {
             try
@@ -69,6 +71,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailControlByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadEmailControlByKey(int key)
         {
             try
@@ -99,6 +102,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateEmailControl)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateEmailControl(int key, EmailControl emailControl)
         {
             try
@@ -131,6 +135,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteEmailControl)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteEmailControl(int key)
         {
             try

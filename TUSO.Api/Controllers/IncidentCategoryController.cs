@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -39,6 +40,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncidentCategory)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateIncidentCategory(IncidentCategory incidentCategory)
         {
             try
@@ -67,6 +69,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategories)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentCategories()
         {
             try
@@ -87,6 +90,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByFirstLevel)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentCategoryPageByFirstLevel(int start, int take)
         {
             try
@@ -120,6 +124,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryPageByLevel)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentCategoryPageByLevel(int key, int start, int take)
         {
             try
@@ -151,6 +156,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCategoryBySingleKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetIncidentCategoryBySingleKey(int key)
         {
             try
@@ -178,6 +184,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateIncidentCategory)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateIncidentCategory(int key, IncidentCategory incidentCategory)
         {
             try
@@ -209,6 +216,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteIncidentCategory)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteIncidentCategory(int key)
         {
             try

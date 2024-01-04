@@ -35,6 +35,7 @@ namespace TUSO.Api.Controllers
 
         [HttpPost]
         [Route(RouteConstants.CreateRecoveryRequest)]
+
         public async Task<ResponseDto> CreateRecoveryRequest(RecoveryRequestDto recoveryRequest)
         {
             try

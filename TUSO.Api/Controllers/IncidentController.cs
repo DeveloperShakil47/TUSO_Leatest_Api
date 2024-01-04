@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -42,6 +43,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncident)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateIncident(Incident incident)
         {
             try
@@ -101,6 +103,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidents)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidents(int start, int take, int status)
         {
             try
@@ -121,6 +124,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentsByKey(long key, long userAccountId, int start, int take, int status)
         {
             try
@@ -141,6 +145,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of incident status.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByStatus)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentsByStatus(bool key, int start, int take)
         {
             try
@@ -161,6 +166,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of Expart incident.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByExpert)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetIncidentsByExpart(long key, int start, int take, int status)
         {
             try
@@ -181,6 +187,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of ExpertLeader incident.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByExpertLeader)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetIncidentsByExpartLeader(int key, int assignedTo, int start, int take, int status)
         {
             try
@@ -202,6 +209,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of incident search.</returns>
         [HttpPost]
         [Route(RouteConstants.ReadIncidentsBySearch)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentsBySearch(IncidentSearchDto search, int start, int take, bool status)
         {
             try
@@ -223,6 +231,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of the table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentByKey(long key)
         {
             try
@@ -250,6 +259,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateIncident)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateIncident(long key, Incident incident)
         {
             try
@@ -468,6 +478,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpDelete]
         [Route(RouteConstants.CloseIncident)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CloseIncidentsByKey(CloseIncidentDto closeIncident)
         {
             try
@@ -543,6 +554,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Object to be deleted.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteIncident)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteIncident(long key)
         {
             try
@@ -576,6 +588,7 @@ namespace TUSO.Api.Controllers
         /// <returns> Single incident </returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByAdvancedSearch)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentsByAdvancedSearch(int start, int take, int? status, DateTime? fromDate, DateTime? toDate, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId)
         {
             try
@@ -596,6 +609,7 @@ namespace TUSO.Api.Controllers
         /// <returns> Single incident </returns>
         [HttpGet]
         [Route(RouteConstants.ReadWeeklyIncidentsByAdvancedSearch)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadWeeklyIncidentsByAdvancedSearch(int start, int take, int? status, int? ticketNo, int? faciltyId, int? provinceId, int? districtId, int? systemId)
         {
             try
@@ -616,6 +630,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of incident.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentsByUserName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentsByUserName(string UserName, int start, int take, int status)
         {
             try
@@ -632,6 +647,7 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.GetIncidentsByAssignUserName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetIncidentsByAssignUserName(string userName, int start, int take, int status)
         {
             try
@@ -652,6 +668,7 @@ namespace TUSO.Api.Controllers
         /// <returns> Total,Resolved and Unresolved incidents count</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentCount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentCount(string? userName)
         {
             try
@@ -668,6 +685,7 @@ namespace TUSO.Api.Controllers
 
         [HttpGet]
         [Route(RouteConstants.ReadIncidentClientCount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadClientIncidentCount(string? userName)
         {
             try

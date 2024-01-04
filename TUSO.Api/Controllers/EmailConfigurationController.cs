@@ -3,6 +3,7 @@ using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -45,6 +46,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateEmailConfiguration)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateEmailConfiguration(EmailConfiguration emailConfiguration)
         {
             try
@@ -73,6 +75,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadEmailConfigurations)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadEmailConfigurations()
         {
             try
@@ -127,6 +130,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateEmailConfiguration)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateEmailConfiguration(int key, EmailConfiguration emailConfiguration)
         {
             try
@@ -156,6 +160,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteEmailConfiguration)]
+        [CustomAuthorization]
         public async Task<IActionResult> DeleteEmailConfiguration(int key)
         {
             try
@@ -191,6 +196,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Sends an email to caller or user on ticket creation.</returns>
         [HttpPost]
         [Route(RouteConstants.TicketCreationEmail)]
+        [CustomAuthorization]
         public async Task<ResponseDto> SendTicketCreationEmail(Incident incident)
         {
             try
@@ -284,6 +290,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Sends an email to user on ticket close.</returns>
         [HttpPost]
         [Route(RouteConstants.TicketCloseEmail)]
+        [CustomAuthorization]
         public async Task<ResponseDto> SendTicketCloseEmail(long key)
         {
             try

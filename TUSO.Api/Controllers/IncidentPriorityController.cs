@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -35,6 +36,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateIncidentPriority)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateIncidentPriority(IncidentPriority incidentPriority)
         {
             try
@@ -64,6 +66,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPriorities)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentPriorities()
         {
             try
@@ -86,6 +89,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPrioritiesPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentPriorities(int start, int take)
         {
             try
@@ -115,6 +119,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadIncidentPriorityByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadIncidentPriorityByKey(int key)
         {
             try
@@ -143,6 +148,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateIncidentPriority)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateIncidentPriority(int key, IncidentPriority incidentPriority)
         {
             try
@@ -176,6 +182,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteIncidentPriority)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteIncidentPriority(int key)
         {
             try

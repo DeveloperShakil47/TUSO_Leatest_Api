@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -41,6 +42,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFacilityPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateFacilityPermission(FacilityPermission facilityPermission)
         {
             try
@@ -71,6 +73,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermissionsByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityPermissionsByKey(int key)
         {
             try
@@ -100,6 +103,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityUsers(int FacilityId)
         {
             try
@@ -123,6 +127,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilitiePermissionPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilitiesUsers(int FacilityId, int start, int take)
         {
             try
@@ -151,6 +156,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityPermissions)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityPermissions()
         {
             try
@@ -192,6 +198,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFacilityPermissions)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateFacilityPermissions(int key, FacilityPermission facilityPermission)
         {
             try
@@ -225,6 +232,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFacilityPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteFacilityPermission(int key)
         {
             try

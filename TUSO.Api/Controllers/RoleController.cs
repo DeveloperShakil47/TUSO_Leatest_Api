@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -40,6 +41,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateUserRole)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateUserRole(Role role)
         {
             try
@@ -69,6 +71,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRoles)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserRoles()
         {
             try
@@ -91,6 +94,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRolesPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserRolesPage(int start, int take)
         {
             try
@@ -120,6 +124,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserRoleByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserRoleByKey(int key)
         {
             try
@@ -148,6 +153,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateUserRole)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateUserRole(int key, Role role)
         {
             try
@@ -181,6 +187,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteUserRole)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteUserRole(int key)
         {
             try

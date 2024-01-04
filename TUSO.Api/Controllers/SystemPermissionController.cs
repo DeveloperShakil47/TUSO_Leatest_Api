@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -39,6 +40,7 @@ namespace TUSO.Api.Controllers
         /// </summary>
         [HttpPost]
         [Route(RouteConstants.CreateSystemPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateSystemPermission(SystemPermission permission)
         {
             try
@@ -68,6 +70,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissions)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermissions()
         {
             try
@@ -90,6 +93,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermissionByKey(int key)
         {
             try
@@ -117,6 +121,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByUser)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermissionByUser(int userAccountId)
         {
             try
@@ -144,6 +149,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByUserPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermissionByUserPage(int key, int start, int take)
         {
             try
@@ -179,6 +185,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermissionByProject)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermissionByProject(int systemId)
         {
             try
@@ -207,6 +214,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemPermission(long userAccountId, int systemId)
         {
             try
@@ -234,6 +242,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateSystemPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateSystemPermission(int key, SystemPermission permission)
         {
             try
@@ -266,6 +275,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteSystemPermission)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteSystemPermission(int key)
         {
             try

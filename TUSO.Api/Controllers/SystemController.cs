@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -42,6 +43,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateSystem)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateSystem(Project system)
         {
             try
@@ -71,6 +73,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystems)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystems()
         {
             try
@@ -93,6 +96,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemsPagination)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemsPagination(int start, int take)
         {
             try
@@ -124,6 +128,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadSystemByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadSystemByKey(int key)
         {
             try
@@ -152,6 +157,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateSystem)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateSystem(int key, Project system)
         {
             try
@@ -185,6 +191,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteSystem)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteSystem(int key)
         {
             try

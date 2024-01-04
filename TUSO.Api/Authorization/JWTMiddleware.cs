@@ -35,14 +35,14 @@ namespace JWTAuth_Validation.Middleware
             if (token != null)
             {
                 _unitOfWork=unitOfWork;
-                await attachAccountToContext(context, token);
+                await AttachAccountToContext(context, token);
             }
              
 
             await _next(context);
         }
 
-        private async Task attachAccountToContext(HttpContext context, string token)
+        private async Task AttachAccountToContext(HttpContext context, string token)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace JWTAuth_Validation.Middleware
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
                 // attach account to context on successful jwt validation
-                context.Items["User"] = _unitOfWork.UserAccountRepository.GetUserAccountByFullName(userId);
+                context.Items["User"] = await _unitOfWork.UserAccountRepository.GetUserAccountByEmail(userId);
             }
             catch(Exception ex)
             {

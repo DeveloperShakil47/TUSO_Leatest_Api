@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -37,6 +38,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateRDPDeviceInfo)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateRDPDeviceInfo(RDPDeviceInfo rDPDeviceInfo)
         {
             try
@@ -65,6 +67,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRDPDeviceInfoes)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadRDPDeviceInfoes()
         {
             try
@@ -85,6 +88,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRDPDeviceInfoByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadRDPDeviceInfoByKey(int key)
         {
             try
@@ -109,6 +113,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRDPDeviceInfoByName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadRDPDeviceInfoByUserName(string username)
         {
             try
@@ -130,6 +135,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.GetFacilitiesByDeviceId)]
+        [CustomAuthorization]
         public async Task<ResponseDto> GetFacilitiesByDeviceId(string deviceId)
         {
             try
@@ -197,6 +203,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadRDPDeviceInfoList)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadRDPDeviceInfoList()
         {
             try
@@ -302,6 +309,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateRDPDeviceInfo)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateRDPDeviceInfo(int key, RDPDeviceInfo rdpDevice)
         {
             try
@@ -333,6 +341,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateRDPDeviceInfoByUsername)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateRDPDeviceInfobyUsername(string username, RDPDeviceInfo rdpDevice)
         {
             try
@@ -367,6 +376,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteRDPDeviceInfo)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteRDPDeviceInfo(int key)
         {
             try
@@ -399,6 +409,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteRDPDeviceInfoByUsername)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteRDPDeviceInfoByUsername(string username)
         {
             try

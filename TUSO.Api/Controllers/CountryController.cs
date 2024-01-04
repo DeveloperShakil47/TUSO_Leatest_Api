@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -41,6 +42,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateCountry)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateCountry(Country country)
         {
             try
@@ -70,6 +72,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountries)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadCountries()
         {
             try
@@ -92,6 +95,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountriesbyPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadCountriesbyPage(int start, int take)
         {
             try
@@ -121,6 +125,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadCountryByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadCountryByKey(int key)
         {
             try
@@ -148,6 +153,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateCountry)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateCountry(int key, Country country)
         {
             try
@@ -181,6 +187,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteCountry)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteCountry(int key)
         {
             try

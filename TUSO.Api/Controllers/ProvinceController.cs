@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -41,6 +42,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateProvince)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateProvince(Province province)
         {
             try
@@ -70,6 +72,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadProvinces)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadProvinces()
         {
             try
@@ -93,6 +96,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadProvinceByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadProvinceByKey(int key)
         {
             try
@@ -121,6 +125,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadProvinceByCountry)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadProvinceByCountries(int key)
         {
             try
@@ -150,6 +155,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadProvinceByCountryPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadProvinceByCountryPage(int key, int start, int take)
         {
             try
@@ -184,6 +190,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateProvince)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateProvince(int key, Province province)
         {
             try
@@ -217,6 +224,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteProvince)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteProvince(int key)
         {
             try

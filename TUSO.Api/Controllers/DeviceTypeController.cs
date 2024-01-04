@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -41,6 +42,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateDeviceType)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateDeviceType(DeviceType deviceType)
         {
             try
@@ -70,6 +72,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypes)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDeviceTypes()
         {
             try
@@ -92,6 +95,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypeByPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDeviceTypeByPage(int start, int take)
         {
             try
@@ -121,6 +125,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceTypeByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDeviceTypeByKey(int key)
         {
             try
@@ -148,6 +153,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateDeviceType)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateDeviceType(int key, DeviceType deviceType)
         {
             try
@@ -182,6 +188,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteDeviceType)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteDeviceType(int key)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -40,6 +41,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateTeam)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateTeam(TeamDto model)
         {
             try
@@ -73,6 +75,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadTeams)]
+        [CustomAuthorization]
         public async Task<IActionResult> ReadTeams()
         {
             try
@@ -94,6 +97,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadTeamsbyPage)]
+        [CustomAuthorization]
         public async Task<IActionResult> ReadTeamsbyPage(int start, int take)
         {
             try
@@ -122,6 +126,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadTeamByKey)]
+        [CustomAuthorization]
         public async Task<IActionResult> ReadTeamByKey(long key)
         {
             try
@@ -152,6 +157,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateTeam)]
+        [CustomAuthorization]
         public async Task<IActionResult> UpdateTeam(long key, Team team)
         {
             try
@@ -185,6 +191,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteTeam)]
+        [CustomAuthorization]
         public async Task<IActionResult> DeleteTeam(long key)
         {
             try

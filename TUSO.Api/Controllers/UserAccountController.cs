@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -28,6 +29,7 @@ namespace TUSO.Api.Controllers
         {
             this.context = context;
             this.logger = logger;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -37,6 +39,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateUserAccount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateUserAccount(UserAccountCreateDto user)
         {
             try
@@ -103,6 +106,7 @@ namespace TUSO.Api.Controllers
         /// <returns> Total,Resolved and Unresolved user account count</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserCount()
         {
             try
@@ -123,6 +127,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserAccounts(int start, int take)
         {
             try
@@ -145,6 +150,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountsByName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserAccountsByName(string name, int start, int take)
         {
             try
@@ -170,6 +176,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserByDeviceType)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserByUserType(int devicetypeId)
         {
             try
@@ -199,6 +206,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserAccountByKey(long key)
         {
             try
@@ -230,6 +238,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByRole)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserAccountByRole(int key, int start, int take)
         {
             try
@@ -258,6 +267,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUserAccountByExpert)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUserAccountByExpert()
         {
             try
@@ -285,6 +295,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateUserAccount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateUserAccount(long key, UserAccount userAccount)
         {
             try
@@ -384,6 +395,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.ChangedPassword)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ChangedPassword(ResetPasswordDto changePassword)
         {
             try
@@ -428,6 +440,7 @@ namespace TUSO.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route(RouteConstants.RecoveryPassword)]
+
         public async Task<ResponseDto> RecoveryPassword(RecoveryPasswordDto recoveryPassword)
         {
             try
@@ -480,6 +493,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteUserAccount)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteUserAccount(long key)
         {
             try
@@ -614,6 +628,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Boolean</returns>
         [HttpGet]
         [Route(RouteConstants.ReadUsersByName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadUsersByName(string name)
         {
             try

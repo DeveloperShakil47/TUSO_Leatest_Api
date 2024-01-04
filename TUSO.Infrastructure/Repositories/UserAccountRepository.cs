@@ -77,6 +77,17 @@ namespace TUSO.Infrastructure.Repositories
             }
         }
 
+        public async Task<UserAccount?> GetUserAccountByEmail(string email)
+        {
+            try
+            {
+                return await context.UserAccounts.Where(u => u.Email == email &&  u.IsDeleted == false).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<UserAccount> GetUserAccountByCellphone(string cellphone)
         {
             try

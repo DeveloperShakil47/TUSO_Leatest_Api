@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -41,6 +42,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFacility)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateFacility(Facility facility)
         {
             try
@@ -70,6 +72,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilities)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilities()
         {
             try
@@ -93,6 +96,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityByKey(int key)
         {
             try
@@ -120,6 +124,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByDistrict)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityByDistrict(int key)
         {
             try
@@ -147,6 +152,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilitieByDistrictPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilitiesByDistrict(int key, int start, int take, string? search = "")
         {
             try
@@ -181,6 +187,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Http Status Code: Ok.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFacilityByName)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFacilityByName(string name)
         {
             try
@@ -213,6 +220,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFacility)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateFacility(int key, Facility facility)
         {
             try
@@ -246,6 +254,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFacility)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteFacility(int key)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -38,6 +39,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateMessage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateMessage(Message message)
         {
             try
@@ -63,6 +65,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMessages)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadMessages()
         {
             try
@@ -84,6 +87,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadMessageByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadMessageByKey(long key)
         {
             try
@@ -109,6 +113,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateMessage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateMessage(long key, Message message)
         {
             try
@@ -136,6 +141,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteMessage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteMessage(long key)
         {
             try

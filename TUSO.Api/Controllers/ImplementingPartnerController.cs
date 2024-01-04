@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -34,6 +35,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateImplementingPartner)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateImplementingPartner(ImplementingPartner implementingPartner)
         {
             try
@@ -63,6 +65,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartners)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadImplementingPartners()
         {
             try
@@ -85,6 +88,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnersPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadImplementingPartnersPage(int start, int take)
         {
             try
@@ -116,6 +120,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnerByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadImplementingPartnerByKey(int key)
         {
             try
@@ -143,6 +148,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadImplementingPartnerBySystem)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadImplementingPartnerBySystem(int key)
         {
             try
@@ -171,6 +177,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateImplementingPartner)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateImplementingPartner(int key, ImplementingPartner implementingPartner)
         {
             try
@@ -204,6 +211,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteImplementingPartner)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteImplementingPartner(int key)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -34,6 +35,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.CreateFundingAgency)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateFundingAgency(FundingAgency fundingAgency)
         {
             try
@@ -63,6 +65,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencies)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFundingAgencies()
         {
             try
@@ -86,6 +89,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgenciesPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFundingAgencies(int start, int take)
         {
             try
@@ -115,6 +119,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencyByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFundingAgencyByKey(int key)
         {
             try
@@ -141,6 +146,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadFundingAgencyBySystem)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadFundingAgencyBySystem(int key)
         {
             try
@@ -172,6 +178,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateFundingAgency)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateFundingAgency(int key, FundingAgency fundingAgency)
         {
             try
@@ -205,6 +212,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteFundingAgency)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteFundingAgency(int key)
         {
             try

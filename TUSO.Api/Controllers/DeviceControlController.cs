@@ -5,6 +5,7 @@ using TUSO.Infrastructure.Contracts;
 using System.Diagnostics.Metrics;
 using System.Net;
 using TUSO.Domain.Dto;
+using TUSO.Authorization;
 
 /*
 * Created by: Stephan
@@ -42,6 +43,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Saved object.</returns>
         [HttpPost]
         [Route(RouteConstants.UpdateDeviceControl)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateDeviceControl(int key, DeviceControl deviceControl)
         {
             try
@@ -71,6 +73,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadDeviceControl)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadDeviceControl()
         {
             try

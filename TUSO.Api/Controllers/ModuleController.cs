@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.AccessControl;
+using TUSO.Authorization;
 using TUSO.Domain.Dto;
 using TUSO.Domain.Entities;
 using TUSO.Infrastructure.Contracts;
@@ -40,6 +41,7 @@ namespace TUSO.Api.Controllers
         ///
         [HttpPost]
         [Route(RouteConstants.CreateModule)]
+        [CustomAuthorization]
         public async Task<ResponseDto> CreateModule(ModuleDto model)
         {
             try
@@ -76,6 +78,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModules)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadModules()
         {
             try
@@ -96,6 +99,7 @@ namespace TUSO.Api.Controllers
         /// <returns>List of table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModulesByPage)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadModulesByPage(int start, int take)
         {
             try
@@ -126,6 +130,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Instance of a table object.</returns>
         [HttpGet]
         [Route(RouteConstants.ReadModuleByKey)]
+        [CustomAuthorization]
         public async Task<ResponseDto> ReadModuleByKey(int key)
         {
             try
@@ -153,6 +158,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Update row in the table.</returns>
         [HttpPut]
         [Route(RouteConstants.UpdateModule)]
+        [CustomAuthorization]
         public async Task<ResponseDto> UpdateModule(int key, Module module)
         {
             try
@@ -188,6 +194,7 @@ namespace TUSO.Api.Controllers
         /// <returns>Deletes a row from the table.</returns>
         [HttpDelete]
         [Route(RouteConstants.DeleteModule)]
+        [CustomAuthorization]
         public async Task<ResponseDto> DeleteModule(int key)
         {
             try
