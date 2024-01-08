@@ -60,7 +60,7 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}",DateTime.Now, "BusinessLayer", "CreateCountry", "CountryController.cs", ex.Message);
+                logger.LogInformation("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}",DateTime.Now, "BusinessLayer", "CreateCountry", "CountryController.cs", ex.Message);
                
                 return new ResponseDto(HttpStatusCode.InternalServerError, false,  MessageConstants.GenericError, null);
             }

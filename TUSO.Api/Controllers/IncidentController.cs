@@ -91,8 +91,10 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, incidentDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+               
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CreateIncident", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
