@@ -22,13 +22,15 @@ namespace TUSO.Api.Controllers
     public class RDPDeviceInfoController : ControllerBase
     {
         private readonly IUnitOfWork context;
+        private readonly ILogger<RDPDeviceInfoController> logger;
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="context"></param>
-        public RDPDeviceInfoController(IUnitOfWork context)
+        public RDPDeviceInfoController(IUnitOfWork context, ILogger<RDPDeviceInfoController> logger)
         {
             this.context = context;
+            this.logger=logger;
         }
 
         /// <summary>
@@ -55,8 +57,9 @@ namespace TUSO.Api.Controllers
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.SaveMessage, rdp);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "CreateRDPDeviceInfo", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -75,8 +78,9 @@ namespace TUSO.Api.Controllers
                 var rdpdevice = await context.RDPDeviceInfoRepository.GetRDPDevices();
                 return new ResponseDto(HttpStatusCode.OK, true, rdpdevice == null ? "Data Not Found" : "Data Loaded", rdpdevice);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadRDPDeviceInfoes", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -100,8 +104,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, rdp == null ? "Data Not Found" : "Data Loaded", rdp);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadRDPDeviceInfoByKey", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -122,8 +127,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, rdp == null ? "Data Not Found" : "Data Loaded", rdp);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadRDPDeviceInfoByUserName", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -191,8 +197,9 @@ namespace TUSO.Api.Controllers
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "GetFacilitiesByDeviceId", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -294,8 +301,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, deviceInfos);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadRDPDeviceInfoList", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -327,8 +335,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "UpdateRDPDeviceInfo", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -363,8 +372,9 @@ namespace TUSO.Api.Controllers
                 await context.SaveChangesAsync();
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "UpdateRDPDeviceInfobyUsername", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -396,8 +406,9 @@ namespace TUSO.Api.Controllers
                 await context.SaveChangesAsync();
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.DeleteMessage, deviceInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "DeleteRDPDeviceInfo", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -426,8 +437,9 @@ namespace TUSO.Api.Controllers
                 await context.SaveChangesAsync();
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.DeleteMessage, deviceInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "DeleteRDPDeviceInfoByUsername", "RDPDeviceInfoController", "RDPDeviceInfoController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }

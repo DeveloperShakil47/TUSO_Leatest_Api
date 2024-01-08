@@ -114,8 +114,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidents", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -135,8 +136,9 @@ namespace TUSO.Api.Controllers
                 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentsByKey", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -156,8 +158,9 @@ namespace TUSO.Api.Controllers
                 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentsByStatus", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -177,8 +180,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetIncidentsByExpart", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -198,8 +202,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetIncidentsByExpartLeader", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -220,8 +225,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentsBySearch", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -247,8 +253,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, dto== null ? "Data Not Found" : string.Empty, dto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentByKey", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -414,8 +421,9 @@ namespace TUSO.Api.Controllers
                 }
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "UpdateIncident", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -469,8 +477,9 @@ namespace TUSO.Api.Controllers
                     await context.SaveChangesAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "AdminLogSave", "IncidentController.cs", ex.Message);
                 throw;
             }
         }
@@ -543,8 +552,9 @@ namespace TUSO.Api.Controllers
                 var result = _emailConfigController.SendTicketCloseEmail(closeIncident.Oid);
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.UpdateMessage, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CloseIncidentsByKey", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -577,8 +587,9 @@ namespace TUSO.Api.Controllers
                 
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.DeleteMessage, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "CloseIncidentsByKey", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -599,8 +610,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, Incident== null ? "Data Not Found" : string.Empty, Incident);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentsByAdvancedSearch", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -620,8 +632,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, Incident== null ? "Data Not Found" : string.Empty, Incident);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadWeeklyIncidentsByAdvancedSearch", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -641,8 +654,9 @@ namespace TUSO.Api.Controllers
                
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentsByUserName", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -658,8 +672,9 @@ namespace TUSO.Api.Controllers
                
                 return new ResponseDto(HttpStatusCode.OK, true, incidentInDb== null ? "Data Not Found" : string.Empty, incidentInDb);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "GetIncidentsByAssignUserName", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -679,8 +694,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, incidentCountDto== null ? "Data Not Found" : string.Empty, incidentCountDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadIncidentCount", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -698,8 +714,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, clientIncidentCount== null ? "Data Not Found" : string.Empty, clientIncidentCount);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "BusinessLayer", "ReadClientIncidentCount", "IncidentController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }

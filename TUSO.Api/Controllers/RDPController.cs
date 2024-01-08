@@ -20,10 +20,11 @@ namespace TUSO.Api.Controllers
     public class RDPController : Controller
     {
         private readonly IUnitOfWork context;
-
-        public RDPController(IUnitOfWork context)
+        private readonly ILogger<RDPController> logger;
+        public RDPController(IUnitOfWork context, ILogger<RDPController> logger)
         {
             this.context = context;
+            this.logger=logger;
         }
 
         /// URL: tuso-api/rdpserver/login
@@ -47,6 +48,7 @@ namespace TUSO.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "UserLogin", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -110,8 +112,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, devices?.Count()==0?"Data Not Found":"Data Loaded", devices);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadDevices", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -168,8 +171,9 @@ namespace TUSO.Api.Controllers
                 }
                 return new ResponseDto(HttpStatusCode.OK, true, devices?.Count()==0 ? "Data Not Found" : "Data Loaded", devices);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "GetDeviceActivity", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -190,8 +194,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, device == null ? MessageConstants.NoMatchFoundError : "Data Loaded", device);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadDeviceByKey", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -219,8 +224,9 @@ namespace TUSO.Api.Controllers
                 };
                 return new ResponseDto(HttpStatusCode.OK, true, MessageConstants.NoMatchFoundError, userAccount);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "ReadDeviceUserByKey", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
@@ -241,8 +247,9 @@ namespace TUSO.Api.Controllers
 
                 return new ResponseDto(HttpStatusCode.OK, true, device == null? MessageConstants.NoMatchFoundError:"Data Loaded" , device);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("{LogDate}{Location}{MethodName}{ClassName}{ErrorMessage}", DateTime.Now, "UninstallDeviceByKey", "RDPController", "RDPController.cs", ex.Message);
                 return new ResponseDto(HttpStatusCode.InternalServerError, false, MessageConstants.GenericError, null);
             }
         }
